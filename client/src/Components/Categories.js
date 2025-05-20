@@ -28,6 +28,7 @@ const Categories = () => {
     if (name.length > 10) {
       const words = name.split(' ');
       if (words.length > 1) {
+        // Split into two lines if there are multiple words
         const middle = Math.floor(words.length / 2);
         const firstLine = words.slice(0, middle).join(' ');
         const secondLine = words.slice(middle).join(' ');
