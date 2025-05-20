@@ -31,16 +31,12 @@ import {
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
   const handleProfileClose = () => setAnchorEl(null);
   const toggleMobileSearch = () => setShowMobileSearch(!showMobileSearch);
@@ -133,7 +129,8 @@ const Navbar = () => {
                     p: "2px 8px",
                     display: { xs: "flex", md: "none" },
                     alignItems: "center",
-                    width: "100%",
+                    width: "100vw%",
+                    height:40,
                     position: "absolute",
                     left: 0,
                     right: 0,
@@ -160,6 +157,7 @@ const Navbar = () => {
                   sx={{ color: "#841395" }}
                   onClick={toggleMobileSearch}
                   size="large"
+               
                 >
                   <SearchIcon fontSize="large" />
                 </IconButton>
@@ -200,19 +198,37 @@ const Navbar = () => {
                   },
                 }}
               >
-                <MenuItem component={Link} to="/dashboard" onClick={handleProfileClose}>
+                 <MenuItem component={Link} to="/profile" onClick={handleProfileClose}>
                   <ListItemIcon>
-                    <DashboardIcon sx={{ color: "#841395" }} />
+                    <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Dashboard" />
+                  <ListItemText primary="Profile"/>
                 </MenuItem>
-                <MenuItem component={Link} to="/update-business" onClick={handleProfileClose}>
+                <MenuItem component={Link} to="/dashboard"  onClick={handleProfileClose}>
+                  <ListItemIcon>
+                    <UpdateIcon sx={{ color: "#841395" }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Dashboard"/>
+                </MenuItem>
+                <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
+                  <ListItemIcon>
+                    <UpdateIcon sx={{ color: "#841395" }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Added business" />
+                </MenuItem>
+                <MenuItem component={Link} to="/Updated/business"  onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
                   <ListItemText primary="Update Business" />
                 </MenuItem>
-                <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>
+                <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
+                  <ListItemIcon>
+                    <UpdateIcon sx={{ color: "#841395" }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Quries" />
+                </MenuItem>
+                <MenuItem component={Link} to="/reviews"onClick={handleProfileClose}>
                   <ListItemIcon>
                     <ReviewsIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>

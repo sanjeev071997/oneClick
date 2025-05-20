@@ -17,6 +17,7 @@ import {
   Card,
   CardMedia,
   IconButton,
+  Autocomplete
 } from "@mui/material";
 import {
   PhotoCamera,
@@ -46,8 +47,7 @@ const ListYourBusiness = () => {
 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [openCategory, setOpenCategory] = useState(false);
+  const [categoryInput, setCategoryInput] = useState("");
 
   const fetchCategories = async () => {
     try {
@@ -82,9 +82,9 @@ const ListYourBusiness = () => {
     setFormData(prev => ({ ...prev, images: newImages }));
   };
 
-  const filteredCategories = categories.filter((cat) =>
-    cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleCategorySelect = (value) => {
+    setFormData(prev => ({ ...prev, category: value || "" }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,6 +115,7 @@ const ListYourBusiness = () => {
         description: "",
         images: []
       });
+      setCategoryInput("");
 
     } catch (error) {
       alert(error.response?.data?.message || "Submission failed.");
@@ -236,70 +237,62 @@ const ListYourBusiness = () => {
                 />
               </Grid>
 
-              {/* Enhanced Category Dropdown with Search */}
-              <Grid item xs={12} sm={12}>
-                <FormControl fullWidth required>
-                  <InputLabel>Business Category</InputLabel>
-                  <Select
-                    label="Business Category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    onOpen={() => setOpenCategory(true)}
-                    onClose={() => setOpenCategory(false)}
-                    open={openCategory}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 300
+              {/* Category Field with Search and Custom Entry */}
+              <Grid item xs={12}>
+                <Autocomplete
+                  freeSolo
+                  options={categories.map((category) => category.name)}
+                  inputValue={categoryInput}
+                  onInputChange={(event, newInputValue) => {
+                    setCategoryInput(newInputValue);
+                  }}
+                  onChange={(event, newValue) => {
+                    handleCategorySelect(newValue);
+                  }}
+                  value={formData.category}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Business Category"
+                      required
+                      placeholder="Search or type a new category"
+                      variant="outlined"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: 2,
+                          "& fieldset": {
+                            borderColor: "rgba(0, 0, 0, 0.12)"
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "#841395"
+                          }
                         }
-                      }
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                        "& fieldset": {
-                          borderColor: "rgba(0, 0, 0, 0.12)"
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "#841395"
-                        }
-                      }
-                    }}
-                  >
-                    <Box sx={{ px: 2, py: 1, borderBottom: "1px solid rgba(0, 0, 0, 0.12)" }}>
-                      <TextField
-                        fullWidth
-                        autoFocus
-                        placeholder="Search categories..."
-                        variant="standard"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Search color="action" />
-                            </InputAdornment>
-                          ),
-                          disableUnderline: true,
-                          sx: { fontSize: "0.9rem" }
-                        }}
-                        sx={{ mb: 1 }}
-                      />
-                    </Box>
-                    {filteredCategories.length > 0 ? (
-                      filteredCategories.map((cat) => (
-                        <MenuItem key={cat._id} value={cat._id} sx={{ py: 1.5 }}>
-                          {cat.name}
-                        </MenuItem>
-                      ))
+                      }}
+                    />
+                  )}
+                  renderOption={(props, option) => (
+                    <MenuItem {...props} key={option}>
+                      {option}
+                    </MenuItem>
+                  )}
+                  noOptionsText={
+                    categoryInput ? (
+                      <Typography>
+                        Press enter to use "{categoryInput}"
+                      </Typography>
                     ) : (
-                      <MenuItem disabled sx={{ py: 1.5 }}>
-                        No categories found
-                      </MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
+                      "Type to search categories"
+                    )
+                  }
+                />
               </Grid>
 
               {/* Description */}
@@ -336,10 +329,10 @@ const ListYourBusiness = () => {
 
               {/* Image Upload Section */}
               <Grid item xs={12}>
-                <Card 
-                  variant="outlined" 
-                  sx={{ 
-                    p: 3, 
+                <Card
+                  variant="outlined"
+                  sx={{
+                    p: 3,
                     borderRadius: 2,
                     border: "2px dashed rgba(132, 19, 149, 0.3)",
                     backgroundColor: "rgba(132, 19, 149, 0.03)",
@@ -427,12 +420,12 @@ const ListYourBusiness = () => {
                                 <Close fontSize="small" />
                               </IconButton>
                             </Card>
-                            <Typography 
-                              variant="caption" 
-                              noWrap 
+                            <Typography
+                              variant="caption"
+                              noWrap
                               title={img.name}
-                              sx={{ 
-                                display: "block", 
+                              sx={{
+                                display: "block",
                                 mt: 0.5,
                                 color: "text.secondary"
                               }}
