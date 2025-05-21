@@ -6,6 +6,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Categories from "../Components/Categories";
+import CategorySection from '../Components/CategorySection'
+import  TravelBookings from '../Components/ TravelBookings'
+
 
 const BannerContainer = styled(Box)({
   position: "relative",
@@ -77,6 +80,8 @@ const Home = () => {
       </BannerContainer>
 
      <Categories /> 
+     <CategorySection/>
+     <TravelBookings />
       {/* <Footer /> */}
     </>
   );

@@ -6,9 +6,6 @@ import {
   Container,
   Box,
   IconButton,
-  Drawer,
-  List,
-  ListItem,
   ListItemText,
   ListItemIcon,
   InputBase,
@@ -19,13 +16,10 @@ import {
   MenuItem,
 } from "@mui/material";
 import {
-  Menu as MenuIcon,
-  Close as CloseIcon,
   Search as SearchIcon,
   Add as AddIcon,
   AccountCircle as AccountCircleIcon,
   Business as BusinessIcon,
-  Dashboard as DashboardIcon,
   Update as UpdateIcon,
   RateReview as ReviewsIcon,
   Settings as SettingsIcon,
@@ -34,6 +28,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const token = JSON.parse(localStorage.getItem('token'));
   const [anchorEl, setAnchorEl] = useState(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
@@ -43,6 +38,19 @@ const Navbar = () => {
 
   const handleAddBusiness = () => {
     navigate("/add/business");
+  };
+
+ 
+
+  const handleLogout = () => {
+    // Remove token from localStorage
+    localStorage.removeItem('token');
+
+    // You can also clear everything if needed
+    // localStorage.clear();
+
+    // Redirect to login page or homepage
+    navigate('/login');
   };
 
   return (
