@@ -28,7 +28,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const token = JSON.parse(localStorage.getItem('token'));
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const navigate = useNavigate();
@@ -42,17 +42,7 @@ const Navbar = () => {
 
  
 
-  const handleLogout = () => {
-    // Remove token from localStorage
-    localStorage.removeItem('token');
-
-    // You can also clear everything if needed
-    // localStorage.clear();
-
-    // Redirect to login page or homepage
-    navigate('/login');
-  };
-
+ 
   return (
     <>
       <AppBar
