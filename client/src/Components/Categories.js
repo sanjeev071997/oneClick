@@ -206,7 +206,7 @@ const Categories = () => {
         onClose={toggleDrawer(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            width: { xs: "100%", sm: 950 },
+            width: { xs: "90%", sm: 700,md:700 ,lg:950},
             p: 3,
             borderTopLeftRadius: 12,
             borderBottomLeftRadius: 12,

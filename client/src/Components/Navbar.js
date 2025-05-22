@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -14,6 +14,8 @@ import {
   Divider,
   Menu,
   MenuItem,
+  List,
+  ListItem,
 } from "@mui/material";
 import {
   Search as SearchIcon,
@@ -26,23 +28,75 @@ import {
   ExitToApp as LogoutIcon,
 } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "../axiosInstance";
+import { useDispatch } from "react-redux";
+import { logout } from '../redux/actions/userAction';
+import { Modal, message } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+
+const { confirm } = Modal;
 
 const Navbar = () => {
-
   const [anchorEl, setAnchorEl] = useState(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
   const handleProfileClose = () => setAnchorEl(null);
   const toggleMobileSearch = () => setShowMobileSearch(!showMobileSearch);
 
-  const handleAddBusiness = () => {
-    navigate("/add/business");
+  const handleAddBusiness = () => navigate("/add/business");
+
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get("/api/v1/categories/get");
+      const cats = res.data.getCategories || [];
+      setCategories(cats);
+      setFilteredCategories(cats);
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
   };
 
- 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
- 
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    const filtered = categories.filter((cat) =>
+      cat.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredCategories(filtered);
+  };
+
+  const handleCategorySelect = (category) => {
+    navigate(`/category/${category.name}`, { state: { category } });
+    setSearchTerm("");
+    setFilteredCategories([]);
+    setShowMobileSearch(false);
+  };
+
+  const handleLogout = () => {
+    confirm({
+      title: "Are you sure you want to Log out?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Your current session will be terminated.",
+      onOk() {
+        dispatch(logout());
+        localStorage.clear();
+        message.success("Logout Successfully");
+        navigate("/login");
+        window.location.reload();
+      },
+    });
+  };
+
   return (
     <>
       <AppBar
@@ -77,27 +131,57 @@ const Navbar = () => {
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {/* Desktop Search */}
-              <Paper
-                component="form"
-                sx={{
-                  p: "2px 8px",
-                  display: { xs: "none", md: "flex" },
-                  alignItems: "center",
-                  width: 300,
-                  border: "1px solid #ddd",
-                  borderRadius: 2,
-                }}
-              >
-                <InputBase
-                  sx={{ ml: 1, flex: 1 }}
-                  placeholder="Search businesses..."
-                />
-                <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
-                  <SearchIcon sx={{ color: "#841395" }} />
-                </IconButton>
-              </Paper>
+              <Box sx={{ position: "relative", display: { xs: "none", md: "block" } }}>
+                <Paper
+                  component="form"
+                  sx={{
+                    p: "2px 8px",
+                    display: "flex",
+                    alignItems: "center",
+                    width: 300,
+                    border: "1px solid #ddd",
+                    borderRadius: 2,
+                  }}
+                >
+                  <InputBase
+                    sx={{ ml: 1, flex: 1 }}
+                    placeholder="Search categories..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                  />
+                  <IconButton type="submit" sx={{ p: "5px" }}>
+                    <SearchIcon sx={{ color: "#841395" }} />
+                  </IconButton>
+                </Paper>
 
-              {/* Desktop Add Business Button */}
+                {searchTerm && filteredCategories.length > 0 && (
+                  <Paper
+                    sx={{
+                      position: "absolute",
+                      top: "48px",
+                      width: "100%",
+                      maxHeight: "300px",
+                      overflowY: "auto",
+                      zIndex: 999,
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <List>
+                      {filteredCategories.map((cat) => (
+                        <ListItem
+                          key={cat._id}
+                          button
+                          onClick={() => handleCategorySelect(cat)}
+                        >
+                          <ListItemText primary={cat.name} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Paper>
+                )}
+              </Box>
+
+              {/* Desktop Add Business */}
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -119,75 +203,26 @@ const Navbar = () => {
                 Add Business
               </Button>
 
-              {/* Mobile Search (hidden by default) */}
-              {showMobileSearch && (
-                <Paper
-                  component="form"
-                  sx={{
-                    p: "2px 8px",
-                    display: { xs: "flex", md: "none" },
-                    alignItems: "center",
-                    width: "100vw%",
-                    height:40,
-                    position: "absolute",
-                    left: 0,
-                    right: 0,
-                    top: "76px",
-                    zIndex: 1,
-                    borderRadius: 0,
-                    border: "1px solid #ddd",
-                  }}
-                >
-                  <InputBase
-                    sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search businesses..."
-                    autoFocus
-                  />
-                  <IconButton type="submit" sx={{ p: "5px" }} aria-label="search">
-                    <SearchIcon sx={{ color: "#841395" }} />
-                  </IconButton>
-                </Paper>
-              )}
-
-              {/* Mobile Search and Add Buttons */}
+              {/* Mobile Buttons */}
               <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-                <IconButton
-                  sx={{ color: "#841395" }}
-                  onClick={toggleMobileSearch}
-                  size="large"
-               
-                >
+                <IconButton sx={{ color: "#841395" }} onClick={toggleMobileSearch}>
                   <SearchIcon fontSize="large" />
                 </IconButton>
-                <IconButton
-                  sx={{ color: "#841395" }}
-                  onClick={handleAddBusiness}
-                  size="large"
-                >
+                <IconButton sx={{ color: "#841395" }} onClick={handleAddBusiness}>
                   <AddIcon fontSize="large" />
                 </IconButton>
               </Box>
 
               {/* Profile Menu */}
-              <IconButton
-                sx={{ color: "#841395" }}
-                onClick={handleProfileClick}
-                size="large"
-              >
+              <IconButton sx={{ color: "#841395" }} onClick={handleProfileClick}>
                 <AccountCircleIcon fontSize="large" />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleProfileClose}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
                 PaperProps={{
                   sx: {
                     width: 220,
@@ -196,25 +231,19 @@ const Navbar = () => {
                   },
                 }}
               >
-                 <MenuItem component={Link} to="/profile" onClick={handleProfileClose}>
+                <MenuItem component={Link} to="/profile" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Profile"/>
-                </MenuItem>
-                <MenuItem component={Link} to="/dashboard"  onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <UpdateIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Dashboard"/>
+                  <ListItemText primary="Profile" />
                 </MenuItem>
                 <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Added business" />
+                  <ListItemText primary="Added Business" />
                 </MenuItem>
-                <MenuItem component={Link} to="/Updated/business"  onClick={handleProfileClose}>
+                <MenuItem component={Link} to="/Updated/business" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
@@ -226,7 +255,7 @@ const Navbar = () => {
                   </ListItemIcon>
                   <ListItemText primary="Quries" />
                 </MenuItem>
-                <MenuItem component={Link} to="/reviews"onClick={handleProfileClose}>
+                <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <ReviewsIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
@@ -239,7 +268,7 @@ const Navbar = () => {
                   </ListItemIcon>
                   <ListItemText primary="Settings" />
                 </MenuItem>
-                <MenuItem component={Link} to="/logout" onClick={handleProfileClose}>
+                <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
                     <LogoutIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
@@ -249,10 +278,71 @@ const Navbar = () => {
             </Box>
           </Toolbar>
         </Container>
+
+        {/* Mobile Search Bar */}
+        {showMobileSearch && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "76px",
+              width: "100%",
+              zIndex: 1200,
+              backgroundColor: "#fff",
+              px: 2,
+              py: 1,
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Paper
+              sx={{
+              mr:3.5,
+                display: "flex",
+                alignItems: "center",
+                border: "1px solid #ddd",
+                borderRadius: 2,
+                px: 1,
+              }}
+            >
+              <InputBase
+                sx={{ flex: 1 }}
+                placeholder="Search categories..."
+                autoFocus
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+              <IconButton type="submit">
+                <SearchIcon sx={{ color: "#841395" }} />
+              </IconButton>
+            </Paper>
+
+            {searchTerm && filteredCategories.length > 0 && (
+              <Paper
+                sx={{
+                  mr:3.5,
+                  mt: 1,
+                  maxHeight: 300,
+                  overflowY: "auto",
+                  border: "1px solid #ccc",
+                }}
+              >
+                <List>
+                  {filteredCategories.map((cat) => (
+                    <ListItem
+                      key={cat._id}
+                      button
+                      onClick={() => handleCategorySelect(cat)}
+                    >
+                      <ListItemText primary={cat.name} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            )}
+          </Box>
+        )}
       </AppBar>
 
-      
-
+      {/* Spacer */}
       <Box sx={{ height: "76px" }} />
     </>
   );

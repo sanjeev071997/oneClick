@@ -9,6 +9,10 @@ import Categories from "../Components/Categories";
 import CategorySection from '../Components/CategorySection'
 import  TravelBookings from '../Components/ TravelBookings'
 import Footer from '../Components/Footer';
+import CategoriesBanner from '../Components/CategoriesBanner'
+
+
+
 
 const BannerContainer = styled(Box)({
   position: "relative",
@@ -82,6 +86,7 @@ const Home = () => {
      <Categories /> 
      <CategorySection/>
      <TravelBookings />
+     <CategoriesBanner />
       <Footer />
     </>
   );

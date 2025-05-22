@@ -25,7 +25,7 @@ import ResetPassword from "./pages/ResetPassword.js";
 import CategoryDetail from "./pages/CategoryDetail.js";
 import About from "./pages/About.js";
 import Contact from "./pages/Contact.js";
-import Profile from './pages/Profile.js'
+import Profile from './pages/UserProfile.js'
 import Dashboard from './pages/Dashboard.js'
 import Updatebusiness from "./pages/Updatebusiness.js";
 import Addedbusiness from "./pages/Addedbusiness.js";
