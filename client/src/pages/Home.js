@@ -15,6 +15,7 @@ import Gatik from './gatik.jpg'
 
 
 const BannerContainer = styled(Box)({
+
   position: "relative",
   overflow: "hidden",
   width: "100%",

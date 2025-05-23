@@ -62,7 +62,10 @@ const CategorySection = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 5 }}>
+   <Container maxWidth={false} sx={{ 
+        mt: 5,
+        px: { xs: 2, sm: 3, md: 4 } // Better padding for different screens
+      }}>
       <Box
         sx={{
           display: 'flex',

@@ -19,7 +19,9 @@ import {
   Breadcrumbs,
   Link,
   Chip,
-  Paper
+  Paper,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import {
   Home,
@@ -35,8 +37,10 @@ import {
 } from "@mui/icons-material";
 import Navbar from "../Components/Navbar";
 import axios from "../axiosInstance";
+import { useSelector } from "react-redux";
 
 const CategoryDetail = () => {
+  const token = localStorage.getItem("token")
   const navigate = useNavigate();
   const { state } = useLocation();
   const category = state?.category;
@@ -51,7 +55,14 @@ const CategoryDetail = () => {
     phone: "",
     message: ""
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
 
+
+  const { user } = useSelector((state) => state.user);
   const fetchBusinessesByCategory = async () => {
     try {
       const response = await axios.post("/api/v1/business/get", {
@@ -60,7 +71,11 @@ const CategoryDetail = () => {
       setBusinesses(response.data.data);
     } catch (error) {
       console.error("Failed to fetch businesses:", error);
-      alert(error.response?.data?.message || "Something went wrong");
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || "Failed to fetch businesses",
+        severity: 'error'
+      });
     } finally {
       setLoading(false);
     }
@@ -108,6 +123,15 @@ const CategoryDetail = () => {
 
   const handleEnquiryOpen = (business) => {
     setSelectedBusiness(business);
+    // Pre-fill user details if logged in
+    if (user) {
+      setEnquiryForm({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        message: ""
+      });
+    }
     setOpenEnquiry(true);
   };
 
@@ -122,14 +146,41 @@ const CategoryDetail = () => {
     });
   };
 
-  const handleEnquirySubmit = (e) => {
+  const handleEnquirySubmit = async (e) => {
     e.preventDefault();
-    console.log("Enquiry submitted:", {
-      business: selectedBusiness._id,
-      ...enquiryForm
-    });
-    alert("Enquiry sent successfully!");
-    handleEnquiryClose();
+    
+    if (!selectedBusiness) return;
+
+    try {
+      const enquiryData = {
+        businessId: selectedBusiness._id,
+        userId: user?._id || null,
+        name: enquiryForm.name,
+        email: enquiryForm.email,
+        phone: enquiryForm.phone,
+        message: enquiryForm.message
+      };
+      
+
+      const response = await axios.post("/api/v1/enquiry/add", enquiryData);
+      console.log(response ,"response ")
+
+      if (response.data.success) {
+        setSnackbar({
+          open: true,
+          message: 'Enquiry sent successfully!',
+          severity: 'success'
+        });
+        handleEnquiryClose();
+      }
+    } catch (error) {
+      console.error("Enquiry submission error:", error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.message || 'Failed to send enquiry',
+        severity: 'error'
+      });
+    }
   };
 
   const handleInputChange = (e) => {
@@ -287,7 +338,6 @@ const CategoryDetail = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 Featured Businesses
               </Typography>
-              
             </Box>
             
             <Grid container spacing={3}>
@@ -423,8 +473,7 @@ const CategoryDetail = () => {
       </Box>
 
       {/* Enquiry Modal */}
-       {/* Enquiry Modal */}
-       <Modal
+      <Modal
         open={openEnquiry}
         onClose={handleEnquiryClose}
         aria-labelledby="enquiry-modal-title"
@@ -456,7 +505,7 @@ const CategoryDetail = () => {
               mb: 3
             }}>
               <Typography id="enquiry-modal-title" variant="h6" component="h2">
-                {selectedBusiness?.businessName}
+                Contact {selectedBusiness?.businessName}
               </Typography>
               <IconButton onClick={handleEnquiryClose} size="small">
                 <Close />
@@ -519,6 +568,7 @@ const CategoryDetail = () => {
               }}>
                 <Button
                   variant="outlined"
+               
                   onClick={handleEnquiryClose}
                 >
                   Cancel
@@ -526,6 +576,7 @@ const CategoryDetail = () => {
                 <Button
                   type="submit"
                   variant="contained"
+                  disabled={token ? false: true}
                   startIcon={<Send />}
                 >
                   Send Message
@@ -568,9 +619,24 @@ const CategoryDetail = () => {
           </Box>
         </Box>
       </Modal>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({...snackbar, open: false})}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({...snackbar, open: false})}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
 
 export default CategoryDetail;
-    

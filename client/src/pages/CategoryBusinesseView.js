@@ -15,7 +15,6 @@ import {
   Link,
   IconButton,
   Chip,
-  Divider
 } from "@mui/material";
 import Rating from "@mui/lab/Rating";
 import Slider from "react-slick";
@@ -24,17 +23,18 @@ import { useSelector } from "react-redux";
 import { Home, ArrowBack, Star, Send, LocationOn, Email, Phone, Person, CalendarToday, ChatBubble } from "@mui/icons-material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { message } from 'antd'; 
 
 const CategoryBusinessView = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const { state } = useLocation();
   const business = state?.business;
-
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
-  const [activeTab, setActiveTab] = useState("reviews");
+  const [activeTab, setActiveTab] = useState("overview"); 
+  const token = localStorage.getItem("token")
 
   const totalReviews = reviews.length;
   const averageRating =
@@ -66,18 +66,24 @@ const CategoryBusinessView = () => {
       console.error("Review submit error", error);
     }
   };
-
+  
+ 
   const getReview = async () => {
     try {
       const response = await axios.post("/api/v1/review/get", {
         businessId: business._id,
       });
-      if (response.data.success === true) setReviews(response.data.data);
+      if (response.data.success === true) {
+        setReviews(response.data.data);
+      } else {
+        message.error('Failed to load reviews.');
+      }
     } catch (error) {
       console.log(error);
+      message.error('An error occurred while fetching reviews.');
     }
   };
-
+  
   useEffect(() => {
     getReview();
   }, []);
@@ -324,7 +330,6 @@ const CategoryBusinessView = () => {
                               size="small" 
                               sx={{ mr: 2 }} 
                             />
-                           
                           </Box>
                           <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                             <LocationOn sx={{ mr: 2, color: 'text.secondary', mt: 0.5 }} />
@@ -350,9 +355,98 @@ const CategoryBusinessView = () => {
 
           {activeTab === "reviews" && (
             <Box>
-              {/* Reviews List */}
+              {/* Add Review Section - Moved to the top */}
+              {user && (
+                <Card sx={{ 
+                  borderRadius: 3,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                  background: 'rgba(255,255,255,0.8)',
+                  backdropFilter: 'blur(10px)',
+                  mb: 3
+                }}>
+                  <CardContent>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                      Share Your Experience
+                    </Typography>
+                    <Box sx={{ mb: 3 }}>
+                      <Typography variant="subtitle1" gutterBottom>
+                        How would you rate your experience?
+                      </Typography>
+                      <Rating
+                        value={rating}
+                        onChange={(e, newVal) => setRating(newVal)}
+                        size="large"
+                        sx={{ 
+                          '& .MuiRating-icon': {
+                            fontSize: '2.5rem'
+                          }
+                        }}
+                      />
+                    </Box>
+                    <TextField
+                      fullWidth
+                      multiline
+                      minRows={4}
+                      placeholder="Tell others about your experience..."
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      variant="outlined"
+                      sx={{
+                        mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': {
+                            borderColor: 'primary.main',
+                          },
+                        },
+                      }}
+                    />
+                  
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button
+                        variant="contained"
+                        endIcon={<Send />}
+                        onClick={handleReviewSubmit}
+                        disabled={token ? false: true}
+                        sx={{ 
+                          px: 4,
+                          py: 1.5,
+                          borderRadius: 2,
+                          textTransform: 'none',
+                          fontSize: '1rem',
+                          fontWeight: 'bold',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                          '&:hover': {
+                            boxShadow: '0 6px 16px rgba(0,0,0,0.2)',
+                            transform: 'translateY(-2px)'
+                          },
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        Post Review
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )}
+
+              {!user && (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  p: 3,
+                  backgroundColor: 'rgba(0,0,0,0.02)',
+                  borderRadius: 2,
+                  border: '2px dashed rgba(0,0,0,0.1)',
+                  mb: 3
+                }}>
+                  <Typography variant="body1" color="text.secondary">
+                    Please <Link onClick={() => navigate('/login')} sx={{ cursor: 'pointer' }}>sign in</Link> to leave a review
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Reviews List - Moved below the review form */}
               <Card sx={{ 
-                mb: 3,
                 borderRadius: 3,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                 background: 'rgba(255,255,255,0.8)',
@@ -445,93 +539,6 @@ const CategoryBusinessView = () => {
                   )}
                 </CardContent>
               </Card>
-
-              {/* Add Review Section */}
-              {user && (
-                <Card sx={{ 
-                  borderRadius: 3,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                  background: 'rgba(255,255,255,0.8)',
-                  backdropFilter: 'blur(10px)'
-                }}>
-                  <CardContent>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
-                      Share Your Experience
-                    </Typography>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle1" gutterBottom>
-                        How would you rate your experience?
-                      </Typography>
-                      <Rating
-                        value={rating}
-                        onChange={(e, newVal) => setRating(newVal)}
-                        size="large"
-                        sx={{ 
-                          '& .MuiRating-icon': {
-                            fontSize: '2.5rem'
-                          }
-                        }}
-                      />
-                    </Box>
-                    <TextField
-                      fullWidth
-                      multiline
-                      minRows={4}
-                      placeholder="Tell others about your experience..."
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      variant="outlined"
-                      sx={{
-                        mb: 2,
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                          '&:hover fieldset': {
-                            borderColor: 'primary.main',
-                          },
-                        },
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                      <Button
-                        variant="contained"
-                        endIcon={<Send />}
-                        onClick={handleReviewSubmit}
-                        sx={{ 
-                          px: 4,
-                          py: 1.5,
-                          borderRadius: 2,
-                          textTransform: 'none',
-                          fontSize: '1rem',
-                          fontWeight: 'bold',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                          '&:hover': {
-                            boxShadow: '0 6px 16px rgba(0,0,0,0.2)',
-                            transform: 'translateY(-2px)'
-                          },
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        Post Review
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              )}
-
-              {!user && (
-                <Box sx={{ 
-                  textAlign: 'center', 
-                  p: 3,
-                  backgroundColor: 'rgba(0,0,0,0.02)',
-                  borderRadius: 2,
-                  border: '2px dashed rgba(0,0,0,0.1)',
-                  mb: 3
-                }}>
-                  <Typography variant="body1" color="text.secondary">
-                    Please <Link onClick={() => navigate('/login')} sx={{ cursor: 'pointer' }}>sign in</Link> to leave a review
-                  </Typography>
-                </Box>
-              )}
             </Box>
           )}
         </Box>

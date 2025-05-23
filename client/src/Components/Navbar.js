@@ -44,7 +44,7 @@ const Navbar = () => {
   const [filteredCategories, setFilteredCategories] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("token")
   const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
   const handleProfileClose = () => setAnchorEl(null);
   const toggleMobileSearch = () => setShowMobileSearch(!showMobileSearch);
@@ -100,7 +100,7 @@ const Navbar = () => {
   return (
     <>
       <AppBar
-        position="fixed"
+        position="sticky"
         sx={{
           top: 0,
           zIndex: 1100,
@@ -231,14 +231,14 @@ const Navbar = () => {
                   },
                 }}
               >
-              
+
                 <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
                   <ListItemText primary="Business" />
                 </MenuItem>
-                
+
                 <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
@@ -258,12 +258,27 @@ const Navbar = () => {
                   </ListItemIcon>
                   <ListItemText primary="Settings" />
                 </MenuItem>
-                <MenuItem onClick={handleLogout}>
+                {
+                  token ?  <MenuItem onClick={handleLogout}>
+                      <ListItemIcon>
+                        <LogoutIcon sx={{ color: "#841395" }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Logout" />
+                    </MenuItem>:<MenuItem component={Link} to="/login" onClick={handleProfileClose}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: "#841395" }} />
+                    </ListItemIcon>
+                    <ListItemText primary="Login" />
+                  </MenuItem>
+                    
+                }
+                {/* <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
                     <LogoutIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
                   <ListItemText primary="Logout" />
-                </MenuItem>
+                </MenuItem> */}
+
               </Menu>
             </Box>
           </Toolbar>
@@ -285,7 +300,7 @@ const Navbar = () => {
           >
             <Paper
               sx={{
-              mr:3.5,
+                mr: 3.5,
                 display: "flex",
                 alignItems: "center",
                 border: "1px solid #ddd",
@@ -308,7 +323,7 @@ const Navbar = () => {
             {searchTerm && filteredCategories.length > 0 && (
               <Paper
                 sx={{
-                  mr:3.5,
+                  mr: 3.5,
                   mt: 1,
                   maxHeight: 300,
                   overflowY: "auto",
