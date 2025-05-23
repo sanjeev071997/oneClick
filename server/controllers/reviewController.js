@@ -32,3 +32,20 @@ export const getReview = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
+
+// User Get all reviews
+export const userGetReview = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { userId } = req.user;
+    const review = await Review.find({ reviewer: userId })
+      .sort({ createdAt: -1 })
+      .populate("reviewer").populate("businessId");
+    res.status(200).json({
+      success: true,
+      data: review,
+      message: "User reviews fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});
