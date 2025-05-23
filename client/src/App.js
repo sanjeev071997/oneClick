@@ -25,12 +25,12 @@ import ResetPassword from "./pages/ResetPassword.js";
 import CategoryDetail from "./pages/CategoryDetail.js";
 import About from "./pages/About.js";
 import Contact from "./pages/Contact.js";
-import Profile from './pages/UserProfile.js'
 import Dashboard from './pages/Dashboard.js'
 import Updatebusiness from "./pages/Updatebusiness.js";
 import Addedbusiness from "./pages/Addedbusiness.js";
 import Reviews from "./pages/Reviews.js";
 import Quries from "./pages/Quries.js";
+import Settings from './pages/Settings.js'
 
 
 function App() {
@@ -85,12 +85,13 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/profile" element={<Profile/>} />
             <Route path="/dashboard" element={<Dashboard/>} />
             <Route path="/Updated/business" element={<Updatebusiness/>} />
             <Route path="/Added/business" element={<Addedbusiness/>} />
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/quries" element={<Quries/>} />
+            <Route path="/settings" element={<Settings/>} />
+          
             <Route path="/category/:name" element={<CategoryDetail />} />
             <Route path="/add/business" element={<ListYourBusiness />} />
             <Route

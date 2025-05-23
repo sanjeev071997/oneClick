@@ -271,7 +271,7 @@ const Categories = () => {
               }}
               sx={{
                 p: 1.2,
-                borderRadius: 2,
+              
                 cursor: "pointer",
                 transition: "background 0.3s",
                 "&:hover": {

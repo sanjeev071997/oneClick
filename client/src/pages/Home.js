@@ -10,7 +10,7 @@ import CategorySection from '../Components/CategorySection'
 import  TravelBookings from '../Components/ TravelBookings'
 import Footer from '../Components/Footer';
 import CategoriesBanner from '../Components/CategoriesBanner'
-
+import Gatik from './gatik.jpg'
 
 
 
@@ -29,9 +29,11 @@ const BannerImage = styled(Box)({
 });
 
 const Home = () => {
+  console.log(Gatik, "Gatik")
   const images = [
+  
     {
-      imageUrl: "https://storage.googleapis.com/htlwebsite/Hinduja_Tech_Product_Engineering_Servces_Small_Banner_2x_100_3e928f1ff5/Hinduja_Tech_Product_Engineering_Servces_Small_Banner_2x_100_3e928f1ff5.jpg",
+      imageUrl:Gatik
     },
     {
       imageUrl: "https://3.imimg.com/data3/SQ/DN/MY-16602737/banner-design-services.png",
@@ -48,7 +50,7 @@ const Home = () => {
 
   const settings = {
     dots: false,
-    infinite: images?.length > 1, // infinite only if there are multiple images
+    infinite: images?.length > 1, 
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,

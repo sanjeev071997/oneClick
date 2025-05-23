@@ -1,7 +1,9 @@
 
 import React from 'react';
-import { Box, Grid, Typography, Card, CardMedia, CardContent, Paper } from '@mui/material';
+import { Box, Grid, Typography, Card, CardMedia, CardContent, Paper, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
+
 const categories = [
   {
     title: 'Wedding Requisites',
@@ -87,10 +89,10 @@ const categories = [
 const CategorySection = () => {
   const navigate = useNavigate();
   return (
-    <Box p={3} >
-      <Grid container spacing={2}>
+    <Container maxWidth="auto">
+      <Grid container spacing={2} >
         {categories.map((category, index) => (
-          <Grid item xs={12} md={6} key={index}>
+          <Grid item xs={12} md={6} key={index} >
            <Paper elevation={3} sx={{ p: 2, mr:2, ml:2, mt:2, borderRadius: 2, border: '1px solid', borderColor:  '#D3D3D3' }}>
               <Typography variant="h6" gutterBottom fontWeight="bold">
                 {category.title}
@@ -120,7 +122,7 @@ const CategorySection = () => {
           </Grid>
         ))}
       </Grid>
-    </Box>
+    </Container>
   );
 };
 export default CategorySection;

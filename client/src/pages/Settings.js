@@ -1,26 +1,4 @@
-// import React from 'react'
-// import { useDispatch, useSelector } from 'react-redux';
-// import {
-//   clearErrors,
-//   updateProfile,
-//   updatePassword,
-//   reloadUser,
-// } from "../redux/actions/userAction";
 
-// const UserProfile = () => {
-//   const dispatch = useDispatch();
-//   const { user } = useSelector((state) => state.user);
-//   const { error, isUpdated, loading } = useSelector((state) => state.profile);
-
-//   console.log(user, "user")
-//   return (
-//     <div>
-//       profile
-//     </div> 
-//   )
-// }
-
-// export default UserProfile
 
 import React, { useState, useEffect } from "react";
 import {

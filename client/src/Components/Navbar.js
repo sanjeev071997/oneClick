@@ -231,29 +231,19 @@ const Navbar = () => {
                   },
                 }}
               >
-                <MenuItem component={Link} to="/profile" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <UpdateIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Profile" />
-                </MenuItem>
+              
                 <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Added Business" />
+                  <ListItemText primary="Business" />
                 </MenuItem>
-                <MenuItem component={Link} to="/Updated/business" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <UpdateIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Update Business" />
-                </MenuItem>
+                
                 <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
                   </ListItemIcon>
-                  <ListItemText primary="Quries" />
+                  <ListItemText primary="Inquries" />
                 </MenuItem>
                 <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>
                   <ListItemIcon>

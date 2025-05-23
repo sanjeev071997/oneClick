@@ -1,5 +1,16 @@
 import React from 'react';
-import { Box, Grid, Typography, Card, CardMedia, CardContent, Paper } from '@mui/material';
+import {
+  Box,
+  Grid,
+  Typography,
+  Card,
+  CardMedia,
+  CardContent,
+  Paper,
+  Container,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const categories = [
@@ -45,57 +56,65 @@ const categories = [
   },
 ];
 
-const CategoriesBanner = () => {
+const CategorySection = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1500, margin: '0 auto' }}>
-      <Grid container spacing={2}>
-        {/* Left side - Categories */}
-        <Grid item xs={12} md={8}>
+    <Container maxWidth="xl" sx={{ mt: 5 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: 3,
+        }}
+      >
+        {/* Left Side - Categories */}
+        <Box sx={{ flex: 1 }}>
           <Grid container spacing={2}>
             {categories.map((category, index) => (
               <Grid item xs={12} key={index}>
-                <Paper elevation={0} sx={{ 
-                  p: 2, 
-                  borderRadius: 2, 
-                  border: '1px solid', 
-                  borderColor: 'divider',
-                  backgroundColor: 'background.paper'
-                }}>
-                  <Typography variant="h6" gutterBottom fontWeight="bold" color="text.primary">
+                <Paper
+                  elevation={3}
+                  sx={{
+                    p: 2,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: '#D3D3D3',
+                  }}
+                >
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
                     {category.title}
                   </Typography>
                   <Grid container spacing={2}>
                     {category.services.map((service, idx) => (
                       <Grid item xs={4} key={idx}>
                         <Card
-                          sx={{ 
-                            borderRadius: 2, 
-                            boxShadow: 'none',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            transition: 'transform 0.2s, box-shadow 0.2s',
-                            '&:hover': { 
-                              transform: 'translateY(-4px)',
-                              boxShadow: 3 
-                            }
-                          }}
-                          onClick={() => navigate(`/category/${service.name}`, { state: { category: service } })}
+                          sx={{ borderRadius: 2, boxShadow: 'none', cursor: 'pointer' }}
+                          onClick={() =>
+                            navigate(`/category/${service.name}`, {
+                              state: { category: service },
+                            })
+                          }
                         >
                           <CardMedia
                             component="img"
                             height="140"
                             image={service.image}
                             alt={service.label}
-                            sx={{ 
-                              borderRadius: '8px 8px 0 0', 
-                              cursor: 'pointer',
-                              objectFit: 'cover'
+                            sx={{
+                              borderRadius: 2,
+                              transition: '0.3s',
+                              '&:hover': { boxShadow: 3 },
                             }}
                           />
-                          <CardContent sx={{ p: 1.5 }}>
-                            <Typography variant="subtitle2" align="center" fontWeight="medium">
+                          <CardContent sx={{ p: 1 }}>
+                            <Typography
+                              variant="body2"
+                              align="center"
+                              fontWeight="500"
+                            >
                               {service.label}
                             </Typography>
                           </CardContent>
@@ -107,38 +126,31 @@ const CategoriesBanner = () => {
               </Grid>
             ))}
           </Grid>
-        </Grid>
+        </Box>
 
-        {/* Right side - Banner */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={0} sx={{ 
-            height: '100%', 
-            borderRadius: 2, 
-            overflow: 'hidden',
-            position: 'relative',
-            '&:hover': {
-              boxShadow: 3
-            }
-          }}>
-            <CardMedia
-              component="img"
-              image="https://img.freepik.com/free-photo/spa-composition-white-background_23-2147749674.jpg"
-              alt="Banner"
-              sx={{ 
-                width: '100%', 
-                height: '100%', 
-                objectFit: 'cover',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                  transform: 'scale(1.02)'
-                }
-              }}
-            />
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
+        {/* Right Side - Banner */}
+        <Box
+  sx={{
+    flex: 1,
+    borderRadius: 3,
+    overflow: 'hidden',
+    height: { xs: 250, sm: 450, md: 545 }, 
+  }}
+>
+          <img
+            src="https://img.freepik.com/free-photo/people-posing-indian-wedding-ceremony_53876-103870.jpg"
+            alt="Banner"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '16px',
+            }}
+          />
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
-export default CategoriesBanner;
+export default CategorySection;
