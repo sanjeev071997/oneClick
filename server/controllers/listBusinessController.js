@@ -73,7 +73,7 @@ export const getUserBusiness = catchAsyncErrors(async (req, res, next) => {
     const userId = req.user.id;
     const businesses = await Business.find({ userId })
       .sort({ createdAt: -1 })
-      .populate("category");
+      .populate("category", "name").populate("userId", "name");
     res.status(200).json({
       success: true,
       data: businesses,
