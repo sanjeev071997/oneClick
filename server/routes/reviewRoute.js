@@ -3,7 +3,9 @@ import express from "express";
 import {
     addReview,
     getReview,
-    userGetReview
+    userGetReview,
+    updateReview,
+    deleteReview,
 } from "../controllers/reviewController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
 
@@ -16,5 +18,8 @@ router.post("/get", getReview);
 // User Get all reviews
 router.get("/get", isAuthenticatedUser, userGetReview);
 
+router.put("/update", isAuthenticatedUser, updateReview);
+
+router.delete("/delete", isAuthenticatedUser, deleteReview);
 
 export default router;

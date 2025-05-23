@@ -52,3 +52,41 @@ export const userGetReview = catchAsyncErrors(async (req, res, next) => {
     message: "User reviews fetched successfully",
   });
 });
+
+// Update Review
+export const updateReview = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const review = await Review.findById(id);
+    if (!review) {
+      return next(new Errorhandler("Review not found", 404));
+    }
+    review.rating = req.body.rating;
+    review.comment = req.body.comment;
+    await review.save();
+    res.status(200).json({
+      success: true,
+      message: "Review updated successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});
+
+// Delete Review
+export const deleteReview = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    const review = await Review.findById(id);
+    if (!review) {
+      return next(new Errorhandler("Review not found", 404));
+    }
+    await review.remove();
+    res.status(200).json({
+      success: true,
+      message: "Review deleted successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});

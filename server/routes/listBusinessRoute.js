@@ -5,7 +5,9 @@ import {
     addBusiness,
     getBusinessByCategory,
     getAllBusiness,
-    getUserBusiness
+    getUserBusiness,
+    updateBusiness,
+    deleteBusiness
 } from "../controllers/listBusinessController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
 
@@ -14,13 +16,16 @@ const storage = multer.diskStorage({});
 const upload = multer({ storage });
 
 const router = express.Router();
-
-router.post("/add", upload.array('images', 5), addBusiness);
+// All Users
+router.post("/add", upload.array('images', 5), isAuthenticatedUser, addBusiness);
 router.post("/get",  getBusinessByCategory);
 
-router.get("/all", isAuthenticatedUser, isAdmin, getAllBusiness);
-
+// Business User
+router.put("/update", upload.array('images', 5), isAuthenticatedUser, updateBusiness);
 router.get("/get", isAuthenticatedUser, getUserBusiness);
 
+// Admin
+router.get("/all", isAuthenticatedUser, isAdmin, getAllBusiness);
+router.delete("/delete", isAuthenticatedUser, isAdmin, deleteBusiness);
 
 export default router;
