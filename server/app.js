@@ -9,6 +9,7 @@ import authRoute from "./routes/authRoute.js";
 import categoriesRoute from "./routes/categoriesRoute.js";
 import listBusinessRoute from "./routes/listBusinessRoute.js";
 import reviewRoute from "./routes/reviewRoute.js";
+import enquiryRoute from "./routes/enquiryRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -45,7 +46,8 @@ app.get("/api/status", (req, res) => {
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/categories", categoriesRoute);
 app.use("/api/v1/business", listBusinessRoute);
-app.use("/api/v1/review", reviewRoute)
+app.use("/api/v1/review", reviewRoute);
+app.use("/api/v1/enquiry", enquiryRoute);
 
 
 // Static files
