@@ -67,5 +67,21 @@ export const getBusinessByCategory = catchAsyncErrors(async (req, res, next) => 
   }
 );
 
+// Get User Business
+export const getUserBusiness = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const businesses = await Business.find({ userId })
+      .sort({ createdAt: -1 })
+      .populate("category");
+    res.status(200).json({
+      success: true,
+      data: businesses,
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});
+
 
 

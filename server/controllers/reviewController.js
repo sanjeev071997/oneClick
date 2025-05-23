@@ -35,17 +35,20 @@ export const getReview = catchAsyncErrors(async (req, res, next) => {
 
 // User Get all reviews
 export const userGetReview = catchAsyncErrors(async (req, res, next) => {
-  try {
-    const { userId } = req.user;
-    const review = await Review.find({ reviewer: userId })
-      .sort({ createdAt: -1 })
-      .populate("reviewer").populate("businessId");
-    res.status(200).json({
-      success: true,
-      data: review,
-      message: "User reviews fetched successfully",
-    });
-  } catch (error) {
-    return next(new Errorhandler(error.message, 500));
+  const  id  = req.user.id;
+
+  if (!id) {
+    return next(new Errorhandler("User not found", 404));
   }
+
+  const review = await Review.find({ reviewer: id })
+    .sort({ createdAt: -1 })
+    .populate("reviewer", "name")
+    .populate("businessId", "businessName images");
+  
+  res.status(200).json({
+    success: true,
+    data: review,
+    message: "User reviews fetched successfully",
+  });
 });

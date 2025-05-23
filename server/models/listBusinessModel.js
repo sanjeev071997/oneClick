@@ -34,6 +34,11 @@ const businessSchema = new mongoose.Schema({
     ref: 'categories',
     required: [true, 'Category is required']
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+    required: [true, 'User ID is required']
+  },
   description: String,
   images: [{
     url: String,
