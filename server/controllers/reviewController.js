@@ -81,7 +81,7 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
     if (!review) {
       return next(new Errorhandler("Review not found", 404));
     }
-    await review.remove();
+    await Review.findByIdAndDelete(id);
     res.status(200).json({
       success: true,
       message: "Review deleted successfully",
