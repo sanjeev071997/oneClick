@@ -94,7 +94,8 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
 // Admin
 export const adminAllReviews = catchAsyncErrors(async (req, res, next) => {
   try {
-    const adminReview = await Review.find({}).sort({ createdAt: -1 })
+    const adminReview = await Review.find({}).sort({ createdAt: -1 }).populate("reviewer", "name")
+    .populate("businessId", "businessName images");
     res.status(200).json({
       success: true,
       adminReview,
