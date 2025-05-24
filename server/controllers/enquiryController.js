@@ -63,7 +63,7 @@ export const deleteEnquiry = catchAsyncErrors(async (req, res, next) => {
     if (!enquiry) {
       return next(new Errorhandler("Enquiry not found", 404));
     }
-    await enquiry.remove();
+    await Enquiry.findByIdAndDelete(id);
     res.status(200).json({
       success: true,
       message: "Enquiry deleted successfully",
