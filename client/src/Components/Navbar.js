@@ -26,7 +26,8 @@ import {
   RateReview as ReviewsIcon,
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
-} from "@mui/icons-material";
+  Mic as MicIcon,
+} from "@mui/icons-material"; // Added MicIcon
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../axiosInstance";
 import { useDispatch } from "react-redux";
@@ -42,9 +43,41 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
+  const [isListening, setIsListening] = useState(false); // Voice search state
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token")
+  const token = localStorage.getItem("token");
+  
+  // Voice recognition setup
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.continuous = false;
+  recognition.lang = 'en-US';
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    setSearchTerm(transcript);
+    const filtered = categories.filter((cat) =>
+      cat.name.toLowerCase().includes(transcript.toLowerCase())
+    );
+    setFilteredCategories(filtered);
+    setIsListening(false);
+  };
+
+  recognition.onerror = (event) => {
+    setIsListening(false);
+    message.error('Voice recognition failed. Please try again.');
+  };
+
+  const startVoiceSearch = () => {
+    setIsListening(true);
+    recognition.start();
+  };
+
+  const stopVoiceSearch = () => {
+    setIsListening(false);
+    recognition.stop();
+  };
+
   const handleProfileClick = (event) => setAnchorEl(event.currentTarget);
   const handleProfileClose = () => setAnchorEl(null);
   const toggleMobileSearch = () => setShowMobileSearch(!showMobileSearch);
@@ -64,6 +97,9 @@ const Navbar = () => {
 
   useEffect(() => {
     fetchCategories();
+    return () => {
+      recognition.abort(); 
+    };
   }, []);
 
   const handleSearchChange = (e) => {
@@ -138,7 +174,7 @@ const Navbar = () => {
                     p: "2px 8px",
                     display: "flex",
                     alignItems: "center",
-                    width: 300,
+                    width: 400, 
                     border: "1px solid #ddd",
                     borderRadius: 2,
                   }}
@@ -149,6 +185,16 @@ const Navbar = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
+                  <IconButton 
+                    type="button" 
+                    onClick={isListening ? stopVoiceSearch : startVoiceSearch}
+                    sx={{ 
+                      p: "5px",
+                      color: isListening ? "red" : "#841395"
+                    }}
+                  >
+                    <MicIcon />
+                  </IconButton>
                   <IconButton type="submit" sx={{ p: "5px" }}>
                     <SearchIcon sx={{ color: "#841395" }} />
                   </IconButton>
@@ -231,7 +277,6 @@ const Navbar = () => {
                   },
                 }}
               >
-
                 <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
                   <ListItemIcon>
                     <UpdateIcon sx={{ color: "#841395" }} />
@@ -270,15 +315,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Login" />
                   </MenuItem>
-                    
                 }
-                {/* <MenuItem onClick={handleLogout}>
-                  <ListItemIcon>
-                    <LogoutIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Logout" />
-                </MenuItem> */}
-
               </Menu>
             </Box>
           </Toolbar>
@@ -315,6 +352,12 @@ const Navbar = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
+              <IconButton 
+                onClick={isListening ? stopVoiceSearch : startVoiceSearch}
+                sx={{ color: isListening ? "red" : "#841395" }}
+              >
+                <MicIcon />
+              </IconButton>
               <IconButton type="submit">
                 <SearchIcon sx={{ color: "#841395" }} />
               </IconButton>

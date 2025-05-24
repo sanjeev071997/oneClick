@@ -9,6 +9,8 @@ import {
 } from '@mui/icons-material';
 import { message, Modal } from "antd";
 import axios from '../axiosInstance';
+import Navbar from '../Components/Navbar';
+import Footer from '../Components/Footer';
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -109,18 +111,19 @@ const ReviewsPage = () => {
           }
         } catch (err) {
           message.error(err || "Failed to delete review")
-          console.error('Failed to delete review:', err);
+       
         }
       },
-      onCancel() {
-        console.log("Delete operation canceled");
+     
       }
-    });
+    );
   };
 
   const paginatedReviews = reviews.slice((currentPage - 1) * 6, currentPage * 6);
 
   return (
+    <>
+    <Navbar/>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box textAlign="center" mb={6}>
         <Typography variant="h3" fontWeight={700} color="primary.main">
@@ -287,6 +290,8 @@ const ReviewsPage = () => {
         </DialogActions>
       </Dialog>
     </Container>
+    <Footer />
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Container,
   Grid,
   Typography,
   CircularProgress,
@@ -15,6 +16,7 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
@@ -90,20 +92,60 @@ const Categories = () => {
     }
     setDrawerOpen(open);
     if (!open) {
-      setSearchTerm(""); // Reset search when closing drawer
+      setSearchTerm("");
     }
   };
 
-  if (loading) return <CircularProgress />;
+  if (loading) {
+    return (
+      <Container
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress size={60} thickness={4} color="primary" />
+      </Container>
+    );
+  }
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography
-        variant="h6"
-        sx={{ fontWeight: "bold", mb: 3, fontSize: "1.25rem" }}
-      >
-        Popular Categories
-      </Typography>
+     <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 1.5,mt:2 }}>
+  <LocalOfferIcon 
+    color="primary" 
+    sx={{ 
+      fontSize: '2rem',
+      transition: 'transform 0.3s',
+      ':hover': { transform: 'rotate(15deg)' } 
+    }} 
+  />
+  <Typography
+    variant="h5"
+    sx={{
+      fontWeight: 800,
+      letterSpacing: '0.5px',
+      color: 'primary.main',
+      fontSize: { xs: '1.5rem', md: '1.7rem' },
+      position: 'relative',
+      '&:before': {
+        content: '""',
+        position: 'absolute',
+        width: '100%',
+        height: '5px',
+        bottom: -8,
+        left: 0,
+        background: 'linear-gradient(90deg, #ff8a00, #e52e71)',
+        opacity: 0.7,
+        borderRadius: '3px'
+      }
+    }}
+  >
+    Popular Categories
+  </Typography>
+</Box>
       <Grid container spacing={3}>
         {categories.slice(0, 19).map((category) => (
           <Grid item xs={4} sm={2.4} md={1.5} lg={1.2} key={category._id}>
@@ -251,7 +293,7 @@ const Categories = () => {
           />
         </Box>
 
-        {/* Categories list in 3-column grid */}
+   
         <List
           sx={{
             display: "grid",

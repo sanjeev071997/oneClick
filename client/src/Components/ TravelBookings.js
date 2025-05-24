@@ -25,9 +25,9 @@ const TravelCard = styled(Box)(({ theme }) => ({
 const TravelBookings = () => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm')); // < 600px
-  const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'lg')); // 600px - 1200px (includes Surface Pro 7)
-  const isLarge = useMediaQuery(theme.breakpoints.up('lg')); // > 1200px
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm')); 
+  const isMedium = useMediaQuery(theme.breakpoints.between('sm', 'lg')); 
+  const isLarge = useMediaQuery(theme.breakpoints.up('lg')); 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
 
@@ -133,12 +133,12 @@ const TravelBookings = () => {
   return (
     <Container maxWidth={false} sx={{ 
       mt: 5,
-      px: { xs: 2, sm: 3, md: 4 } // Better padding for different screens
+      px: { xs: 2, sm: 3, md: 4 } 
     }}>
       <TravelCard sx={{ 
         ml: { xs: 0, sm: 0 },
         mr: { xs: 0, sm: 0 },
-        px: { sm: 3 } // Add horizontal padding on small and up
+        px: { sm: 3 } 
       }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           {/* Left Text Section */}

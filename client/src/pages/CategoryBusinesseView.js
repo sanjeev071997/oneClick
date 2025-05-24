@@ -23,7 +23,7 @@ import { useSelector } from "react-redux";
 import { Home, ArrowBack, Star, Send, LocationOn, Email, Phone, Person, CalendarToday, ChatBubble } from "@mui/icons-material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { message } from 'antd'; 
+import { message } from 'antd';
 
 const CategoryBusinessView = () => {
   const navigate = useNavigate();
@@ -33,16 +33,16 @@ const CategoryBusinessView = () => {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
-  const [activeTab, setActiveTab] = useState("overview"); 
+  const [activeTab, setActiveTab] = useState("overview");
   const token = localStorage.getItem("token")
 
   const totalReviews = reviews.length;
   const averageRating =
     totalReviews > 0
       ? (
-          reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
-          totalReviews
-        ).toFixed(1)
+        reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
+        totalReviews
+      ).toFixed(1)
       : 0;
 
   const handleReviewSubmit = async () => {
@@ -54,7 +54,7 @@ const CategoryBusinessView = () => {
       rating,
       comment: reviewText,
       reviewer: user._id,
-    }; 
+    };
     try {
       const res = await axios.post("/api/v1/review/add", newReview);
       if (res.data.success) {
@@ -66,8 +66,8 @@ const CategoryBusinessView = () => {
       console.error("Review submit error", error);
     }
   };
-  
- 
+
+
   const getReview = async () => {
     try {
       const response = await axios.post("/api/v1/review/get", {
@@ -83,7 +83,7 @@ const CategoryBusinessView = () => {
       message.error('An error occurred while fetching reviews.');
     }
   };
-  
+
   useEffect(() => {
     getReview();
   }, []);
@@ -102,10 +102,10 @@ const CategoryBusinessView = () => {
   return (
     <>
       <Navbar />
-      <Box sx={{ 
-        maxWidth: 1400, 
-        mx: "auto", 
-        px: { xs: 2, md: 4 }, 
+      <Box sx={{
+        maxWidth: 1400,
+        mx: "auto",
+        px: { xs: 2, md: 4 },
         py: 3,
         background: 'linear-gradient(to bottom, #f5f7fa 0%, #e4e8ed 100%)',
         minHeight: '100vh'
@@ -113,9 +113,9 @@ const CategoryBusinessView = () => {
         {/* Header Section */}
         <Box sx={{ mb: 4 }}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <IconButton 
-              onClick={() => navigate(-1)} 
-              sx={{ 
+            <IconButton
+              onClick={() => navigate(-1)}
+              sx={{
                 mr: 1,
                 backgroundColor: 'rgba(0,0,0,0.1)',
                 '&:hover': {
@@ -130,9 +130,9 @@ const CategoryBusinessView = () => {
                 underline="hover"
                 color="inherit"
                 onClick={() => navigate("/")}
-                sx={{ 
-                  display: "flex", 
-                  alignItems: "center", 
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
                   cursor: "pointer",
                   '&:hover': {
                     color: 'primary.main'
@@ -154,6 +154,8 @@ const CategoryBusinessView = () => {
             overflow: 'hidden',
             boxShadow: 3,
             position: 'relative',
+            width: '100%',
+            height: { xs: 250, sm: 350, md: 450 },
             '&:before': {
               content: '""',
               position: 'absolute',
@@ -169,18 +171,23 @@ const CategoryBusinessView = () => {
               {business?.images?.map((img, index) => (
                 <Box key={index}>
                   <Box
-                    sx={{
-                      height: { xs: 250, sm: 350, md: 450 },
+                     sx={{
+                      width: '100%',
+                      height: { xs: 250, sm: 350, md: 540 },
                       backgroundImage: `url(${img?.url})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
-                      position: 'relative'
+                      backgroundRepeat: 'no-repeat',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                   />
                 </Box>
               ))}
             </Slider>
-            
+
             {/* Business Name Overlay */}
             <Box sx={{
               position: 'absolute',
@@ -191,15 +198,15 @@ const CategoryBusinessView = () => {
               zIndex: 2,
               color: 'white'
             }}>
-              <Typography variant="h3" fontWeight="bold" sx={{ 
+              <Typography variant="h3" fontWeight="bold" sx={{
                 textShadow: '0 2px 4px rgba(0,0,0,0.5)',
                 fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
               }}>
                 {business?.businessName}
               </Typography>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
                 mt: 1,
                 backdropFilter: 'blur(5px)',
                 p: 1,
@@ -222,9 +229,9 @@ const CategoryBusinessView = () => {
 
         {/* Business Info Tabs */}
         <Box sx={{ mb: 4 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            borderBottom: 1, 
+          <Box sx={{
+            display: 'flex',
+            borderBottom: 1,
             borderColor: 'divider',
             mb: 3
           }}>
@@ -261,7 +268,7 @@ const CategoryBusinessView = () => {
           </Box>
 
           {activeTab === "overview" && (
-            <Card sx={{ 
+            <Card sx={{
               borderRadius: 3,
               boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
               overflow: 'hidden',
@@ -272,17 +279,17 @@ const CategoryBusinessView = () => {
                 <Typography variant="h5" fontWeight="bold" gutterBottom>
                   About {business?.businessName}
                 </Typography>
-                
+
                 <Typography variant="body1" paragraph sx={{ mb: 3 }}>
                   {business?.description}
                 </Typography>
-                
+
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <Card variant="outlined" sx={{ borderRadius: 2 }}>
                       <CardContent>
-                        <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ 
-                          display: 'flex', 
+                        <Typography variant="h6" fontWeight="bold" gutterBottom sx={{
+                          display: 'flex',
                           alignItems: 'center',
                           color: 'primary.main'
                         }}>
@@ -311,12 +318,12 @@ const CategoryBusinessView = () => {
                       </CardContent>
                     </Card>
                   </Grid>
-                  
+
                   <Grid item xs={12} md={6}>
                     <Card variant="outlined" sx={{ borderRadius: 2 }}>
                       <CardContent>
-                        <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ 
-                          display: 'flex', 
+                        <Typography variant="h6" fontWeight="bold" gutterBottom sx={{
+                          display: 'flex',
                           alignItems: 'center',
                           color: 'primary.main'
                         }}>
@@ -324,11 +331,11 @@ const CategoryBusinessView = () => {
                         </Typography>
                         <Stack spacing={2}>
                           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Chip 
-                              label={business?.category?.name} 
-                              color="primary" 
-                              size="small" 
-                              sx={{ mr: 2 }} 
+                            <Chip
+                              label={business?.category?.name}
+                              color="primary"
+                              size="small"
+                              sx={{ mr: 2 }}
                             />
                           </Box>
                           <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
@@ -357,7 +364,7 @@ const CategoryBusinessView = () => {
             <Box>
               {/* Add Review Section - Moved to the top */}
               {user && (
-                <Card sx={{ 
+                <Card sx={{
                   borderRadius: 3,
                   boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                   background: 'rgba(255,255,255,0.8)',
@@ -376,7 +383,7 @@ const CategoryBusinessView = () => {
                         value={rating}
                         onChange={(e, newVal) => setRating(newVal)}
                         size="large"
-                        sx={{ 
+                        sx={{
                           '& .MuiRating-icon': {
                             fontSize: '2.5rem'
                           }
@@ -401,14 +408,14 @@ const CategoryBusinessView = () => {
                         },
                       }}
                     />
-                  
+
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                       <Button
                         variant="contained"
                         endIcon={<Send />}
                         onClick={handleReviewSubmit}
-                        disabled={token ? false: true}
-                        sx={{ 
+                        disabled={token ? false : true}
+                        sx={{
                           px: 4,
                           py: 1.5,
                           borderRadius: 2,
@@ -431,8 +438,8 @@ const CategoryBusinessView = () => {
               )}
 
               {!user && (
-                <Box sx={{ 
-                  textAlign: 'center', 
+                <Box sx={{
+                  textAlign: 'center',
                   p: 3,
                   backgroundColor: 'rgba(0,0,0,0.02)',
                   borderRadius: 2,
@@ -446,31 +453,31 @@ const CategoryBusinessView = () => {
               )}
 
               {/* Reviews List - Moved below the review form */}
-              <Card sx={{ 
+              <Card sx={{
                 borderRadius: 3,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                 background: 'rgba(255,255,255,0.8)',
                 backdropFilter: 'blur(10px)'
               }}>
                 <CardContent>
-                  <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ 
-                    display: 'flex', 
+                  <Typography variant="h5" fontWeight="bold" gutterBottom sx={{
+                    display: 'flex',
                     alignItems: 'center',
                     mb: 3
                   }}>
                     <ChatBubble sx={{ mr: 1, color: 'primary.main' }} /> Customer Reviews
                   </Typography>
-                  
+
                   {reviews?.length > 0 ? (
                     <Box>
                       {reviews.map((rev, idx) => (
                         <Box key={idx} sx={{ mb: 3, pb: 3, borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
                           <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                            <Avatar 
-                              src={rev?.reviewer?.avatar} 
-                              sx={{ 
-                                width: 48, 
-                                height: 48, 
+                            <Avatar
+                              src={rev?.reviewer?.avatar}
+                              sx={{
+                                width: 48,
+                                height: 48,
                                 mr: 2,
                                 boxShadow: 1
                               }}
@@ -489,11 +496,11 @@ const CategoryBusinessView = () => {
                                 </Typography>
                               </Box>
                               <Box sx={{ display: 'flex', alignItems: 'center', my: 1 }}>
-                                <Rating 
-                                  value={rev.rating} 
-                                  readOnly 
-                                  size="small" 
-                                  sx={{ color: 'gold' }} 
+                                <Rating
+                                  value={rev.rating}
+                                  readOnly
+                                  size="small"
+                                  sx={{ color: 'gold' }}
                                 />
                                 <Chip
                                   label={`${rev.rating} stars`}
@@ -501,7 +508,7 @@ const CategoryBusinessView = () => {
                                   sx={{ ml: 1, backgroundColor: 'rgba(255,215,0,0.2)' }}
                                 />
                               </Box>
-                              <Typography sx={{ 
+                              <Typography sx={{
                                 pl: 0,
                                 backgroundColor: 'rgba(0,0,0,0.02)',
                                 p: 2,
@@ -516,16 +523,16 @@ const CategoryBusinessView = () => {
                       ))}
                     </Box>
                   ) : (
-                    <Box sx={{ 
-                      textAlign: 'center', 
+                    <Box sx={{
+                      textAlign: 'center',
                       p: 4,
                       backgroundColor: 'rgba(0,0,0,0.02)',
                       borderRadius: 2,
                       border: '2px dashed rgba(0,0,0,0.1)'
                     }}>
-                      <Star sx={{ 
-                        fontSize: 60, 
-                        color: 'text.disabled', 
+                      <Star sx={{
+                        fontSize: 60,
+                        color: 'text.disabled',
                         mb: 2,
                         opacity: 0.5
                       }} />
@@ -542,7 +549,7 @@ const CategoryBusinessView = () => {
             </Box>
           )}
         </Box>
-      </Box>  
+      </Box>
     </>
   );
 };

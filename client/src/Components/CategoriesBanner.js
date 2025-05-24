@@ -8,8 +8,6 @@ import {
   CardContent,
   Paper,
   Container,
-  useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -58,13 +56,10 @@ const categories = [
 
 const CategorySection = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   return (
    <Container maxWidth={false} sx={{ 
         mt: 5,
-        px: { xs: 2, sm: 3, md: 4 } // Better padding for different screens
+        px: { xs: 2, sm: 3, md: 4 } 
       }}>
       <Box
         sx={{

@@ -89,7 +89,7 @@ const categories = [
 const CategorySection = () => {
   const navigate = useNavigate();
   return (
-    <Container maxWidth="auto">
+    <Container maxWidth="auto" sx={{mt:3}}>
       <Grid container spacing={2} >
         {categories.map((category, index) => (
           <Grid item xs={12} md={6} key={index} >

@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import { reloadUser } from "./redux/actions/userAction";
 import store from "./redux/store";
-
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -25,8 +24,6 @@ import ResetPassword from "./pages/ResetPassword.js";
 import CategoryDetail from "./pages/CategoryDetail.js";
 import About from "./pages/About.js";
 import Contact from "./pages/Contact.js";
-import Dashboard from './pages/Dashboard.js'
-import Updatebusiness from "./pages/Updatebusiness.js";
 import Addedbusiness from "./pages/Addedbusiness.js";
 import Reviews from "./pages/Reviews.js";
 import Quries from "./pages/Quries.js";
@@ -85,8 +82,6 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/dashboard" element={<Dashboard/>} />
-            <Route path="/Updated/business" element={<Updatebusiness/>} />
             <Route path="/Added/business" element={<Addedbusiness/>} />
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/quries" element={<Quries/>} />
@@ -98,7 +93,6 @@ function App() {
               path="/category/:name/:id"
               element={<CategoryBusinesseView />}
             />
-
             {/* Admin Routes */}
             {user?.role >= 1 ? (
               <>
