@@ -8,6 +8,7 @@ import {
   profileUpdatePassword,
   forgotPassword,
   resetPassword,
+  getAllUsers
 } from "../controllers/authController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
 import { registerValidation, loginValidation, profileUpdateValidation, profileUpdatePasswordValidation, resetPasswordValidation } from '../helpers/authHelper.js';
@@ -22,5 +23,8 @@ router.put("/profile/update", isAuthenticatedUser, profileUpdateValidation, prof
 router.put("/profile/password/update", isAuthenticatedUser, profileUpdatePasswordValidation, profileUpdatePassword ); // Change password
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPasswordValidation, resetPassword);
+
+// Admin get all users
+router.get("/admin/get", isAuthenticatedUser, isAdmin, getAllUsers)
 
 export default router;

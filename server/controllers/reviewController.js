@@ -90,3 +90,17 @@ export const deleteReview = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
+
+// Admin
+export const adminAllReviews = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const adminReview = await Review.find({}).sort({ createdAt: -1 })
+    res.status(200).json({
+      success: true,
+      adminReview,
+      message: "All users reviews fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+})

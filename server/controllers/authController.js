@@ -208,3 +208,18 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
+
+
+// Admin Get All Users
+export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const adminUsers = await User.find({}).sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      adminUsers,
+      message: "Users details fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+})

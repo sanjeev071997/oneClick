@@ -6,6 +6,7 @@ import {
     userGetReview,
     updateReview,
     deleteReview,
+    adminAllReviews,
 } from "../controllers/reviewController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
 
@@ -21,5 +22,8 @@ router.get("/get", isAuthenticatedUser, userGetReview);
 router.put("/update", isAuthenticatedUser, updateReview);
 
 router.delete("/delete", isAuthenticatedUser, deleteReview);
+
+// Admin Gat All reviews
+router.get("/admin/get", isAuthenticatedUser, isAdmin, adminAllReviews)
 
 export default router;
