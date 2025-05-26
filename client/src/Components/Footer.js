@@ -33,7 +33,7 @@ const Footer = () => {
           <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold",ml:2 }}>
             Quick Links
           </Typography >
-          {["Home", "Services", "Categories", "Contact", "Help"].map((link) => (
+          {["Home", "About", "Contact", "Help"].map((link) => (
             <Link
               key={link}
               href={`/${link.toLowerCase()}`}

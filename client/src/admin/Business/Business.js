@@ -52,7 +52,7 @@ const Business = () => {
     fetchBusinesses();
   }, []);
 
-  // Pagination logic
+  // // Pagination logic
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
     setCurrentPage(1); // Reset to the first page on search
@@ -132,7 +132,7 @@ const Business = () => {
       <TextField
         fullWidth
         variant="outlined"
-        placeholder="Search by Categories Name"
+        placeholder="Search by Business Name"
         value={searchTerm}
         onChange={handleSearch}
         InputProps={{
@@ -167,18 +167,27 @@ const Business = () => {
           <TableHead className="table-head">
             <TableRow>
               <TableCell className="table-head-cell">#</TableCell>
+              <TableCell className="table-head-cell">Actions</TableCell>
               <TableCell className="table-head-cell">Business Image</TableCell>
               <TableCell className="table-head-cell">Owner</TableCell>
               <TableCell className="table-head-cell">Business</TableCell>
               <TableCell className="table-head-cell">Category</TableCell>
               <TableCell className="table-head-cell">Phone</TableCell>
-              <TableCell className="table-head-cell">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {businesses.map((business, index) => (
+            {filteredBusinesses.map((business, index) => (
               <TableRow key={business._id}>
                 <TableCell>{index + 1}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleView(business)}>
+                    <VisibilityIcon color="primary" />
+                  </IconButton>
+
+                  <IconButton onClick={() => handleDelete(business?._id)}>
+                    <DeleteIcon color="error" />
+                  </IconButton>
+                </TableCell>
                 <TableCell>
                   <Avatar
                     src={business.images[0]?.url}
@@ -190,15 +199,7 @@ const Business = () => {
                 <TableCell>{business.businessName}</TableCell>
                 <TableCell>{business.category.name}</TableCell>
                 <TableCell>{business.phone}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleView(business)}>
-                    <VisibilityIcon color="primary" />
-                  </IconButton>
-
-                  <IconButton onClick={() => handleDelete(business?._id)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                </TableCell>
+                
               </TableRow>
             ))}
           </TableBody>

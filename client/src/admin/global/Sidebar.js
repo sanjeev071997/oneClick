@@ -40,7 +40,6 @@ const SidebarAdm = () => {
       },
     });
   };
-  console.log(user);
 
   return (
     <>

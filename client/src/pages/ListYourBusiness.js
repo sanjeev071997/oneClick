@@ -68,7 +68,7 @@
 //   useEffect(() => {
 //     fetchCategories();
 //   }, []);
-  
+
 
 //   const handleChange = (e) => {
 //     const { name, value } = e.target;
@@ -580,7 +580,7 @@ const ListYourBusiness = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
-  
+
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -689,7 +689,7 @@ const ListYourBusiness = () => {
                 sx={{ mb: 3 }}
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <Autocomplete
                 freeSolo
@@ -699,7 +699,7 @@ const ListYourBusiness = () => {
                   setCategoryInput(newInputValue);
                 }}
                 onChange={handleCategorySelect}
-                value={formData.category}
+                value={formData.category.name}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -724,7 +724,7 @@ const ListYourBusiness = () => {
                 )}
               />
             </Grid>
-            
+
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -737,7 +737,7 @@ const ListYourBusiness = () => {
                 variant="outlined"
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start" sx={{mt:-7}}>
+                    <InputAdornment position="start" sx={{ mt: -7 }}>
                       <Description color="primary" />
                     </InputAdornment>
                   ),
@@ -827,7 +827,7 @@ const ListYourBusiness = () => {
                   </Box>
                 </label>
               </Box>
-              
+
               {formData.images.length > 0 && (
                 <Box mt={3}>
                   <Typography variant="subtitle2" gutterBottom>
@@ -875,21 +875,21 @@ const ListYourBusiness = () => {
             <Typography variant="h6" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
               <CheckCircle color="primary" sx={{ mr: 1 }} /> Review Your Business Information
             </Typography>
-            
+
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" color="text.secondary">Business Name</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>{formData.businessName}</Typography>
-                
+
                 <Typography variant="subtitle2" color="text.secondary">Category</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   {categories.find(c => c._id === formData.category)?.name || formData.category}
                 </Typography>
-                
+
                 <Typography variant="subtitle2" color="text.secondary">Description</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>{formData.description || "Not provided"}</Typography>
               </Grid>
-              
+
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" color="text.secondary">Contact Information</Typography>
                 <Box sx={{ mb: 2 }}>
@@ -897,14 +897,32 @@ const ListYourBusiness = () => {
                   <Chip icon={<Phone />} label={formData.phone} sx={{ mr: 1, mb: 1 }} />
                   {formData.email && <Chip icon={<Email />} label={formData.email} sx={{ mb: 1 }} />}
                 </Box>
-                
+
                 <Typography variant="subtitle2" color="text.secondary">Address</Typography>
                 <Typography variant="body1" sx={{ mb: 2 }}>{formData.address}</Typography>
-                
+
                 <Typography variant="subtitle2" color="text.secondary">Images</Typography>
-                <Typography variant="body1">
-                  {formData.images.length} image{formData.images.length !== 1 ? 's' : ''} uploaded
-                </Typography>
+
+                <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
+                  {formData.images && formData.images.length > 0 ? (
+                    formData.images.map((img, index) => (
+                      <img
+                        key={index}
+                        src={typeof img === 'string' ? img : URL.createObjectURL(img)}
+                        alt={`Uploaded ${index}`}
+                        style={{
+                          width: '100px',
+                          height: '100px',
+                          objectFit: 'cover',
+                          borderRadius: '8px',
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="body1">No images uploaded</Typography>
+                  )}
+                </Box>
+
               </Grid>
             </Grid>
           </Box>
@@ -959,7 +977,7 @@ const ListYourBusiness = () => {
   return (
     <>
       <Navbar />
-      <Container maxWidth="md" sx={{ py: 6 }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
         <Paper
           elevation={0}
           sx={{
@@ -1055,7 +1073,7 @@ const ListYourBusiness = () => {
             >
               Back
             </Button>
-            
+
             {activeStep === steps.length - 1 ? (
               <Button
                 variant="contained"

@@ -182,7 +182,7 @@ const ReviewsDashboard = () => {
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                       <Avatar
-                        src={review.businessId?.images?.[0] || '/default-business.png'}
+                        src={review.businessId?.images[0]?.url || '/default-business.png'}
                         alt={review.businessId?.businessName || 'Business'}
                         sx={{ width: 40, height: 40 }}
                         variant="rounded"
