@@ -8,7 +8,8 @@ import {
   profileUpdatePassword,
   forgotPassword,
   resetPassword,
-  getAllUsers
+  getAllUsers,
+  adminDeleteUser
 } from "../controllers/authController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
 import { registerValidation, loginValidation, profileUpdateValidation, profileUpdatePasswordValidation, resetPasswordValidation } from '../helpers/authHelper.js';
@@ -25,6 +26,7 @@ router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPasswordValidation, resetPassword);
 
 // Admin get all users
-router.get("/admin/get", isAuthenticatedUser, isAdmin, getAllUsers)
+router.get("/admin/get", isAuthenticatedUser, isAdmin, getAllUsers);
+router.delete("/admin/delete", isAuthenticatedUser ,isAdmin, adminDeleteUser)
 
 export default router;

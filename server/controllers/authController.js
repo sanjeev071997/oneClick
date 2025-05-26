@@ -222,4 +222,21 @@ export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
   }
+});
+
+// Admin Delete User by Id
+export const adminDeleteUser = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const deleteUser = await User.findByIdAndDelete(req.body.id);
+  if (!deleteUser) {
+    return next(new Errorhandler("User not found", 404))
+  }
+  res.status(200).json({
+    success:true,
+    deleteUser,
+    message:"User deleted successfully"
+  })
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500))
+  }
 })
