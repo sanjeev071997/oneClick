@@ -65,12 +65,12 @@ const Login = () => {
     }
 
     if (isAuthenticated) {
-      message.success("Login Successfully");
+      message.success("login Successfully");
       // Redirect based on user role
       if (user && user.role === 0) {
-        navigate("/");
+        navigate("/", { replace: true });
       } else if (user && user.role >= 1) {
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       }
     }
   }, [error, isAuthenticated, user, dispatch, navigate]);

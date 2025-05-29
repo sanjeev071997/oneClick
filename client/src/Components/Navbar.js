@@ -119,25 +119,29 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    confirm({
-      title: "Are you sure you want to Log out?",
-      icon: <ExclamationCircleOutlined />,
-      content: "Your current session will be terminated.",
-      onOk() {
-        dispatch(logout());
-        localStorage.clear();
-        message.success("Logout Successfully");
-        navigate("/login");
-        window.location.reload();
-      },
-    });
-  };
+  confirm({
+    title: "Are you sure you want to Log out?",
+    icon: <ExclamationCircleOutlined />,
+    content: "Your current session will be terminated.",
+    onOk() {
+      sessionStorage.setItem("justLoggedOut", "true");
+      dispatch(logout());
+      localStorage.clear();
+      navigate("/login", { replace: true });
+    },
+  });
+};
+
+  
+
 
   return (
     <>
       <AppBar
+  
         position="sticky"
         sx={{
+         
           top: 0,
           zIndex: 1100,
           background: "#fff",

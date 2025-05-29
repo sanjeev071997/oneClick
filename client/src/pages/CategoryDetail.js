@@ -123,12 +123,11 @@ const CategoryDetail = () => {
 
   const handleEnquiryOpen = (business) => {
     setSelectedBusiness(business);
-    // Pre-fill user details if logged in
     if (user) {
       setEnquiryForm({
-        name: user.name || "",
-        email: user.email || "",
-        phone: user.phone || "",
+        name: "",
+        email:  "",
+        phone:  "",
         message: ""
       });
     }
@@ -148,7 +147,7 @@ const CategoryDetail = () => {
 
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedBusiness) return;
 
     try {
@@ -160,10 +159,10 @@ const CategoryDetail = () => {
         phone: enquiryForm.phone,
         message: enquiryForm.message
       };
-      
+
 
       const response = await axios.post("/api/v1/enquiry/add", enquiryData);
-      console.log(response ,"response ")
+      console.log(response, "response ")
 
       if (response.data.success) {
         setSnackbar({
@@ -201,9 +200,9 @@ const CategoryDetail = () => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        display: "flex", 
-        justifyContent: "center", 
+      <Box sx={{
+        display: "flex",
+        justifyContent: "center",
         alignItems: "center",
         height: "80vh"
       }}>
@@ -215,11 +214,11 @@ const CategoryDetail = () => {
   return (
     <>
       <Navbar />
-      <Box sx={{ 
-        maxWidth: 1400, 
-        mx: "auto", 
-        px: { xs: 2, md: 4 }, 
-        py: 3 
+      <Box sx={{
+        maxWidth: 1400,
+        mx: "auto",
+        px: { xs: 2, md: 4 },
+        py: 3
       }}>
         {/* Breadcrumb Navigation */}
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
@@ -227,9 +226,9 @@ const CategoryDetail = () => {
             underline="hover"
             color="inherit"
             onClick={() => navigate("/")}
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
               cursor: 'pointer',
               '&:hover': {
                 color: 'primary.main'
@@ -281,7 +280,7 @@ const CategoryDetail = () => {
               }}
             />
             <Box>
-              <Chip 
+              <Chip
                 label={`${businesses.length} ${businesses.length === 1 ? 'Business' : 'Businesses'}`}
                 color="primary"
                 size="small"
@@ -322,16 +321,28 @@ const CategoryDetail = () => {
               variant="outlined"
               startIcon={<ArrowBack />}
               onClick={() => navigate(-1)}
-              sx={{ borderRadius: 3 }}
+              sx={{
+                borderRadius: 3,
+                textTransform: 'none',
+                fontWeight: 'bold',
+                px: 2,
+                py: 1,
+                boxShadow: 1,
+                bgcolor: 'white',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                  borderColor: 'primary.main',
+                }
+              }}
             >
               Back to Categories
             </Button>
           </Box>
         ) : (
           <>
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'space-between', 
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
               mb: 3
             }}>
@@ -339,7 +350,7 @@ const CategoryDetail = () => {
                 Featured Businesses
               </Typography>
             </Box>
-            
+
             <Grid container spacing={3}>
               {businesses?.map((business) => (
                 <Grid item xs={12} sm={6} lg={4} key={business._id}>
@@ -385,9 +396,9 @@ const CategoryDetail = () => {
                         </Typography>
                       </Box>
                     </Box>
-                    
+
                     <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h6" component="h2" sx={{ 
+                      <Typography gutterBottom variant="h6" component="h2" sx={{
                         fontWeight: 600,
                         mb: 1.5
                       }}>
@@ -427,9 +438,9 @@ const CategoryDetail = () => {
                         )}
                       </Stack>
                     </CardContent>
-                    
+
                     <Divider sx={{ my: 0 }} />
-                    
+
                     <Box sx={{
                       display: 'flex',
                       justifyContent: 'space-between',
@@ -568,7 +579,7 @@ const CategoryDetail = () => {
               }}>
                 <Button
                   variant="outlined"
-               
+
                   onClick={handleEnquiryClose}
                 >
                   Cancel
@@ -576,7 +587,7 @@ const CategoryDetail = () => {
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={token ? false: true}
+                  disabled={token ? false : true}
                   startIcon={<Send />}
                 >
                   Send Message
@@ -624,11 +635,11 @@ const CategoryDetail = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar({...snackbar, open: false})}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={() => setSnackbar({...snackbar, open: false})}
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >

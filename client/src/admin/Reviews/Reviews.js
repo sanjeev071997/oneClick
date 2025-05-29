@@ -91,23 +91,22 @@ const ReviewsDashboard = () => {
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
-          mb: 2,
-          p: 1.5,
-          backgroundColor: 'white',
-          borderRadius: 5,
+          mb: 5,
+          backgroundColor: "#fff",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
         }}
       >
         <Link
           component={RouterLink}
           to="/dashboard"
-          underline="hover"
-          color="inherit"
-          sx={{ display: 'flex', alignItems: 'center' }}
+          sx={{ color: "inherit", textDecoration: "none" }}
         >
-          <Home sx={{ mr: 0.5 }} fontSize="inherit" />
           Dashboard
         </Link>
-        <Typography color="text.primary">Reviews</Typography>
+
+        <Typography sx={{ color: "primary.main" }}>Business</Typography>
       </Breadcrumbs>
       <Divider />
 

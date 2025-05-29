@@ -13,6 +13,17 @@ html {
   height: 0px !important;
 }
 
+.css-12chgqh-MuiContainer-root {
+  width: 100%;
+  margin-left: auto;
+  box-sizing: border-box;
+  margin-right: auto;
+  padding-left: 25px !important;
+  padding-right: 0px !important;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
 .ForgotPassword {
   margin-right: -58% !important;
   margin-top: 1% !important;
@@ -98,4 +109,7 @@ html {
   font-size: 13px !important;
   line-height: 1.43 !important;
   letter-spacing: 1px !important;
+}
+body {
+  cursor: pointer;
 }

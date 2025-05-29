@@ -16,7 +16,7 @@ import {
   IconButton,
   Chip,
 } from "@mui/material";
-import Rating from "@mui/lab/Rating";
+import Rating from "@mui/material/Rating"; // Make sure to import from @mui/material
 import Slider from "react-slick";
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
@@ -66,7 +66,6 @@ const CategoryBusinessView = () => {
       console.error("Review submit error", error);
     }
   };
-
 
   const getReview = async () => {
     try {
@@ -148,7 +147,7 @@ const CategoryBusinessView = () => {
             </Breadcrumbs>
           </Box>
 
-          {/* Image Gallery with Parallax Effect */}
+          {/* Image Gallery */}
           <Box sx={{
             borderRadius: 3,
             overflow: 'hidden',
@@ -171,7 +170,7 @@ const CategoryBusinessView = () => {
               {business?.images?.map((img, index) => (
                 <Box key={index}>
                   <Box
-                     sx={{
+                    sx={{
                       width: '100%',
                       height: { xs: 250, sm: 350, md: 540 },
                       backgroundImage: `url(${img?.url})`,
@@ -362,7 +361,7 @@ const CategoryBusinessView = () => {
 
           {activeTab === "reviews" && (
             <Box>
-              {/* Add Review Section - Moved to the top */}
+              {/* Add Review Section */}
               {user && (
                 <Card sx={{
                   borderRadius: 3,
@@ -383,6 +382,7 @@ const CategoryBusinessView = () => {
                         value={rating}
                         onChange={(e, newVal) => setRating(newVal)}
                         size="large"
+                        precision={0.5} // This enables half-star ratings
                         sx={{
                           '& .MuiRating-icon': {
                             fontSize: '2.5rem'
@@ -452,7 +452,7 @@ const CategoryBusinessView = () => {
                 </Box>
               )}
 
-              {/* Reviews List - Moved below the review form */}
+              {/* Reviews List */}
               <Card sx={{
                 borderRadius: 3,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
@@ -500,6 +500,7 @@ const CategoryBusinessView = () => {
                                   value={rev.rating}
                                   readOnly
                                   size="small"
+                                  precision={0.5} // Add this for half-star display
                                   sx={{ color: 'gold' }}
                                 />
                                 <Chip

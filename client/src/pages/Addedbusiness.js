@@ -1,9 +1,17 @@
+
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../axiosInstance';
 import { message } from 'antd';
-import Navbar from '../Components/Navbar'
-import Footer from '../Components/Footer'
+import Navbar from '../Components/Navbar';
+import Footer from '../Components/Footer';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import {  Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Autoplay } from 'swiper/modules';
 import {
   Container,
   Typography,
@@ -35,15 +43,14 @@ import {
   Phone,
   LocationOn,
   Person,
-  MoreVert,
   Edit,
   Delete,
   Close,
   AddPhotoAlternate,
   Star,
   Business,
-
 } from '@mui/icons-material';
+
 
 
 const AddedBusiness = () => {
@@ -85,7 +92,6 @@ const AddedBusiness = () => {
   };
 
   const handleEditClick = () => {
-    // if (selectedBusiness) {
     setFormData({
       id: selectedBusiness._id,
       businessName: selectedBusiness.businessName,
@@ -98,7 +104,6 @@ const AddedBusiness = () => {
       images: selectedBusiness.images || []
     });
     setOpenEditDialog(true);
-    // }
     handleMenuClose();
   };
 
@@ -150,17 +155,13 @@ const AddedBusiness = () => {
   const handleUpdateBusiness = async () => {
     try {
       const formDataToSend = new FormData();
-      // Append regular form fields
       Object.keys(formData).forEach(key => {
         if (key !== 'images') {
           formDataToSend.append(key, formData[key]);
         }
       });
 
-      // formDataToSend.append('id', selectedBusiness?.id);
-
       const existingImageUrls = formData.images.map(img => img.url);
-
       formDataToSend.append('images', JSON.stringify(existingImageUrls));
 
       newImages.forEach((img) => {
@@ -183,11 +184,10 @@ const AddedBusiness = () => {
     }
   };
 
-
-  const handleDeleteBusiness = async () => {
+  const handleDeleteBusiness = async (id) => {
     try {
       await axios.delete('/api/v1/business/delete', {
-        data: { id: selectedBusiness._id },
+        data: {id},
       });
       fetchBusinesses();
       message.success('Business deleted successfully');
@@ -207,7 +207,7 @@ const AddedBusiness = () => {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Grid container spacing={3}>
           {[...Array(3)].map((_, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid item xs={12} sm={6} md={6} key={index}>
               <Card>
                 <Skeleton variant="rectangular" height={180} animation="wave" />
                 <CardContent>
@@ -229,15 +229,16 @@ const AddedBusiness = () => {
       </Container>
     );
   }
+
   return (
     <>
       <Navbar />
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h3" component="h1" fontWeight="bold">
-            My Businesses
-          </Typography>
-        </Box>
+      <Container sx={{ py: 4 }}>
+        <Typography variant="h4" component="h1" fontWeight="bold" sx={{
+          mb: 4
+        }}>
+          My Businesses
+        </Typography>
 
         {businesses.length === 0 ? (
           <Box sx={{
@@ -358,148 +359,184 @@ const AddedBusiness = () => {
             >
               Add Your First Business
             </Button>
-
-            
-            </Box>
-        
+          </Box>
         ) : (
-          <Grid container spacing={3}>
-            {businesses.map((business) => (
-              <Grid item xs={12} sm={6} lg={4} key={business._id}>
-                <Card sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
-                  }
-                }}>
-                  <Box sx={{ position: 'relative' }}>
-                    {business.images?.length > 0 && (
-                      <CardMedia
-                        component="img"
-                        height="180"
-                        image={business.images[0].url}
-                        alt={business.businessName}
-                        sx={{ objectFit: 'cover' }}
-                      />
-                    )}
-                    <Box sx={{
-                      position: 'absolute',
-                      top: 8,
-                      right: 8,
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      borderRadius: '50%'
-                    }}>
+          
+          <Container>
+            <Grid container spacing={3}>
+              {businesses.map((business) => (
+                <Grid item xs={12} sm={12} md={12} key={business._id}>
+                  <Card
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      transition: 'transform 0.3s, box-shadow 0.3s',
+                      '&:hover': {
+                        transform: 'translateY(-5px)',
+                        boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+                      },
+                    }}
+                  >
+                    <Box sx={{ position: 'relative', height: 450 }}>
+                      {business.images?.length > 0 ? (
+                       <Swiper
+                       modules={[Pagination, Autoplay]} 
+                       pagination={{ clickable: true }}  // Keep pagination
+                       autoplay={{ delay: 3000 }}
+                       style={{
+                         height: '100%',
+                         width: '100%',
+                         '--swiper-pagination-color': '#1976d2',
+                       
+                       }}
+                        >
+                          {business.images.map((image, index) => (
+                            <SwiperSlide key={index}>
+                              <CardMedia
+                                component="img"
+                                image={image.url}
+                                alt={`${business.businessName} ${index + 1}`}
+                                sx={{
+                                  height: '100%',
+                                  width: '100%',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                            </SwiperSlide>
+                          ))}
+                        </Swiper>
+                      ) : (
+                        <Box sx={{
+                          height: '100%',
+                          width: '100%',
+                          backgroundColor: 'grey.200',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          <Typography variant="body2" color="text.secondary">
+                            No Images Available
+                          </Typography>
+                        </Box>
+                      )}
+                      
                       <IconButton
-                        aria-label="settings"
+                        aria-label="edit"
                         onClick={(e) => handleMenuOpen(e, business)}
-                        sx={{ color: 'white' }}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                    </Box>
-                    {business.category && (
-                      <Chip
-                        label={business.category.name}
-                        size="small"
                         sx={{
                           position: 'absolute',
-                          bottom: 16,
-                          left: 16,
-                          backgroundColor: 'primary.main',
-                          color: 'white',
-                          fontWeight: 'bold'
+                          top: 8,
+                          right: 8,
+                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 1)',
+                          },
+                          zIndex: 10
                         }}
-                      />
-                    )}
-                  </Box>
-
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Typography variant="h6" fontWeight="bold">
-                        {business.businessName}
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Star color="warning" fontSize="small" />
-                        <Typography variant="body2" ml={0.5}>
-                          4.8
+                      >
+                        <Edit color="primary" />
+                      </IconButton>
+                      
+                      {business.category && (
+                        <Chip
+                          label={business.category.name}
+                          size="small"
+                          sx={{
+                            position: 'absolute',
+                            bottom: 16,
+                            left: 16,
+                            backgroundColor: 'primary.main',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            zIndex: 10
+                          }}
+                        />
+                      )}
+                    </Box>
+                    
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="h6" fontWeight="bold">
+                          {business.businessName}
                         </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Star color="warning" fontSize="small" />
+                          <Typography variant="body2" ml={0.5}>
+                            4.8
+                          </Typography>
+                        </Box>
                       </Box>
-                    </Box>
 
-                    <Box sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      mb: 1,
-                      backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                      p: 1,
-                      borderRadius: 1
-                    }}>
-                      <Person sx={{ mr: 1, color: 'primary.main' }} />
-                      <Typography variant="body2">
-                        {business.ownerName}
-                      </Typography>
-                    </Box>
-
-                    <Grid container spacing={1} sx={{ mb: 1 }}>
-                      <Grid item xs={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Phone sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {business.phone}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Email sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                          <Typography variant="body2" color="text.secondary" noWrap>
-                            {business.email}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    </Grid>
-
-                    {business.address && (
                       <Box sx={{
                         display: 'flex',
                         alignItems: 'center',
                         mb: 1,
+                        backgroundColor: 'rgba(25, 118, 210, 0.08)',
                         p: 1,
-                        backgroundColor: 'action.hover',
                         borderRadius: 1
                       }}>
-                        <LocationOn sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                        <Typography variant="body2" color="text.secondary">
-                          {business.address}
+                        <Person sx={{ mr: 1, color: 'primary.main' }} />
+                        <Typography variant="body2">
+                          {business.ownerName}
                         </Typography>
                       </Box>
-                    )}
 
-                    {business.description && (
-                      <>
-                        <Divider sx={{ my: 1 }} />
-                        <Typography variant="body2" sx={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
+                      <Grid container spacing={1} sx={{ mb: 1 }}>
+                        <Grid item xs={6}>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Phone sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary">
+                              {business.phone}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            <Email sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
+                            <Typography variant="body2" color="text.secondary" noWrap>
+                              {business.email}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
+
+                      {business.address && (
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          mb: 1,
+                          p: 1,
+                          backgroundColor: 'action.hover',
+                          borderRadius: 1
                         }}>
-                          {business.description}
-                        </Typography>
-                      </>
-                    )}
-                  </CardContent>
+                          <LocationOn sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
+                          <Typography variant="body2" color="text.secondary">
+                            {business.address}
+                          </Typography>
+                        </Box>
+                      )}
 
-
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                      {business.description && (
+                        <>
+                          <Divider sx={{ my: 1 }} />
+                          <Typography variant="body2" sx={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 3,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {business.description}
+                          </Typography>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Container>
         )}
 
         {/* Context Menu */}
@@ -562,7 +599,7 @@ const AddedBusiness = () => {
           <DialogContent dividers>
             {activeTab === 0 && (
               <Grid container spacing={3} sx={{ pt: 2 }}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <TextField
                     fullWidth
                     label="Business Name"
@@ -573,7 +610,7 @@ const AddedBusiness = () => {
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12} >
                   <TextField
                     fullWidth
                     label="Owner Name"
@@ -584,7 +621,7 @@ const AddedBusiness = () => {
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={12}>
                   <TextField
                     fullWidth
                     label="Phone"
@@ -646,7 +683,7 @@ const AddedBusiness = () => {
                           src={image.url}
                           alt={`Business ${index}`}
                           loading="lazy"
-                          style={{ borderRadius: 8 }}
+                          style={{ height: 150, objectFit: 'cover', borderRadius: 8 }}
                         />
                         <ImageListItemBar
                           position="top"
@@ -694,7 +731,7 @@ const AddedBusiness = () => {
                         <img
                           src={image.url}
                           alt={`New ${index}`}
-                          style={{ borderRadius: 8 }}
+                          style={{ height: 150, objectFit: 'cover', borderRadius: 8 }}
                         />
                         <ImageListItemBar
                           position="top"

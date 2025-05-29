@@ -16,8 +16,8 @@ import {
   Breadcrumbs,
   Link
 } from '@mui/material';
-import { Delete, Person, Home } from '@mui/icons-material';
-import { Divider, message } from 'antd';
+import { Delete, Person } from '@mui/icons-material';
+import { Divider, message, Modal } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
 
 const UserDashboard = () => {
@@ -47,7 +47,6 @@ const UserDashboard = () => {
       await axios.delete('/api/v1/auth/admin/delete', {
         data: { id }
       });
-
       message.success('User deleted successfully!');
       fetchUsers();
     } catch (err) {
@@ -76,25 +75,26 @@ const UserDashboard = () => {
       padding: { xs: '0.5rem', sm: '1rem' }
     }}>
       {/* Breadcrumbs */}
-      <Breadcrumbs aria-label="breadcrumb"
+      <Breadcrumbs
+        aria-label="breadcrumb"
         sx={{
-          mb: 2,
-          p: 1.5,
-          backgroundColor: 'white', 
-          borderRadius: 3, 
-        }}>
+          mb: 5,
+          backgroundColor: "#fff",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        }}
+      >
         <Link
           component={RouterLink}
           to="/dashboard"
-          underline="hover"
-          color="inherit"
-          sx={{ display: 'flex', alignItems: 'center' }}
+          sx={{ color: "inherit", textDecoration: "none" }}
         >
-          <Home sx={{ mr: 0.5 }} fontSize="inherit" />
           Dashboard
         </Link>
-        <Typography color="text.primary">Users</Typography>
+        <Typography sx={{ color: "primary.main" }}>Users</Typography>
       </Breadcrumbs>
+
       <Divider />
 
       <Typography variant="h4" gutterBottom sx={{
@@ -117,7 +117,7 @@ const UserDashboard = () => {
         ) : (
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: 'primary.light' }}>
+            <TableRow sx={{ backgroundColor: 'primary.main' }}>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>S.No</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>User</TableCell>
                 <TableCell sx={{ fontWeight: 'bold', color: 'white' }}>Email</TableCell>
@@ -154,7 +154,16 @@ const UserDashboard = () => {
                       color="error"
                       size="small"
                       startIcon={<Delete />}
-                      onClick={() => handleDeleteUser(user._id)}
+                      onClick={() => {
+                        Modal.confirm({
+                          title: 'Are you sure you want to delete this user?',
+                          content: 'This action cannot be undone.',
+                          okText: 'Yes, Delete',
+                          okType: 'danger',
+                          cancelText: 'Cancel',
+                          onOk: () => handleDeleteUser(user._id),
+                        });
+                      }}
                       sx={{ textTransform: 'none' }}
                     >
                       Delete

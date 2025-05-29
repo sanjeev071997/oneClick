@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Typography,
@@ -26,17 +27,17 @@ import SearchIcon from "@mui/icons-material/Search";
 import PageTitle from "../../Components/PageTitle";
 import axios from "../../axiosInstance";
 import ViewBusiness from "./ViewBusiness";
+import { Modal, message } from "antd";
 
 const Business = () => {
   const [businesses, setBusinesses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState([]);
-  // Fetch all businesses
+
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get("/api/v1/business/all");
@@ -48,44 +49,49 @@ const Business = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchBusinesses();
   }, []);
 
-  // // Pagination logic
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to the first page on search
+    setCurrentPage(1);
   };
 
-  // Filter businesses based on search term
   const filteredBusinesses = businesses.filter((business) =>
     business.businessName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredBusinesses.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  // Calculate total pages
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+  // ✅ Show confirmation modal before delete
+  const confirmDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this business?",
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk() {
+        handleDelete(id);
+      },
+    });
   };
 
-  // Delete business
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/business/${id}`);
-      setBusinesses(businesses.filter((business) => business._id !== id));
+      await axios.delete("/api/v1/business/delete", {
+        data: { id }, 
+      });
+      setBusinesses((prev) =>
+        prev.filter((business) => business._id !== id)
+      );
+      message.success("Business deleted successfully");
     } catch (error) {
-      console.error("Error deleting business:", error);
+      console.error("Error deleting business:", error.response?.data || error);
+      message.error("Failed to delete business");
     }
   };
+  
 
-  // Handle View action
   const handleView = (business) => {
     setSelectedBusiness(business);
     setOpenDialog(true);
@@ -184,7 +190,7 @@ const Business = () => {
                     <VisibilityIcon color="primary" />
                   </IconButton>
 
-                  <IconButton onClick={() => handleDelete(business?._id)}>
+                  <IconButton onClick={() => confirmDelete(business._id)}>
                     <DeleteIcon color="error" />
                   </IconButton>
                 </TableCell>
@@ -199,14 +205,13 @@ const Business = () => {
                 <TableCell>{business.businessName}</TableCell>
                 <TableCell>{business.category.name}</TableCell>
                 <TableCell>{business.phone}</TableCell>
-                
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
 
-      {/* Dialog to show detailed business information */}
+      {/* Business View Modal */}
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}

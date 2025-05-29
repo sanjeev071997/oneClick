@@ -2,6 +2,18 @@
 import React from 'react';
 import { Box, Grid, Typography, Card, CardMedia, CardContent, Paper, Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import WeddingImage from '../Images/wedding.avif';
+import Image from '../Images/weddingguide1_cover.jpg';
+import Image1 from '../Images/wedding1.jpg';
+import Beauty from '../Images/beauty.jpg'
+import Spa  from  '../Images/spa.avif';
+import Hair  from '../Images/hair.jpg'
+import Car from '../Images/car.jpg';
+import Bike from '../Images/bike1.jpg';
+import Ac from '../Images/ac.jpg';
+import  Movie from '../Images/movie.jpeg';
+import Grocery from '../Images/grocery.jpg';
+import  EImage from '../Images/Electercity.jpeg'
 
 
 const categories = [
@@ -10,17 +22,17 @@ const categories = [
     services: [
       {
         label: 'Banquet Halls',
-        image: 'https://cms-assets.bajajfinserv.in/is/image/bajajfinance/wedding-to-do-planning-checklists?scl=1',
+        image: WeddingImage ,
         name: 'Wedding Planning',
       },
       {
         label: 'Bridal Requisite',
-        image: 'https://iso.500px.com/wp-content/uploads/2015/04/weddingguide1_cover.jpg',
+        image: Image,
         name: 'Wedding Planning',
       },
       {
         label: 'Caterers',
-        image: 'https://i.pinimg.com/474x/9d/3f/e8/9d3fe841d6ee8fb6ff36fbbb02ead617.jpg',
+        image: Image1,
         name: 'Wedding Planning',
       },
     ],
@@ -30,17 +42,17 @@ const categories = [
     services: [
       {
         label: 'Beauty Parlours',
-        image: 'https://media.istockphoto.com/id/921797424/photo/woman-in-mask-on-face-in-spa-beauty-salon.jpg?s=612x612&w=0&k=20&c=gGSPZOjIS2wcwQyOcjANOKpRVU0KR_iEDbRACnAoIXA=',
+        image:  Beauty,
         name:  'Beauty & Spa'
       },
       {
         label: 'Spa & Massages',
-        image: 'https://content.jdmagicbox.com/comp/mysore/e9/0821px821.x821.200804185633.l6e9/catalogue/mirror-beauty-spa-gokulam-3rd-stage-mysore-body-massage-centres-t2z1qkgeo7.jpg',
+        image:  Spa,
          name:  'Beauty & Spa'
       },
       {
         label: 'Salons',
-        image: 'https://media.istockphoto.com/id/851007946/photo/woman-getting-hair-shampooed-at-salon.jpg?s=612x612&w=0&k=20&c=1kRvk2iAy6rBdfrfeAz7fhqPz8pvY_dgKmq_fHmjmLU=',
+        image:  Hair,
          name:  'Beauty & Spa'
       },
     ],
@@ -50,17 +62,17 @@ const categories = [
     services: [
       {
         label: 'AC Service',
-        image: 'https://t4.ftcdn.net/jpg/02/76/43/29/360_F_276432902_ciIBGVGeW3NkA8ja4EqxJzcG7M5jhGB9.jpg',
+        image:  Ac ,
         name: 'Car Repair & Services',
       },
       {
         label: 'Car Service',
-        image: 'https://media.istockphoto.com/id/1284285153/photo/auto-mechanic-working-on-car-engine-in-mechanics-garage-repair-service-authentic-close-up-shot.jpg?s=612x612&w=0&k=20&c=7AbRTEvT_5McOvmE1ArLvcowxlEuiPYPvMFEBjQEiAU=',
+        image: Car,
         name: 'Car Repair & Services',
       },
       {
         label: 'Bike Service',
-        image: 'https://media.istockphoto.com/id/1388398423/photo/mexican-female-mechanic-in-her-shop.jpg?s=612x612&w=0&k=20&c=97p43aver040MsgLtxfG7BQkd_OHLqigG5PUdwhVV4k=',
+        image: Bike,
         name: 'Car Repair & Services',
       },
     ],
@@ -70,17 +82,17 @@ const categories = [
     services: [
       {
         label: 'Movies',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6_Vs7-NoM2TGbbUT-zymByTh_1S_ZZkcQww&s',
+        image:  Movie,
         name: 'Other',
       },
       {
         label: 'Grocery',
-        image: 'https://i.pinimg.com/1200x/4b/62/44/4b6244a5e5d474827f7bc71e304ee599.jpg',
+        image:  Grocery,
         name: 'Other',
       },
       {
         label: 'Electricians',
-        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSwmzVDDjs3X6BeC-Azaj81jwkBv4lTTqYy_pT_eVgjuFQoY57OVjPx4LyDYhgj4jwvxQ&usqp=CAU',
+        image:   EImage ,
         name: 'Other',
       },
     ],

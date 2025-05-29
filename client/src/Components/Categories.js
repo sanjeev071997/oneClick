@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container,
   Grid,
   Typography,
   CircularProgress,
@@ -13,17 +12,12 @@ import {
   ListItemText,
   TextField,
   InputAdornment,
-  useMediaQuery,
   useTheme,
-  Badge,
-  Avatar,
-  Chip
+  useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CloseIcon from "@mui/icons-material/Close";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
 
@@ -33,20 +27,16 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Get all categories list
   const fetchCategories = async () => {
     try {
       const res = await axios.get("/api/v1/categories/get");
-      const sortedCategories = (res.data.getCategories || [])
-        .sort((a, b) => a.name.localeCompare(b.name));
-      setCategories(sortedCategories);
-      setFilteredCategories(sortedCategories);
+      setCategories(res.data.getCategories || []);
+      setFilteredCategories(res.data.getCategories || []);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     } finally {
@@ -104,142 +94,81 @@ const Categories = () => {
     }
     setDrawerOpen(open);
     if (!open) {
-      setSearchTerm("");
-      setSelectedCategory(null);
-    }
-  };
-
-  const handleCategoryClick = (category) => {
-    if (isMobile) {
-      setSelectedCategory(category);
-    } else {
-      navigate(`/category/${category.name}`, { state: { category } });
-      setDrawerOpen(false);
+      setSearchTerm(""); // Reset search when closing drawer
     }
   };
 
   if (loading) {
     return (
-      <Container
+      <Box
         sx={{
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "80vh",
+          minHeight: "50vh",
         }}
       >
-        <CircularProgress size={60} thickness={4} color="primary" />
-      </Container>
+        <CircularProgress size={60} thickness={4} />
+      </Box>
     );
   }
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 3 }, maxWidth: '1800px', margin: '0 auto' }}>
-      {/* Header Section */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        mb: 3, 
-        gap: 1.5,
-        mt: { xs: 1, sm: 2 },
-        px: { xs: 1, sm: 0 }
-      }}>
-        <Badge 
-          badgeContent={categories.length} 
-          color="primary" 
-          overlap="circular"
-          sx={{
-            '& .MuiBadge-badge': {
-              right: 8,
-              top: 8,
-              border: `2px solid ${theme.palette.background.paper}`,
-              padding: '0 4px',
-              fontWeight: 'bold'
-            }
-          }}
-        >
-          <Avatar
-            sx={{
-              bgcolor: 'primary.main',
-              width: { xs: 40, sm: 48 },
-              height: { xs: 40, sm: 48 },
-              boxShadow: theme.shadows[2]
-            }}
-          >
-            <LocalOfferIcon 
-              sx={{ 
-                fontSize: { xs: '1.5rem', sm: '1.8rem' },
-                transition: 'transform 0.3s',
-                ':hover': { transform: 'rotate(15deg)' } 
-              }} 
-            />
-          </Avatar>
-        </Badge>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 800,
-            letterSpacing: '0.5px',
-            color: 'primary.main',
-            fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.7rem' },
-            position: 'relative',
-            '&:before': {
-              content: '""',
-              position: 'absolute',
-              width: '100%',
-              height: '4px',
-              bottom: -6,
-              left: 0,
-              background: theme.palette.mode === 'light' 
-                ? 'linear-gradient(90deg, #3f51b5, #ff4081)'
-                : 'linear-gradient(90deg, #7986cb, #ff80ab)',
-              opacity: 0.8,
-              borderRadius: '3px'
-            }
-          }}
-        >
-          Popular Categories
-        </Typography>
-      </Box>
-
-      {/* Main Categories Grid */}
+    <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1500, margin: "0 auto" }}>
+ <Typography
+  variant="h5"
+  sx={{
+    fontWeight: 700,
+    mb: 3,
+    fontSize: { xs: "1.3rem", sm: "1.6rem" },
+    color: "black",
+    display: "inline-block",
+    px: 3,
+    py: 1,
+    borderLeft: "4px solid",
+    borderColor: "primary.main",
+    bgcolor: "rgba(0, 0, 0, 0.02)",
+    borderRadius: "0 8px 8px 0",
+  }}
+>
+  Popular Categories
+</Typography>
       <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
         {categories.slice(0, 19).map((category) => (
-          <Grid 
-            item 
-            xs={4} 
-            sm={2.4} 
-            md={1.5} 
-            lg={1.2} 
-            key={category._id}
-            sx={{ display: 'flex', justifyContent: 'center' }}
-          >
+          <Grid item xs={4} sm={2.4} md={1.7} lg={1.2} key={category._id}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                width: '100%',
-                maxWidth: '120px'
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                },
               }}
-              onClick={() => handleCategoryClick(category)}
+              onClick={() =>
+                navigate(`/category/${category.name}`, { state: { category } })
+              }
             >
               <Box
                 sx={{
-                  width: { xs: 48, sm: 56, md: 64 },
-                  height: { xs: 48, sm: 56, md: 64 },
+                  width: { xs: 45, sm: 50, md: 60 },
+                  height: { xs: 45, sm: 50, md: 60 },
                   mb: 1,
-                  border: `1px solid ${theme.palette.divider}`,
+                  border: "1px solid",
+                  borderColor: "divider",
                   borderRadius: "12px",
                   p: 1,
                   cursor: "pointer",
-                  transition: 'all 0.3s ease',
-                  backgroundColor: theme.palette.background.paper,
+                  backgroundColor: "background.paper",
+                  boxShadow: 1,
                   "&:hover": {
-                    transform: 'translateY(-4px)',
-                    boxShadow: theme.shadows[4],
-                    borderColor: theme.palette.primary.main
+                    boxShadow: 3,
+                    borderColor: "primary.main",
                   },
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
                 <img
@@ -259,12 +188,11 @@ const Categories = () => {
               </Box>
               <Typography
                 variant="body2"
-                sx={{ 
-                  fontWeight: 600, 
+                sx={{
+                  fontWeight: 500,
                   textAlign: "center",
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  lineHeight: 1.3,
-                  color: theme.palette.text.primary
+                  fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                  lineHeight: 1.2,
                 }}
               >
                 {formatCategoryName(category.name)}
@@ -273,58 +201,58 @@ const Categories = () => {
           </Grid>
         ))}
 
-        {/* View All Button */}
-        <Grid 
-          item 
-          xs={4} 
-          sm={2.4} 
-          md={1.5} 
-          lg={1.2}
-          sx={{ display: 'flex', justifyContent: 'center' }}
-        >
+        {/* 20th item - Menu button */}
+        <Grid item xs={4} sm={2.4} md={1.7} lg={1.2}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              width: '100%',
-              maxWidth: '120px'
+              transition: "transform 0.2s",
+              "&:hover": {
+                transform: "scale(1.05)",
+              },
             }}
             onClick={toggleDrawer(true)}
           >
             <Box
               sx={{
-                width: { xs: 48, sm: 56, md: 64 },
-                height: { xs: 48, sm: 56, md: 64 },
+                width: { xs: 45, sm: 50, md: 60 },
+                height: { xs: 45, sm: 50, md: 60 },
                 mb: 1,
-                border: `1px dashed ${theme.palette.primary.main}`,
+                border: "1px solid",
+                borderColor: "divider",
                 borderRadius: "12px",
                 p: 1,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                transition: 'all 0.3s ease',
-                backgroundColor: theme.palette.primary.light,
+                backgroundColor: "background.paper",
+                boxShadow: 1,
                 "&:hover": {
-                  transform: 'scale(1.05)',
-                  boxShadow: theme.shadows[4],
-                  backgroundColor: theme.palette.primary.lighter
+                  boxShadow: 3,
+                  borderColor: "primary.main",
                 },
               }}
             >
-              <MenuIcon sx={{
-                color: theme.palette.primary.main,
-                fontSize: { xs: '1.5rem', sm: '1.8rem' },
-              }} />
+              <MenuIcon
+                sx={{
+                  backgroundColor: 'primary.main',
+                  color: 'white',
+                  borderRadius: '50%',
+                  p: 1.2,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  fontSize: { xs: "1.2rem", sm: "1.5rem" },
+                }}
+              />
             </Box>
             <Typography
               variant="body2"
-              sx={{ 
-                fontWeight: 600, 
+              sx={{
+                fontWeight: 500,
                 textAlign: "center",
-                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                color: theme.palette.primary.main
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
               }}
             >
               View All
@@ -333,20 +261,15 @@ const Categories = () => {
         </Grid>
       </Grid>
 
-      {/* Categories Drawer */}
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            width: { xs: "100%", sm: "80%", md: "60%", lg: "50%" },
-            maxWidth: '950px',
-            p: { xs: 2, sm: 3 },
-            borderTopLeftRadius: { xs: 0, sm: 12 },
-            borderBottomLeftRadius: { xs: 0, sm: 12 },
-            boxShadow: theme.shadows[16],
-            overflow: 'hidden'
+            width: { xs: "90%", sm: 700, md: 800 },
+            p: 3,
+            boxShadow: theme.shadows[10],
           },
         }}
       >
@@ -356,35 +279,17 @@ const Categories = () => {
           justifyContent="space-between"
           alignItems="center"
           mb={3}
-          sx={{
-            position: 'sticky',
-            top: 0,
-            backgroundColor: theme.palette.background.paper,
-            zIndex: 1,
-            pt: 1,
-            pb: 1,
-            borderBottom: `1px solid ${theme.palette.divider}`
-          }}
         >
-          <Box display="flex" alignItems="center">
-            {selectedCategory && (
-              <IconButton 
-                onClick={() => setSelectedCategory(null)}
-                sx={{ mr: 1 }}
-              >
-                <ChevronRightIcon />
-              </IconButton>
-            )}
-            <Typography variant="h5" fontWeight="bold">
-              {selectedCategory ? selectedCategory.name : "All Categories"}
-            </Typography>
-          </Box>
-          <IconButton 
+          <Typography variant="h5" fontWeight="bold" color="primary">
+            All Categories
+          </Typography>
+          <IconButton
             onClick={toggleDrawer(false)}
             sx={{
-              '&:hover': {
-                backgroundColor: theme.palette.action.hover
-              }
+              color: "text.secondary",
+              "&:hover": {
+                backgroundColor: "action.hover",
+              },
             }}
           >
             <CloseIcon />
@@ -392,195 +297,123 @@ const Categories = () => {
         </Box>
 
         {/* Search bar */}
-        {!selectedCategory && (
-          <Box mb={3} sx={{ position: 'sticky', top: 64, zIndex: 1, backgroundColor: theme.palette.background.paper }}>
-            <TextField
-              fullWidth
-              placeholder="Search categories..."
-              variant="outlined"
-              size="small"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon color="action" />
-                  </InputAdornment>
-                ),
-                sx: {
-                  borderRadius: 8,
-                  backgroundColor: theme.palette.background.default,
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.hover
-                  }
+        <Box mb={3}>
+          <TextField
+            fullWidth
+            placeholder="Search categories..."
+            variant="outlined"
+            size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon color="action" />
+                </InputAdornment>
+              ),
+              sx: {
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                "&:hover": {
+                  backgroundColor: "action.hover",
                 },
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "divider",
+                },
+                "&:hover fieldset": {
+                  borderColor: "primary.main",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "primary.main",
+                },
+              },
+            }}
+          />
+        </Box>
+
+        {/* Categories list in responsive grid */}
+        <List
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
+            gap: 1,
+            overflow: "auto",
+            maxHeight: "75vh",
+            pr: 1,
+            "&::-webkit-scrollbar": {
+              width: "6px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "transparent",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: theme.palette.divider,
+              borderRadius: "3px",
+            },
+          }}
+        >
+          {filteredCategories.map((category) => (
+            <ListItem
+              key={category._id}
+              onClick={() => {
+                navigate(`/category/${category.name}`, { state: { category } });
+                setDrawerOpen(false);
               }}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: theme.palette.primary.main,
-                    borderWidth: 1
-                  }
-                }
+                p: 1.5,
+                borderRadius: 2,
+                cursor: "pointer",
+                transition: "all 0.3s",
+                "&:hover": {
+                  backgroundColor: "action.hover",
+                  transform: "translateX(4px)",
+                },
               }}
-            />
-          </Box>
-        )}
-
-        {/* Category Details View */}
-        {selectedCategory ? (
-          <Box sx={{ p: 2 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: { xs: 'column', sm: 'row' }, 
-              alignItems: 'center', 
-              mb: 3,
-              gap: 2
-            }}>
-              <Avatar
-                src={selectedCategory.url}
-                alt={selectedCategory.name}
-                sx={{ 
-                  width: 80, 
-                  height: 80,
-                  borderRadius: '12px',
-                  boxShadow: theme.shadows[2]
-                }}
-              />
-              <Box>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {selectedCategory.name}
-                </Typography>
-                {selectedCategory.description && (
-                  <Typography variant="body2" color="text.secondary">
-                    {selectedCategory.description}
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-            
-            <Box sx={{ mt: 3 }}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                Popular in this category
-              </Typography>
-              <Box sx={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: 1,
-                mt: 2
-              }}>
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <Chip
-                    key={index}
-                    label={`Item ${index + 1}`}
-                    clickable
-                    sx={{
-                      borderRadius: '8px',
-                      '&:hover': {
-                        backgroundColor: theme.palette.primary.light,
-                        color: theme.palette.primary.contrastText
-                      }
-                    }}
-                  />
-                ))}
-              </Box>
-            </Box>
-            
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                About this category
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {selectedCategory.description || 
-                  `Explore a wide range of ${selectedCategory.name.toLowerCase()} options. Find the best deals and quality products in this category.`}
-              </Typography>
-            </Box>
-            
-            <Box sx={{ 
-              mt: 4,
-              display: 'flex',
-              justifyContent: 'center'
-            }}>
-              <Chip
-                label={`Browse ${selectedCategory.name}`}
-                color="primary"
-                onClick={() => {
-                  navigate(`/category/${selectedCategory.name}`, { state: { category: selectedCategory } });
-                  setDrawerOpen(false);
-                }}
-                sx={{
-                  px: 3,
-                  py: 1.5,
-                  fontSize: '1rem',
-                  fontWeight: 'bold'
-                }}
-              />
-            </Box>
-          </Box>
-        ) : (
-          /* Categories List */
-          <List
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { 
-                xs: "1fr", 
-                sm: "repeat(2, 1fr)", 
-                md: "repeat(3, 1fr)" 
-              },
-              gap: 1,
-              overflow: "auto",
-              maxHeight: "calc(100vh - 180px)",
-              pr: 1,
-              mt: 1
-            }}
-          >
-            {filteredCategories.map((category) => (
-              <ListItem
-                key={category._id}
-                onClick={() => handleCategoryClick(category)}
-                sx={{
-                  p: 1.2,
-                  borderRadius: '8px',
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    backgroundColor: theme.palette.action.hover,
-                    transform: 'translateX(4px)'
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>
-                  <Avatar
-                    src={
-                      category.url ||
-                      "https://akam.cdn.jdmagicbox.com/images/icontent/newwap/web2022/hotkey_wedding_icon.gif?w=96&q=75"
-                    }
-                    alt={category.name}
-                    sx={{ 
-                      width: 36, 
-                      height: 36,
-                      borderRadius: '8px',
-                      backgroundColor: theme.palette.grey[200]
-                    }}
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  primary={category.name}
-                  primaryTypographyProps={{ 
-                    fontSize: 14,
-                    fontWeight: 500 
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>
+                <img
+                  src={
+                    category.url ||
+                    "https://akam.cdn.jdmagicbox.com/images/icontent/newwap/web2022/hotkey_wedding_icon.gif?w=96&q=75"
+                  }
+                  alt={category.name}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    objectFit: "contain",
+                    borderRadius: "6px",
                   }}
+                  loading="lazy"
                 />
-                <ChevronRightIcon 
-                  sx={{ 
-                    color: theme.palette.action.active,
-                    fontSize: '1.25rem'
-                  }} 
-                />
-              </ListItem>
-            ))}
-          </List>
-        )}
+              </ListItemIcon>
+              <ListItemText
+                primary={category.name}
+                primaryTypographyProps={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "text.primary",
+                }}
+              />
+            </ListItem>
+          ))}
+          {filteredCategories.length === 0 && (
+            <Typography
+              variant="body1"
+              sx={{
+                textAlign: "center",
+                color: "text.secondary",
+                gridColumn: "1 / -1",
+                mt: 3,
+              }}
+            >
+              No categories found matching your search
+            </Typography>
+          )}
+        </List>
       </Drawer>
     </Box>
   );
