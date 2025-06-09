@@ -1,18 +1,34 @@
 {
   "files": {
-    "main.css": "/static/css/main.2c18b117.css",
-    "main.js": "/static/js/main.edd59aae.js",
+    "main.css": "/static/css/main.e7530c36.css",
+    "main.js": "/static/js/main.aeb0ec1d.js",
+    "static/media/weddingguide1_cover.jpg": "/static/media/weddingguide1_cover.31b8e5e6367355fe2c75.jpg",
+    "static/media/bike.jpg": "/static/media/bike.bd2a2eb0ce29244a440d.jpg",
     "static/media/gatik.jpg": "/static/media/gatik.aafb84ff29f152b1315a.jpg",
+    "static/media/grocery.jpg": "/static/media/grocery.b980b1378e42c48d3694.jpg",
+    "static/media/bike1.jpg": "/static/media/bike1.4763ad9d5c7e98721783.jpg",
+    "static/media/ac.jpg": "/static/media/ac.6dd515f4b61ae785a278.jpg",
+    "static/media/local.jpg": "/static/media/local.47496386dfea5fac5964.jpg",
+    "static/media/truck.jpg": "/static/media/truck.b8d6e4214de88ae8f0c0.jpg",
+    "static/media/interr.webp": "/static/media/interr.2acc46cf69453c8e4427.webp",
+    "static/media/wedding1.jpg": "/static/media/wedding1.51bb444c30c967e1e38a.jpg",
+    "static/media/car.jpg": "/static/media/car.683993f668e249e40451.jpg",
+    "static/media/National.webp": "/static/media/National.4a4981f48458040f03a7.webp",
+    "static/media/beauty.jpg": "/static/media/beauty.8eba42a14b1c32ace2b6.jpg",
+    "static/media/hair.jpg": "/static/media/hair.13b53c07713185e603f3.jpg",
+    "static/media/car.webp": "/static/media/car.273b7c8cf870419125b8.webp",
+    "static/media/wedding.avif": "/static/media/wedding.91f95b295e16b4f99da1.avif",
+    "static/media/spa.avif": "/static/media/spa.0f4edc8c889a3a8e486a.avif",
     "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
     "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
-    "main.2c18b117.css.map": "/static/css/main.2c18b117.css.map",
-    "main.edd59aae.js.map": "/static/js/main.edd59aae.js.map"
+    "main.e7530c36.css.map": "/static/css/main.e7530c36.css.map",
+    "main.aeb0ec1d.js.map": "/static/js/main.aeb0ec1d.js.map"
   },
   "entrypoints": [
-    "static/css/main.2c18b117.css",
-    "static/js/main.edd59aae.js"
+    "static/css/main.e7530c36.css",
+    "static/js/main.aeb0ec1d.js"
   ]
 }
