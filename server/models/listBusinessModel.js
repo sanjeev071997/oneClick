@@ -6,10 +6,12 @@ const businessSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Business name is required']
   },
+
   ownerName: {
     type: String,
     required: [true, 'Owner name is required']
   },
+
   phone: {
     type: String,
     required: [true, 'Phone number is required'],
@@ -18,6 +20,7 @@ const businessSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid phone number!`
     }
   },
+
   email: {
     type: String,
     validate: {
@@ -25,29 +28,46 @@ const businessSchema = new mongoose.Schema({
       message: (props) => `${props.value} is not a valid email!`
     }
   },
+
   address: {
     type: String,
     required: [true, 'Address is required']
   },
+
+  state:{
+    type:String,
+    required: [true, 'State is required']
+  },
+
+  city: {
+    type:String,
+    required: [true, 'City is required']
+  },
+
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
     required: [true, 'Category is required']
   },
+
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
     required: [true, 'User ID is required']
   },
+
   description: String,
+
   images: [{
     url: String,
     public_id: String
   }],
+  
   createdAt: {
     type: Date,
     default: () => new Date()
   },
+  
   updatedAt: {
     type: Date,
     default: () => new Date()

@@ -41,7 +41,9 @@ export const addBusiness = catchAsyncErrors(async (req, res, next) => {
 // Get All Businesses
 export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
   try {
-    const businesses = await Business.find().sort({ createdAt: -1 }).populate("category");
+    const businesses = await Business.find()
+      .sort({ createdAt: -1 })
+      .populate("category");
     res.status(200).json({
       success: true,
       data: businesses,
@@ -52,11 +54,15 @@ export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get Business by ID
-export const getBusinessByCategory = catchAsyncErrors(async (req, res, next) => {
+export const getBusinessByCategory = catchAsyncErrors(
+  async (req, res, next) => {
     try {
-     const {category} = req.body
-      const getBusiness = await Business.find({category}).sort({
-        createdAt: -1}).populate("category")
+      const { category } = req.body;
+      const getBusiness = await Business.find({ category })
+        .sort({
+          createdAt: -1,
+        })
+        .populate("category");
       res.status(201).json({
         success: true,
         data: getBusiness,
@@ -73,7 +79,8 @@ export const getUserBusiness = catchAsyncErrors(async (req, res, next) => {
     const userId = req.user.id;
     const businesses = await Business.find({ userId })
       .sort({ createdAt: -1 })
-      .populate("category", "name").populate("userId", "name");
+      .populate("category", "name")
+      .populate("userId", "name");
     res.status(200).json({
       success: true,
       data: businesses,
@@ -124,8 +131,7 @@ export const updateBusiness = catchAsyncErrors(async (req, res, next) => {
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
   }
-}
-);
+});
 
 // Delete Business
 export const deleteBusiness = catchAsyncErrors(async (req, res, next) => {
@@ -148,7 +154,4 @@ export const deleteBusiness = catchAsyncErrors(async (req, res, next) => {
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
   }
-}
-);
-
-
+});
