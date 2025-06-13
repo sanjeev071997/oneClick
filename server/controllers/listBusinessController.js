@@ -57,8 +57,8 @@ export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
 export const getBusinessByCategory = catchAsyncErrors(
   async (req, res, next) => {
     try {
-      const { category } = req.body;
-      const getBusiness = await Business.find({ category })
+      const { userId } = req.body;
+      const getBusiness = await Business.find({ userId })
         .sort({
           createdAt: -1,
         })
