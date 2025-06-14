@@ -27,13 +27,15 @@ import {
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
   Mic as MicIcon,
-} from "@mui/icons-material"; // Added MicIcon
+} from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "../axiosInstance";
-import { useDispatch } from "react-redux";
-import { logout } from '../redux/actions/userAction';
+import { useDispatch, useSelector } from "react-redux";
 import { Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import LoginIcon from '@mui/icons-material/Login';
+import axios from "../axiosInstance";
+import { logout } from '../redux/actions/userAction';
+import { Colors, FontSize, FontWeight, FontFamily } from "../Comman"
 
 const { confirm } = Modal;
 
@@ -46,8 +48,8 @@ const Navbar = () => {
   const [isListening, setIsListening] = useState(false); // Voice search state
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  
+  const { user } = useSelector((state) => state.user);
+
   // Voice recognition setup
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   recognition.continuous = false;
@@ -82,7 +84,7 @@ const Navbar = () => {
   const handleProfileClose = () => setAnchorEl(null);
   const toggleMobileSearch = () => setShowMobileSearch(!showMobileSearch);
 
-  const handleAddBusiness = () => navigate("/add/business");
+  const handleAddBusiness = () => navigate("/plans");
 
   const fetchCategories = async () => {
     try {
@@ -98,7 +100,7 @@ const Navbar = () => {
   useEffect(() => {
     fetchCategories();
     return () => {
-      recognition.abort(); 
+      recognition.abort();
     };
   }, []);
 
@@ -119,32 +121,27 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-  confirm({
-    title: "Are you sure you want to Log out?",
-    icon: <ExclamationCircleOutlined />,
-    content: "Your current session will be terminated.",
-    onOk() {
-      sessionStorage.setItem("justLoggedOut", "true");
-      dispatch(logout());
-      localStorage.clear();
-      navigate("/login", { replace: true });
-    },
-  });
-};
-
-  
-
+    confirm({
+      title: "Are you sure you want to Log out?",
+      icon: <ExclamationCircleOutlined />,
+      content: "Your current session will be terminated.",
+      onOk() {
+        sessionStorage.setItem("justLoggedOut", "true");
+        dispatch(logout());
+        localStorage.clear();
+        navigate("/login", { replace: true });
+      },
+    });
+  };
 
   return (
     <>
       <AppBar
-  
         position="sticky"
         sx={{
-         
           top: 0,
           zIndex: 1100,
-          background: "#fff",
+          background: Colors.LOGOColor,
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -156,16 +153,16 @@ const Navbar = () => {
                 to="/"
                 variant="h5"
                 sx={{
-                  fontWeight: "bold",
-                  color: "rgb(132, 19, 149)",
+                  fontFamily:FontFamily.arial,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.WHITE,
                   textDecoration: "none",
                   display: "flex",
                   alignItems: "center",
                   gap: 1,
                 }}
               >
-                <BusinessIcon fontSize="large" />
-                OneClick
+              BuzzDails
               </Typography>
             </Box>
 
@@ -178,8 +175,9 @@ const Navbar = () => {
                     p: "2px 8px",
                     display: "flex",
                     alignItems: "center",
-                    width: 400, 
-                    border: "1px solid #ddd",
+                    width: 400,
+                    border: "1px solid ",
+                    borderColor:Colors.LOGOColor,
                     borderRadius: 2,
                   }}
                 >
@@ -189,18 +187,18 @@ const Navbar = () => {
                     value={searchTerm}
                     onChange={handleSearchChange}
                   />
-                  <IconButton 
-                    type="button" 
+                  <IconButton
+                    type="button"
                     onClick={isListening ? stopVoiceSearch : startVoiceSearch}
-                    sx={{ 
+                    sx={{
                       p: "5px",
-                      color: isListening ? "red" : "#841395"
+                      color: isListening ? Colors.LOGOlight: Colors.LOGOColor
                     }}
                   >
                     <MicIcon />
                   </IconButton>
                   <IconButton type="submit" sx={{ p: "5px" }}>
-                    <SearchIcon sx={{ color: "#841395" }} />
+                    <SearchIcon sx={{ color: Colors.LOGOColor}} />
                   </IconButton>
                 </Paper>
 
@@ -238,16 +236,15 @@ const Navbar = () => {
                 onClick={handleAddBusiness}
                 sx={{
                   display: { xs: "none", md: "flex" },
-                  backgroundColor: "#841395",
-                  color: "white",
+                  backgroundColor:Colors.WHITE,
+                  color: Colors.LOGOColor,
                   borderRadius: 2,
                   px: 3,
                   py: 1,
+                  fontFamily:FontFamily.arial,
                   textTransform: "none",
-                  fontSize: "15px",
-                  "&:hover": {
-                    backgroundColor: "#6a0d7a",
-                  },
+                  fontSize: FontSize.fifteen,
+                
                 }}
               >
                 Add Business
@@ -255,72 +252,95 @@ const Navbar = () => {
 
               {/* Mobile Buttons */}
               <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
-                <IconButton sx={{ color: "#841395" }} onClick={toggleMobileSearch}>
+                <IconButton sx={{ color: Colors.WHITE}} onClick={toggleMobileSearch}>
                   <SearchIcon fontSize="large" />
                 </IconButton>
-                <IconButton sx={{ color: "#841395" }} onClick={handleAddBusiness}>
+                <IconButton sx={{ color: Colors.WHITE}} onClick={handleAddBusiness}>
                   <AddIcon fontSize="large" />
                 </IconButton>
               </Box>
 
               {/* Profile Menu */}
-              <IconButton sx={{ color: "#841395" }} onClick={handleProfileClick}>
-                <AccountCircleIcon fontSize="large" />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleProfileClose}
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                transformOrigin={{ vertical: "top", horizontal: "right" }}
-                PaperProps={{
-                  sx: {
-                    width: 220,
-                    borderRadius: 2,
-                    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
-                  },
+              {user ? (
+                <>
+                  <IconButton sx={{ color: Colors.WHITE}} onClick={handleProfileClick}>
+                    <AccountCircleIcon fontSize="large" />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleProfileClose}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    PaperProps={{
+                      sx: {
+                        bgcolor:Colors.LOGOColor,
+                        width: 220,
+                        borderRadius: 2,
+                        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.15)",
+                      },
+                    }}
+                  >
+                    <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                        <UpdateIcon sx={{ color:Colors.WHITE}} />
+                      </ListItemIcon>
+                      <ListItemText primary="Business"  sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+
+                    <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                        <UpdateIcon sx={{ color: Colors.WHITE }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Inquiries"  sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+
+                    <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                        <ReviewsIcon sx={{ color:Colors.WHITE}} />
+                      </ListItemIcon>
+                      <ListItemText primary="Reviews"  sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+
+                    <Divider sx={{ my: 0.5 }} />
+
+                    <MenuItem component={Link} to="/settings" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                        <SettingsIcon sx={{ color:Colors.WHITE }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Settings" sx={{ color:Colors.WHITE}} />
+                    </MenuItem>
+
+                    <MenuItem onClick={handleLogout}>
+                      <ListItemIcon>
+                        <LogoutIcon sx={{ color: Colors.WHITE }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Logout" sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <Button
+                component={Link}
+                to="/login"
+                startIcon={<LoginIcon />}
+                sx={{
+                  backgroundColor: Colors.WHITE,
+                  color: Colors.LOGOColor,
+                  textTransform: "none",
+                  fontFamily: FontFamily.arial,
+                  fontSize: FontSize.fifteen,
+                  borderRadius: 2,
+                  px: 2,
+                  py: 0.8,
+                 
                 }}
               >
-                <MenuItem component={Link} to="/Added/business" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <UpdateIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Business" />
-                </MenuItem>
+                Login
+              </Button>
+              
 
-                <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <UpdateIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Inquries" />
-                </MenuItem>
-                <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <ReviewsIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Reviews" />
-                </MenuItem>
-                <Divider sx={{ my: 0.5 }} />
-                <MenuItem component={Link} to="/settings" onClick={handleProfileClose}>
-                  <ListItemIcon>
-                    <SettingsIcon sx={{ color: "#841395" }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Settings" />
-                </MenuItem>
-                {
-                  token ?  <MenuItem onClick={handleLogout}>
-                      <ListItemIcon>
-                        <LogoutIcon sx={{ color: "#841395" }} />
-                      </ListItemIcon>
-                      <ListItemText primary="Logout" />
-                    </MenuItem>:<MenuItem component={Link} to="/login" onClick={handleProfileClose}>
-                    <ListItemIcon>
-                      <LogoutIcon sx={{ color: "#841395" }} />
-                    </ListItemIcon>
-                    <ListItemText primary="Login" />
-                  </MenuItem>
-                }
-              </Menu>
+              )}
             </Box>
           </Toolbar>
         </Container>
@@ -356,14 +376,14 @@ const Navbar = () => {
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
-              <IconButton 
+              <IconButton
                 onClick={isListening ? stopVoiceSearch : startVoiceSearch}
-                sx={{ color: isListening ? "red" : "#841395" }}
+                sx={{ color: isListening ? "red" : Colors.LOGOColor}}
               >
                 <MicIcon />
               </IconButton>
               <IconButton type="submit">
-                <SearchIcon sx={{ color: "#841395" }} />
+                <SearchIcon sx={{ color: Colors.LOGOColor}} />
               </IconButton>
             </Paper>
 
@@ -374,7 +394,8 @@ const Navbar = () => {
                   mt: 1,
                   maxHeight: 300,
                   overflowY: "auto",
-                  border: "1px solid #ccc",
+                  border: "1px solid ",
+                 
                 }}
               >
                 <List>

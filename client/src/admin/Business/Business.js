@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Typography,
@@ -10,7 +9,7 @@ import {
   TableRow,
   Paper,
   IconButton,
-  Switch,
+  Switch, 
   Dialog,
   DialogTitle,
   DialogContent,
@@ -27,7 +26,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import PageTitle from "../../Components/PageTitle";
 import axios from "../../axiosInstance";
 import ViewBusiness from "./ViewBusiness";
-import { Modal, message } from "antd";
+import { Divider, Modal, message } from "antd";
 
 const Business = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -38,6 +37,7 @@ const Business = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState([]);
 
+  // Function to fetch business data from the API
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get("/api/v1/business/all");
@@ -50,20 +50,23 @@ const Business = () => {
     }
   };
 
+  // Fetch businesses on component mount
   useEffect(() => {
     fetchBusinesses();
   }, []);
 
+  // Handler for search input changes
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page on search
   };
 
+  // Filter businesses based on search term
   const filteredBusinesses = businesses.filter((business) =>
     business.businessName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // ✅ Show confirmation modal before delete
+  // Show confirmation modal before deleting a business
   const confirmDelete = (id) => {
     Modal.confirm({
       title: "Are you sure you want to delete this business?",
@@ -76,11 +79,13 @@ const Business = () => {
     });
   };
 
+  // Function to handle business deletion
   const handleDelete = async (id) => {
     try {
       await axios.delete("/api/v1/business/delete", {
-        data: { id }, 
+        data: { id },
       });
+     
       setBusinesses((prev) =>
         prev.filter((business) => business._id !== id)
       );
@@ -90,8 +95,8 @@ const Business = () => {
       message.error("Failed to delete business");
     }
   };
-  
 
+ 
   const handleView = (business) => {
     setSelectedBusiness(business);
     setOpenDialog(true);
@@ -134,6 +139,7 @@ const Business = () => {
         </MUILink>
         <Typography sx={{ color: "primary.main" }}>Business</Typography>
       </Breadcrumbs>
+      <Divider />
 
       <TextField
         fullWidth
@@ -170,15 +176,26 @@ const Business = () => {
 
       <TableContainer component={Paper}>
         <Table>
-          <TableHead className="table-head">
+          <TableHead
+            sx={{
+              backgroundColor: "#275559", 
+              "& .MuiTableCell-head": { 
+                color: "white",
+                fontWeight: "bold",
+                fontFamily: "Poppins, sans-serif",
+              },
+            }}
+          >
             <TableRow>
-              <TableCell className="table-head-cell">#</TableCell>
-              <TableCell className="table-head-cell">Actions</TableCell>
-              <TableCell className="table-head-cell">Business Image</TableCell>
-              <TableCell className="table-head-cell">Owner</TableCell>
-              <TableCell className="table-head-cell">Business</TableCell>
-              <TableCell className="table-head-cell">Category</TableCell>
-              <TableCell className="table-head-cell">Phone</TableCell>
+              <TableCell>#</TableCell>
+              <TableCell>Actions</TableCell>
+              <TableCell>Business Image</TableCell>
+              <TableCell>Owner</TableCell>
+              <TableCell>Business</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell>Phone</TableCell>
+              <TableCell>State</TableCell> 
+              <TableCell>City</TableCell>  
             </TableRow>
           </TableHead>
           <TableBody>
@@ -196,15 +213,17 @@ const Business = () => {
                 </TableCell>
                 <TableCell>
                   <Avatar
-                    src={business.images[0]?.url}
-                    alt="Profile"
+                    src={business.images && business.images.length > 0 ? business.images[0].url : ''} 
+                    alt="Business Image" 
                     sx={{ width: 100, height: 100 }}
                   />
                 </TableCell>
                 <TableCell>{business.ownerName}</TableCell>
                 <TableCell>{business.businessName}</TableCell>
-                <TableCell>{business.category.name}</TableCell>
+                <TableCell>{business.category?.name}</TableCell> 
                 <TableCell>{business.phone}</TableCell>
+                <TableCell>{business.state}</TableCell> 
+                <TableCell>{business.city}</TableCell> 
               </TableRow>
             ))}
           </TableBody>
@@ -216,6 +235,7 @@ const Business = () => {
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         maxWidth="md"
+        fullWidth
       >
         <DialogTitle
           sx={{
@@ -239,7 +259,7 @@ const Business = () => {
           </IconButton>
         </DialogTitle>
         <hr />
-        <DialogContent>
+        <DialogContent dividers> 
           {selectedBusiness && <ViewBusiness businessData={selectedBusiness} />}
         </DialogContent>
       </Dialog>

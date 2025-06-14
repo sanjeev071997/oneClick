@@ -3,6 +3,7 @@ import { Grid, Typography, Box, Container, useTheme, useMediaQuery } from "@mui/
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
 import { styled } from "@mui/system";
+import { Colors,  FontWeight, FontFamily } from "../Comman"
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
@@ -10,8 +11,9 @@ const SectionContainer = styled(Box)(({ theme }) => ({
 }));
 
 const GradientText = styled(Typography)(({ theme }) => ({
-  background: `linear-gradient(45deg, ${theme.palette.primary.main} 30%, ${theme.palette.secondary.main} 90%)`,
+  background: `linear-gradient(45deg, ${Colors.LOGOColor} 60%, ${Colors.LOGOlight} 90%)`,
   WebkitBackgroundClip: "text",
+  fontWeight: FontWeight.heading2,
   WebkitTextFillColor: "transparent",
   display: "inline-block",
 }));
@@ -38,15 +40,22 @@ const AboutUs = () => {
           <Container maxWidth="lg">
             <Grid container alignItems="center" spacing={6}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h2" gutterBottom sx={{ fontWeight: 700 }}>
+                <Typography variant="h2" gutterBottom sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   <GradientText>Our Story</GradientText> Begins Here
                 </Typography>
-                <Typography variant="h6" color="text.secondary" paragraph>
+                <Typography variant="h6" paragraph sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   HubSpot's company and culture are crafted, not cobbled, for a delightful experience.
                 </Typography>
-                <Typography variant="body1" color="text.secondary">
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: Colors.LOGOColor,
+                    fontFamily: FontFamily.inriaSerif,
+                  }}
+                >
                   Founded in 2006, we've grown from a simple idea to a global platform helping millions of businesses grow better.
                 </Typography>
+
               </Grid>
               <Grid item xs={12} md={6}>
                 <StyledImage
@@ -71,16 +80,16 @@ const AboutUs = () => {
                 />
               </Grid>
               <Grid item xs={12} md={6}>
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+                <Typography variant="h4" gutterBottom sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   Our <GradientText>Mission</GradientText>
                 </Typography>
-                <Typography variant="h6" color="primary" paragraph>
+                <Typography variant="h6" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   Helping Millions of Organizations Grow Better
                 </Typography>
-                <Typography variant="body1" color="text.secondary" paragraph>
+                <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   We believe not just in growing bigger, but in growing better. Growing better means aligning the success of your business with the success of your customers.
                 </Typography>
-                <Typography variant="body1" color="text.secondary">
+                <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   Our platform is designed to create win-win scenarios where businesses and their customers thrive together.
                 </Typography>
               </Grid>
@@ -93,10 +102,10 @@ const AboutUs = () => {
           <Container maxWidth="lg">
             <Grid container alignItems="center" spacing={6}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+                <Typography variant="h4" gutterBottom sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                   Our <GradientText>Journey</GradientText>
                 </Typography>
-                <Box sx={{ 
+                <Box sx={{
                   position: "relative",
                   pl: 3,
                   "&:before": {
@@ -106,17 +115,17 @@ const AboutUs = () => {
                     top: 0,
                     bottom: 0,
                     width: "4px",
-                    background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                    background: `linear-gradient(to bottom, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
                     borderRadius: "2px",
                   }
                 }}>
-                  <Typography variant="body1" color="text.secondary" paragraph>
+                  <Typography variant="body1"sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                     In 2004, fellow MIT graduate students Brian Halligan and Dharmesh Shah noticed a major shift in consumer behavior. Buyers no longer responded to interruptive ads—they wanted helpful information.
                   </Typography>
-                  <Typography variant="body1" color="text.secondary" paragraph>
+                  <Typography variant="body1"sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                     In 2006, they founded HubSpot to help companies shift from interruptive marketing to inbound marketing.
                   </Typography>
-                  <Typography variant="body1" color="text.secondary">
+                  <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
                     Today, led by CEO Yamini Rangan, HubSpot serves millions of customers worldwide with our AI-powered Smart CRM platform.
                   </Typography>
                 </Box>
@@ -132,9 +141,9 @@ const AboutUs = () => {
           </Container>
         </SectionContainer>
 
-        
-         
-       
+
+
+
       </Box>
       <Footer />
     </>

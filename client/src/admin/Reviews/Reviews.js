@@ -3,6 +3,7 @@ import axios from '../../axiosInstance';
 import {
   Container,
   Table,
+  IconButton,
   TableHead,
   TableBody,
   TableRow,
@@ -17,9 +18,11 @@ import {
   Breadcrumbs,
   Link
 } from '@mui/material';
-import { Delete, Star, Home, Search } from '@mui/icons-material';
+import { Delete, Star} from '@mui/icons-material';
 import { Divider, message } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
+import SearchIcon from "@mui/icons-material/Search";
+
 
 const ReviewsDashboard = () => {
   const [reviews, setReviews] = useState([]);
@@ -106,7 +109,7 @@ const ReviewsDashboard = () => {
           Dashboard
         </Link>
 
-        <Typography sx={{ color: "primary.main" }}>Business</Typography>
+        <Typography sx={{ color: "primary.main" }}>Reviews</Typography>
       </Breadcrumbs>
       <Divider />
 
@@ -121,18 +124,36 @@ const ReviewsDashboard = () => {
 
       {/* Search Bar */}
       <Box sx={{ mb: 3 }}>
-        <TextField
+       
+         <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search by business name or reviewer..."
+          placeholder="Search by Categories Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
-            startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />,
+            startAdornment: (
+              <IconButton>
+                <SearchIcon sx={{ color: "#1976d2" }} />
+              </IconButton>
+            ),
           }}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: 10,
+            mb: 3,
+            mt: 2,
+            bgcolor: "white",
+            borderRadius: "20px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                border: "none",
+              },
+              "&:hover fieldset": {
+                border: "none",
+              },
+              "&.Mui-focused fieldset": {
+                border: "none",
+              },
             },
           }}
         />

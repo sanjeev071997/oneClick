@@ -14,9 +14,9 @@ import {
   Form,
   Button,
   message,
- 
   Popconfirm,
   Divider,
+  Empty,
 } from 'antd';
 import {
   UserOutlined,
@@ -29,14 +29,13 @@ import {
   DeleteOutlined,
   SearchOutlined,
   CloseOutlined,
+  CommentOutlined,
 } from '@ant-design/icons';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
+import { Colors, FontSize } from '../Comman';
 
 const { Title, Text, Paragraph } = Typography;
-
-const LOGOGREEN = '#296248';
-const LOGOYELLOW = '#FCECA1';
 
 const Queries = () => {
   const [queries, setQueries] = useState([]);
@@ -46,6 +45,9 @@ const Queries = () => {
   const [currentQuery, setCurrentQuery] = useState(null);
   const [form] = Form.useForm();
   const [searchTerm, setSearchTerm] = useState('');
+  const [focused, setFocused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const isActive = focused || hovered;
 
   const fetchQueries = async () => {
     setLoading(true);
@@ -146,23 +148,48 @@ const Queries = () => {
           style={{ marginBottom: 20, flexWrap: 'wrap' }}
         >
           <Col xs={24} sm={12} md={8}>
-            <Title level={2} style={{ color: LOGOGREEN, marginBottom: 0 }}>
+            <Title level={2} style={{ color: Colors.LOGOColor, marginBottom: 0 }}>
               Customer Enquiries
             </Title>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <Input
-              allowClear
-              placeholder="Search by user or business..."
-              prefix={<SearchOutlined style={{ color: LOGOGREEN }} />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+            <div
               style={{
-                borderRadius: 8,
-                boxShadow: '0 2px 8px rgba(41, 98, 72, 0.15)',
-                maxWidth: '100%',
+               
+                height: 3,
+                width: '60%',
+                backgroundColor: Colors.LOGOlight,
+                marginTop: 4,
+                borderRadius: 2,
               }}
             />
+          </Col>
+
+
+          <Col xs={24} sm={12} md={8}>
+            <div
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+            >
+              <Input
+                allowClear
+                placeholder="Search by user or business..."
+                prefix={
+                  <SearchOutlined
+                    style={{ color: isActive ? Colors.LOGOlight : Colors.LOGOColor }}
+                  />
+                }
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                style={{
+                  borderRadius: 8,
+                  boxShadow: `0 2px 8px ${isActive ? Colors.LOGOlight : Colors.LOGOColor}15`,
+                  maxWidth: '100%',
+                  border: `1px solid ${isActive ? Colors.LOGOlight : '#d9d9d9'}`,
+                  transition: 'all 0.3s',
+                }}
+              />
+            </div>
           </Col>
         </Row>
 
@@ -172,8 +199,66 @@ const Queries = () => {
             <Text>Loading enquiries...</Text>
           </div>
         ) : filteredQueries.length === 0 ? (
-          <div style={{ textAlign: 'center', marginTop: 100 }}>
-            <Text type="secondary">No enquiries found.</Text>
+          <div style={{
+            textAlign: 'center',
+            margin: '40px 0',
+            padding: '60px 40px',
+            borderRadius: 12,
+            background: `linear-gradient(135deg, ${Colors.LOGOColor}10, ${Colors.LOGOlight}10)`,
+            border: `1px dashed ${Colors.LOGOColor}50`,
+            boxShadow: `0 4px 12px ${Colors.LOGOColor}10`
+          }}>
+            <Empty
+              image={
+                <div style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: '50%',
+                  background: `linear-gradient(135deg, ${Colors.LOGOColor}20, ${Colors.LOGOlight}20)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 20px',
+                  border: `1px solid ${Colors.LOGOColor}30`
+                }}>
+                  <CommentOutlined style={{
+                    fontSize: 48,
+                    color: Colors.LOGOColor,
+                  }} />
+                </div>
+              }
+              description={
+                <Space direction="vertical" size="small">
+                  <Text style={{
+                    fontSize: FontSize.large,
+                    color: Colors.LOGOColor,
+                    fontWeight: 500
+                  }}>
+                    No Enquiries Yet
+                  </Text>
+                  <Text type="secondary" style={{
+                    maxWidth: 500,
+                    color: Colors.LOGOColor,
+                    opacity: 0.8
+                  }}>
+                    When customers inquire about your services, they'll appear here.
+                  </Text>
+                </Space>
+              }
+            >
+              <Button
+                type="primary"
+                style={{
+                  background: `linear-gradient(to bottom, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                  borderColor: Colors.LOGOColor,
+                  color: Colors.WHITE,
+                  marginTop: 20
+                }}
+                onClick={fetchQueries}
+              >
+                Check for New Enquiries
+              </Button>
+            </Empty>
           </div>
         ) : (
           <Row gutter={[24, 24]}>
@@ -197,20 +282,25 @@ const Queries = () => {
                         size={56}
                         src={q.userId?.profilePicture?.url}
                         icon={<UserOutlined />}
-                        style={{ backgroundColor: LOGOGREEN }}
+                        style={{ backgroundColor: Colors.LOGOlight }}
                       />
                       <div>
-                        <Title level={5} style={{ margin: 0 }}>
+                        <Title level={5} style={{ margin: 0, color: Colors.LOGOColor }}>
                           {q.userId?.name || 'N/A'}
                         </Title>
-                        <Text type="secondary" style={{ fontSize: 14 }}>
-                          <PhoneOutlined /> {q.userId?.phone || 'N/A'}
+
+                        <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
+                          <PhoneOutlined style={{ color: Colors.LOGOlight, marginRight: 4 }} />
+                          {q.userId?.phone || 'N/A'}
                         </Text>
                         <br />
-                        <Text type="secondary" style={{ fontSize: 14 }}>
-                          <MailOutlined /> {q.userId?.email || 'N/A'}
+
+                        <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
+                          <MailOutlined style={{ color: Colors.LOGOlight, marginRight: 4 }} />
+                          {q.userId?.email || 'N/A'}
                         </Text>
                       </div>
+
                     </Space>
 
                     <Divider style={{ margin: '12px 0' }} />
@@ -228,17 +318,20 @@ const Queries = () => {
                         <Avatar
                           size={56}
                           icon={<ShopOutlined />}
-                          style={{ backgroundColor: LOGOYELLOW, color: LOGOGREEN }}
+                          style={{ backgroundColor: Colors.LOGOlight, color: Colors.LOGOColor }}
                         />
                       )}
                       <div>
-                        <Title level={5} style={{ margin: 0, color: LOGOGREEN }}>
+                        <Title level={5} style={{ margin: 0, color: Colors.LOGOColor }}>
                           {q.businessId?.businessName || 'N/A'}
                         </Title>
-                        <Text type="secondary" style={{ fontSize: 14 }}>
-                          <PhoneOutlined /> {q.businessId?.phone || 'N/A'}
+
+                        <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
+                          <PhoneOutlined style={{ color: Colors.LOGOlight, marginRight: 4 }} />
+                          {q.businessId?.phone || 'N/A'}
                         </Text>
                       </div>
+
                     </Space>
 
                     <Divider style={{ margin: '12px 0' }} />
@@ -250,7 +343,7 @@ const Queries = () => {
                         overflow: 'hidden',
                         whiteSpace: 'normal',
                         textOverflow: 'ellipsis',
-                        color: '#333',
+                        color: Colors.LOGOColor,
                         fontSize: 14,
                       }}
                       title={q.message}
@@ -264,8 +357,8 @@ const Queries = () => {
                       align="center"
                       wrap
                     >
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        <CalendarOutlined />{' '}
+                      <Text style={{ fontSize: 12, color: Colors.LOGOColor }}>
+                        <CalendarOutlined style={{ color: Colors.LOGOlight, marginRight: 4 }} />
                         {new Date(q.createdAt).toLocaleDateString()}
                       </Text>
 
@@ -273,16 +366,21 @@ const Queries = () => {
                         <Tooltip title="View Message">
                           <Button
                             shape="circle"
-                            type="primary"
-                            ghost
-                            icon={<EyeOutlined />}
+                            type="default"
+                            icon={<EyeOutlined style={{ color: Colors.LOGOlight }} />}
                             onClick={() => openViewModal(q)}
+                            style={{
+                              borderColor: Colors.LOGOlight,
+                              color: Colors.LOGOlight,
+                            }}
                           />
                         </Tooltip>
+
+
                         <Tooltip title="Edit Enquiry">
                           <Button
                             shape="circle"
-                            style={{ backgroundColor: LOGOGREEN, color: '#fff' }}
+                            style={{ backgroundColor: Colors.LOGOColor, color: '#fff' }}
                             icon={<EditOutlined />}
                             onClick={() => openEditDrawer(q)}
                           />
@@ -315,79 +413,146 @@ const Queries = () => {
           bodyStyle={{ paddingBottom: 40 }}
           footer={
             <div style={{ textAlign: 'right' }}>
-              <Button onClick={closeEditDrawer} style={{ marginRight: 8 }}>
+              <Button
+                onClick={closeEditDrawer}
+                style={{
+                  marginRight: 8,
+                  backgroundImage: `linear-gradient(to right, ${Colors.LOGOlight}, ${Colors.LOGOColor})`,
+                  border: 'none',
+                  color: '#fff',
+                }}
+              >
                 Cancel
               </Button>
-              <Button onClick={handleUpdate} type="primary">
+
+              <Button
+                onClick={handleUpdate}
+                type="primary"
+                style={{
+                  backgroundImage: `linear-gradient(to right, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                  border: 'none',
+                  color: '#fff',
+                }}
+              >
                 Update
               </Button>
             </div>
           }
           maskClosable={false}
-          headerStyle={{ backgroundColor: LOGOGREEN, color: '#fff' }}
+          headerStyle={{
+            backgroundColor: Colors.LOGOColor,
+            color: '#fff',
+            borderBottom: `1px solid ${Colors.LOGOlight}30`,
+          }}
           closeIcon={<CloseOutlined style={{ color: '#fff' }} />}
         >
           <Form layout="vertical" form={form} preserve={false} style={{ maxWidth: '100%' }}>
-            <Divider orientation="left" plain>
+            <Divider orientation="left" plain style={{ color: Colors.LOGOColor }}>
               User Information
             </Divider>
             <Row gutter={16}>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Name"
+                  label={<span style={{ color: Colors.LOGOColor }}>Name</span>}
                   name="name"
                   rules={[{ required: true, message: 'Please input the name!' }]}
                 >
-                  <Input prefix={<UserOutlined />} placeholder="Name" />
+                  <Input
+                    prefix={<UserOutlined style={{ color: Colors.LOGOlight }} />}
+                    placeholder="Name"
+                    style={{
+                      borderColor: Colors.LOGOlight,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
                 <Form.Item
-                  label="Phone"
+                  label={<span style={{ color: Colors.LOGOColor }}>Phone</span>}
                   name="phone"
                   rules={[{ required: true, message: 'Please input the phone!' }]}
                 >
-                  <Input prefix={<PhoneOutlined />} placeholder="Phone" />
+                  <Input
+                    prefix={<PhoneOutlined style={{ color: Colors.LOGOlight }} />}
+                    placeholder="Phone"
+                    style={{
+                      borderColor: Colors.LOGOlight,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                    }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
 
             <Form.Item
-              label="Email"
+              label={<span style={{ color: Colors.LOGOColor }}>Email</span>}
               name="email"
               rules={[
                 { required: true, message: 'Please input the email!' },
                 { type: 'email', message: 'Invalid email!' },
               ]}
             >
-              <Input prefix={<MailOutlined />} placeholder="Email" />
+              <Input
+                prefix={<MailOutlined style={{ color: Colors.LOGOlight }} />}
+                placeholder="Email"
+                style={{
+                  borderColor: Colors.LOGOlight,
+                  boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                }}
+              />
             </Form.Item>
 
-            <Divider orientation="left" plain>
+            <Divider orientation="left" plain style={{ color: Colors.LOGOColor }}>
               Business Information
             </Divider>
             <Row gutter={16}>
               <Col xs={24} sm={12}>
-                <Form.Item label="Business Name" name="businessName">
-                  <Input prefix={<ShopOutlined />} readOnly />
+                <Form.Item
+                  label={<span style={{ color: Colors.LOGOColor }}>Business Name</span>}
+                  name="businessName"
+                >
+                  <Input
+                    prefix={<ShopOutlined style={{ color: Colors.LOGOlight }} />}
+                    readOnly
+                    style={{
+                      borderColor: Colors.LOGOlight,
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col xs={24} sm={12}>
-                <Form.Item label="Business Phone" name="businessPhone">
-                  <Input prefix={<PhoneOutlined />} readOnly />
+                <Form.Item
+                  label={<span style={{ color: Colors.LOGOColor }}>Business Phone</span>}
+                  name="businessPhone"
+                >
+                  <Input
+                    prefix={<PhoneOutlined style={{ color: Colors.LOGOlight }} />}
+                    readOnly
+                    style={{
+                      borderColor: Colors.LOGOlight,
+                    }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
 
-            <Divider orientation="left" plain>
+            <Divider orientation="left" plain style={{ color: Colors.LOGOColor }}>
               Message
             </Divider>
             <Form.Item
-              label="Message"
+              label={<span style={{ color: Colors.LOGOColor }}>Message</span>}
               name="message"
               rules={[{ required: true, message: 'Please input the message!' }]}
             >
-              <Input.TextArea rows={4} placeholder="Message" />
+              <Input.TextArea
+                rows={4}
+                placeholder="Message"
+                style={{
+                  borderColor: Colors.LOGOlight,
+                  boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                }}
+              />
             </Form.Item>
           </Form>
         </Drawer>
@@ -398,12 +563,20 @@ const Queries = () => {
           open={viewModalVisible}
           onCancel={closeViewModal}
           footer={[
-            <Button key="close" onClick={closeViewModal}>
+            <Button
+              key="close"
+              onClick={closeViewModal}
+              style={{
+                backgroundImage: `linear-gradient(to right, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                border: 'none',
+                color: '#fff',
+              }}
+            >
               Close
             </Button>,
           ]}
           width={Math.min(window.innerWidth * 0.85, 600)}
-          bodyStyle={{ fontSize: 16 }}
+          bodyStyle={{ fontSize: 16, color: Colors.LOGOColor }}
         >
           <Paragraph>{currentQuery?.message}</Paragraph>
         </Modal>

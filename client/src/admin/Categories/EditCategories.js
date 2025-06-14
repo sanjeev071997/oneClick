@@ -20,7 +20,7 @@ const EditCategories = ({ id, name, refreshData, url }) => {
   const [imageBase64, setImageBase64] = useState("");
 
   const handleClickOpen = () => {
-    setCategoryName(name); // Reset to original name on open
+    setCategoryName(name); 
     setIsModalOpen(true);
   };
 
@@ -93,7 +93,7 @@ const EditCategories = ({ id, name, refreshData, url }) => {
   return (
     <>
       <IconButton onClick={handleClickOpen}>
-        <EditIcon sx={{ color: "#1976d2" }} />
+        <EditIcon sx={{ color: "#1976d2",ml:3 }} />
       </IconButton>
 
       <Modal

@@ -129,12 +129,26 @@ export default function Profile() {
       <PageTitle title={`${user?.name}'s Profile | LAMPS`} />
 
       <Box sx={{ mb: 4 }}>
-        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
-          <MUILink component={Link} to="/dashboard" color="inherit" underline="hover">
-            Dashboard
-          </MUILink>
-          <Typography color="text.primary">Profile</Typography>
-        </Breadcrumbs>
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        sx={{
+          mb: 5,
+          backgroundColor: "#fff",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        }}
+      >
+        <MUILink
+          component={Link}
+          to="/dashboard"
+          sx={{ color: "inherit", textDecoration: "none" }}
+        >
+          Dashboard
+        </MUILink>
+        <Typography sx={{ color: "primary.main" }}>Profile</Typography>
+      </Breadcrumbs>
+      <Divider />
 
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'text.primary' }}>
           My Profile

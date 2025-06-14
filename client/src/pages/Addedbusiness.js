@@ -1,670 +1,431 @@
 
 
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from '../axiosInstance';
-import { message } from 'antd';
-import Navbar from '../Components/Navbar';
-import Footer from '../Components/Footer';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import {  Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import { Autoplay } from 'swiper/modules';
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Divider,
   Box,
-  Skeleton,
-  IconButton,
-  Menu,
-  MenuItem,
+  Button,
+  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Button,
   TextField,
+  IconButton,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Avatar,
   Chip,
-  Tabs,
-  Tab,
+  Paper,
+  MenuItem,
   ImageList,
   ImageListItem,
-  ImageListItemBar
-} from '@mui/material';
+  ImageListItemBar,
+  Tabs,
+  Tab,
+  Badge,
+} from "@mui/material";
 import {
-  Email,
-  Phone,
-  LocationOn,
-  Person,
   Edit,
   Delete,
-  Close,
   AddPhotoAlternate,
-  Star,
+  Close,
   Business,
-} from '@mui/icons-material';
-
-
+  Phone,
+  Email,
+  LocationOn,
+  Star,
+  AddBusiness,
+  CheckCircle,
+  Image,
+} from "@mui/icons-material";
+import axios from "../axiosInstance";
+import { useSelector } from "react-redux";
+import { message } from "antd";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+import { Colors } from "../Comman";
 
 const AddedBusiness = () => {
-  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogType, setDialogType] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
-  const [openEditDialog, setOpenEditDialog] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [activeTab, setActiveTab] = useState(0);
+  const [formData, setFormData] = useState({
+    businessName: "",
+    phone: "",
+    email: "",
+    address: "",
+    description: "",
+    images: [],
+  });
   const [newImages, setNewImages] = useState([]);
+  const [deletedImages, setDeletedImages] = useState([]);
+  const [activeTab, setActiveTab] = useState(0);
 
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
-
+  // Fetch businesses
   const fetchBusinesses = async () => {
     try {
-      setLoading(true);
-      const response = await axios.get('/api/v1/business/get');
-      setBusinesses(response.data.data);
+      const res = await axios.post("/api/v1/business/get", { userId: user._id });
+      setBusinesses(res.data.data);
     } catch (error) {
-      message.error('Failed to fetch businesses');
+      message.error("Failed to fetch businesses");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleMenuOpen = (event, business) => {
-    setAnchorEl(event.currentTarget);
+  useEffect(() => {
+    if (user?._id) fetchBusinesses();
+  }, [user]);
+
+  // Handle dialog operations
+  const handleOpenDialog = (type, business = null) => {
+    setDialogType(type);
     setSelectedBusiness(business);
+    if (type === "edit" && business) {
+      setFormData({
+        businessName: business.businessName,
+        phone: business.phone,
+        email: business.email,
+        address: business.address,
+        description: business.description,
+        images: business.images || [],
+      });
+      setDeletedImages([]);
+    }
+    setOpenDialog(true);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedBusiness(null);
-  };
-
-  const handleEditClick = () => {
-    setFormData({
-      id: selectedBusiness._id,
-      businessName: selectedBusiness.businessName,
-      ownerName: selectedBusiness.ownerName,
-      phone: selectedBusiness.phone,
-      email: selectedBusiness.email,
-      address: selectedBusiness.address,
-      description: selectedBusiness.description,
-      category: selectedBusiness.category?._id,
-      images: selectedBusiness.images || []
-    });
-    setOpenEditDialog(true);
-    handleMenuClose();
-  };
-
-  const handleDeleteClick = () => {
-    setOpenDeleteDialog(true);
-    handleMenuClose();
-  };
-
-  const handleEditDialogClose = () => {
-    setOpenEditDialog(false);
-    setSelectedBusiness(null);
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
     setNewImages([]);
+    setActiveTab(0);
   };
 
-  const handleDeleteDialogClose = () => {
-    setOpenDeleteDialog(false);
-    setSelectedBusiness(null);
-  };
-
-  const handleInputChange = (e) => {
+  // Handle form changes
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Handle image upload
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImagePreviews = files.map(file => ({
-      url: URL.createObjectURL(file),
+    const files = Array.from(e.target.files).slice(0, 5 - formData.images.length + deletedImages.length - newImages.length);
+    const previews = files.map(file => ({
       file,
+      url: URL.createObjectURL(file),
       isNew: true
     }));
-    setNewImages(prev => [...prev, ...newImagePreviews]);
+    setNewImages(prev => [...prev, ...previews]);
   };
 
-  const handleRemoveImage = (index, isNew) => {
+  const handleRemoveImage = (imageId, isNew) => {
     if (isNew) {
-      setNewImages(prev => prev.filter((_, i) => i !== index));
+      setNewImages(prev => prev.filter(img => img.url !== imageId));
     } else {
+      setDeletedImages(prev => [...prev, imageId]);
       setFormData(prev => ({
         ...prev,
-        images: prev.images.filter((_, i) => i !== index)
+        images: prev.images.filter(img => img._id !== imageId)
       }));
     }
   };
 
-  const handleUpdateBusiness = async () => {
+  // Handle business update
+  const handleUpdate = async () => {
+    setLoading(true);
     try {
       const formDataToSend = new FormData();
-      Object.keys(formData).forEach(key => {
-        if (key !== 'images') {
-          formDataToSend.append(key, formData[key]);
-        }
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key !== "images") formDataToSend.append(key, value);
       });
 
-      const existingImageUrls = formData.images.map(img => img.url);
-      formDataToSend.append('images', JSON.stringify(existingImageUrls));
+      newImages.forEach(img => formDataToSend.append("images", img.file));
+      formDataToSend.append("deletedImages", JSON.stringify(deletedImages));
 
-      newImages.forEach((img) => {
-        formDataToSend.append('images', img.file);
-      });
-
-      await axios.put('/api/v1/business/update', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      fetchBusinesses();
-      message.success('Business updated successfully');
-      setOpenEditDialog(false);
-      setNewImages([]);
+      const res = await axios.put(`/api/v1/business/update/${selectedBusiness._id}`, formDataToSend);
+      if (res.data.success) {
+        message.success("Business updated successfully");
+        fetchBusinesses();
+        handleCloseDialog();
+      }
     } catch (error) {
-      console.error('Error updating business:', error);
-      message.error('Failed to update business');
+      message.error(error.response?.data?.message || "Update failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleDeleteBusiness = async (id) => {
+  // Handle business deletion
+  const handleDelete = async () => {
+    setLoading(true);
     try {
-      await axios.delete('/api/v1/business/delete', {
-        data: {id},
-      });
-      fetchBusinesses();
-      message.success('Business deleted successfully');
-      setOpenDeleteDialog(false);
+      const res = await axios.delete(`/api/v1/business/delete/${selectedBusiness._id}`);
+      if (res.data.success) {
+        message.success("Business deleted successfully");
+        fetchBusinesses();
+        handleCloseDialog();
+      }
     } catch (error) {
-      console.error('Error deleting business:', error);
-      message.error('Failed to delete business');
+      message.error("Deletion failed");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
-  if (loading) {
+  if (loading && !businesses.length) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Grid container spacing={3}>
-          {[...Array(3)].map((_, index) => (
-            <Grid item xs={12} sm={6} md={6} key={index}>
-              <Card>
-                <Skeleton variant="rectangular" height={180} animation="wave" />
-                <CardContent>
-                  <Skeleton variant="text" width="60%" height={32} />
-                  <Skeleton variant="text" width="40%" height={24} />
-                  <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                    <Skeleton variant="circular" width={24} height={24} />
-                    <Skeleton variant="text" width="60%" height={24} />
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                    <Skeleton variant="circular" width={24} height={24} />
-                    <Skeleton variant="text" width="60%" height={24} />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+        <CircularProgress size={60} />
+      </Box>
     );
   }
 
   return (
     <>
       <Navbar />
-      <Container sx={{ py: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight="bold" sx={{
-          mb: 4
-        }}>
-          My Businesses
-        </Typography>
-
+      <Container maxWidth="lg" sx={{ py: 4 }}>
         {businesses.length === 0 ? (
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '60vh',
-            textAlign: 'center',
-            p: 4,
-            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-            borderRadius: 4,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.05)',
-            border: '1px solid rgba(255,255,255,0.3)',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: -50,
-              right: -50,
-              width: 200,
-              height: 200,
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(25,118,210,0.1) 0%, rgba(25,118,210,0) 70%)',
-            },
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              bottom: -30,
-              left: -30,
-              width: 150,
-              height: 150,
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(233,30,99,0.1) 0%, rgba(233,30,99,0) 70%)',
-            }
+          <Paper elevation={0} sx={{
+            p: 6,
+            textAlign: "center",
+            borderRadius: 3,
+            background: 'rgba(245, 245, 245, 0.7)',
+            backdropFilter: 'blur(10px)'
           }}>
             <Box sx={{
               width: 120,
               height: 120,
               borderRadius: '50%',
+              bgcolor: 'primary.light',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              bgcolor: 'primary.main',
-              mb: 3,
-              position: 'relative',
-              '& svg': {
-                fontSize: 60,
-                color: 'white'
-              },
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                border: '2px dashed rgba(255,255,255,0.5)',
-                animation: 'spin 20s linear infinite',
-                '@keyframes spin': {
-                  '0%': { transform: 'rotate(0deg)' },
-                  '100%': { transform: 'rotate(360deg)' }
-                }
-              }
+              mx: 'auto',
+              mb: 3
             }}>
-              <Business />
+              <AddBusiness sx={{ fontSize: 60, color: "primary.main" }} />
             </Box>
-
-            <Typography variant="h4" component="h2" gutterBottom sx={{
-              fontWeight: 700,
-              color: 'text.primary',
-              position: 'relative',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: -8,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 80,
-                height: 4,
-                background: 'linear-gradient(90deg, #1976d2 0%, #e91e63 100%)',
-                borderRadius: 2
-              }
-            }}>
-              No Businesses Found
+            <Typography variant="h5" gutterBottom>
+              No Businesses Listed Yet
             </Typography>
-
-            <Typography variant="body1" sx={{
-              maxWidth: 500,
-              mb: 4,
-              fontSize: '1.1rem',
-              color: 'text.secondary'
-            }}>
-              You haven't added any businesses yet. Start building your portfolio by adding your first business listing.
+            <Typography color="text.secondary" mb={4}>
+              Get started by adding your first business to showcase your services
             </Typography>
-
             <Button
               variant="contained"
               size="large"
-              onClick={() => navigate("/add/business")}
-              startIcon={<AddPhotoAlternate />}
-              sx={{
-                borderRadius: 50,
-                px: 4,
-                py: 1.5,
-                fontSize: '1rem',
-                fontWeight: 600,
-                textTransform: 'none',
-                boxShadow: '0 4px 20px rgba(25, 118, 210, 0.3)',
-                transition: 'all 0.3s ease',
-                background: 'linear-gradient(90deg, #1976d2 0%, #2196f3 100%)',
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 6px 24px rgba(25, 118, 210, 0.4)',
-                  background: 'linear-gradient(90deg, #1565c0 0%, #1e88e5 100%)'
-                }
-              }}
+              sx={{ px: 5, borderRadius: 2 }}
             >
-              Add Your First Business
+              Create Your First Listing
             </Button>
-          </Box>
+          </Paper>
         ) : (
-          
-          <Container>
-            <Grid container spacing={3}>
-              {businesses.map((business) => (
-                <Grid item xs={12} sm={12} md={12} key={business._id}>
-                  <Card
-                    sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      transition: 'transform 0.3s, box-shadow 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
-                      },
-                    }}
-                  >
-                    <Box sx={{ position: 'relative', height: 450 }}>
-                      {business.images?.length > 0 ? (
-                       <Swiper
-                       modules={[Pagination, Autoplay]} 
-                       pagination={{ clickable: true }}  // Keep pagination
-                       autoplay={{ delay: 3000 }}
-                       style={{
-                         height: '100%',
-                         width: '100%',
-                         '--swiper-pagination-color': '#1976d2',
-                       
-                       }}
-                        >
-                          {business.images.map((image, index) => (
-                            <SwiperSlide key={index}>
-                              <CardMedia
-                                component="img"
-                                image={image.url}
-                                alt={`${business.businessName} ${index + 1}`}
-                                sx={{
-                                  height: '100%',
-                                  width: '100%',
-                                  objectFit: 'cover'
-                                }}
-                              />
-                            </SwiperSlide>
-                          ))}
-                        </Swiper>
-                      ) : (
-                        <Box sx={{
-                          height: '100%',
-                          width: '100%',
-                          backgroundColor: 'grey.200',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}>
-                          <Typography variant="body2" color="text.secondary">
-                            No Images Available
-                          </Typography>
-                        </Box>
-                      )}
-                      
-                      <IconButton
-                        aria-label="edit"
-                        onClick={(e) => handleMenuOpen(e, business)}
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          right: 8,
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 1)',
-                          },
-                          zIndex: 10
-                        }}
-                      >
-                        <Edit color="primary" />
-                      </IconButton>
-                      
-                      {business.category && (
-                        <Chip
-                          label={business.category.name}
-                          size="small"
-                          sx={{
-                            position: 'absolute',
-                            bottom: 16,
-                            left: 16,
-                            backgroundColor: 'primary.main',
-                            color: 'white',
-                            fontWeight: 'bold',
-                            zIndex: 10
-                          }}
-                        />
-                      )}
-                    </Box>
-                    
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                        <Typography variant="h6" fontWeight="bold">
-                          {business.businessName}
-                        </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Star color="warning" fontSize="small" />
-                          <Typography variant="body2" ml={0.5}>
-                            4.8
-                          </Typography>
-                        </Box>
-                      </Box>
+          <Grid container spacing={3}>
+            {businesses.map((business) => (
+              <Grid item xs={12} sm={6} lg={4} key={business._id}>
+                <Card sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+                    boxShadow: 3
+                  }
+                }}>
+                  <Box sx={{ position: 'relative' }}>
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={business.images?.[0]?.url || "/placeholder-business.jpg"}
+                      alt={business.businessName}
+                      sx={{ objectFit: 'cover' }}
+                    />
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: 10,
+                        right: 10,
+                        color: Colors.LOGOlight,
 
-                      <Box sx={{
+                        px: 1.5,
+                        py: 0.5,
+                        borderRadius: 2,
                         display: 'flex',
                         alignItems: 'center',
-                        mb: 1,
-                        backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                        p: 1,
-                        borderRadius: 1
-                      }}>
-                        <Person sx={{ mr: 1, color: 'primary.main' }} />
-                        <Typography variant="body2">
-                          {business.ownerName}
-                        </Typography>
-                      </Box>
+                      }}
+                    >
+                      <Star fontSize="small" sx={{ mr: 0.5 }} />
+                      <Typography variant="caption">
+                        {Number(business?.rating || 0).toFixed(1)} ({business?.ratingCount || 0})
+                      </Typography>
+                    </Box>
 
-                      <Grid container spacing={1} sx={{ mb: 1 }}>
-                        <Grid item xs={6}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Phone sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary">
-                              {business.phone}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                        <Grid item xs={6}>
-                          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Email sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                            <Typography variant="body2" color="text.secondary" noWrap>
-                              {business.email}
-                            </Typography>
-                          </Box>
-                        </Grid>
-                      </Grid>
+                  </Box>
 
-                      {business.address && (
-                        <Box sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          mb: 1,
-                          p: 1,
-                          backgroundColor: 'action.hover',
-                          borderRadius: 1
-                        }}>
-                          <LocationOn sx={{ mr: 1, fontSize: 'small', color: 'text.secondary' }} />
-                          <Typography variant="body2" color="text.secondary">
-                            {business.address}
-                          </Typography>
-                        </Box>
-                      )}
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
+                        {business.businessName}
+                      </Typography>
 
-                      {business.description && (
-                        <>
-                          <Divider sx={{ my: 1 }} />
-                          <Typography variant="body2" sx={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {business.description}
-                          </Typography>
-                        </>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Container>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" mb={1.5}>
+                      <LocationOn fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {business.address}
+                      </Typography>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" mb={1.5}>
+                      <Phone fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {business.phone}
+                      </Typography>
+                    </Box>
+
+                    <Box display="flex" alignItems="center" mb={2}>
+                      <Email fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {business.email}
+                      </Typography>
+                    </Box>
+
+                    <Typography variant="body2" sx={{
+                      mb: 2,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden'
+                    }}>
+                      {business.description}
+                    </Typography>
+                  </CardContent>
+
+                  <Box sx={{
+                    p: 2,
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid rgba(0,0,0,0.1)'
+                  }}>
+                    <Button
+                      size="small"
+                      startIcon={<Image />}
+                      onClick={() => handleOpenDialog("edit", business)}
+                    >
+                      {business.images?.length || 0} Photos
+                    </Button>
+                    <Box>
+                      <IconButton
+                        onClick={() => handleOpenDialog("edit", business)}
+                        sx={{ color: 'primary.main' }}
+                      >
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleOpenDialog("delete", business)}
+                        sx={{ color: 'error.main', ml: 1 }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
         )}
-
-        {/* Context Menu */}
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuItem onClick={handleEditClick} sx={{ color: 'primary.main' }}>
-            <Edit sx={{ mr: 1 }} /> Edit Business
-          </MenuItem>
-          <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
-            <Delete sx={{ mr: 1 }} /> Delete Business
-          </MenuItem>
-        </Menu>
 
         {/* Edit Dialog */}
         <Dialog
-          open={openEditDialog}
-          onClose={handleEditDialogClose}
-          maxWidth="md"
+          open={openDialog && dialogType === "edit"}
+          onClose={handleCloseDialog}
           fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: 3,
-              overflow: 'hidden'
-            }
-          }}
+          maxWidth="md"
+          PaperProps={{ sx: { borderRadius: 3 } }}
         >
           <DialogTitle sx={{
-            backgroundColor: 'primary.main',
+            bgcolor: 'primary.main',
             color: 'white',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            Edit Business
-            <IconButton
-              aria-label="close"
-              onClick={handleEditDialogClose}
-              sx={{ color: 'white' }}
-            >
+            <Typography variant="h6">Edit Business</Typography>
+            <IconButton onClick={handleCloseDialog} sx={{ color: 'white' }}>
               <Close />
             </IconButton>
           </DialogTitle>
 
-          <Tabs value={activeTab} onChange={handleTabChange} sx={{ px: 3, pt: 1 }}>
-            <Tab label="Basic Info" />
+          <Tabs
+            value={activeTab}
+            onChange={(e, newValue) => setActiveTab(newValue)}
+            variant="fullWidth"
+            sx={{ borderBottom: 1, borderColor: 'divider' }}
+          >
+            <Tab label="Details" />
             <Tab label="Images" />
           </Tabs>
 
-          <DialogContent dividers>
+          <DialogContent dividers sx={{ p: 3 }}>
             {activeTab === 0 && (
-              <Grid container spacing={3} sx={{ pt: 2 }}>
-                <Grid item xs={12} md={12}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
                     label="Business Name"
                     name="businessName"
-                    value={formData.businessName || ''}
-                    onChange={handleInputChange}
+                    value={formData.businessName}
+                    onChange={handleChange}
                     margin="normal"
                     variant="outlined"
                   />
-                </Grid>
-                <Grid item xs={12} md={12} >
                   <TextField
                     fullWidth
-                    label="Owner Name"
-                    name="ownerName"
-                    value={formData.ownerName || ''}
-                    onChange={handleInputChange}
-                    margin="normal"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12} md={12}>
-                  <TextField
-                    fullWidth
-                    label="Phone"
+                    label="Phone Number"
                     name="phone"
-                    value={formData.phone || ''}
-                    onChange={handleInputChange}
+                    value={formData.phone}
+                    onChange={handleChange}
                     margin="normal"
-                    variant="outlined"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    margin="normal"
                   />
                 </Grid>
+
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Email"
-                    name="email"
-                    value={formData.email || ''}
-                    onChange={handleInputChange}
-                    margin="normal"
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Address"
+                    label="Business Address"
                     name="address"
-                    value={formData.address || ''}
-                    onChange={handleInputChange}
+                    value={formData.address}
+                    onChange={handleChange}
                     margin="normal"
-                    variant="outlined"
+                    multiline
+                    rows={3}
                   />
-                </Grid>
-                <Grid item xs={12}>
                   <TextField
                     fullWidth
                     label="Description"
                     name="description"
-                    value={formData.description || ''}
-                    onChange={handleInputChange}
+                    value={formData.description}
+                    onChange={handleChange}
                     margin="normal"
                     multiline
                     rows={4}
-                    variant="outlined"
                   />
                 </Grid>
               </Grid>
@@ -672,156 +433,180 @@ const AddedBusiness = () => {
 
             {activeTab === 1 && (
               <Box>
-                <Typography variant="h6" gutterBottom>
-                  Current Images
+                <Typography variant="subtitle1" gutterBottom sx={{ mb: 2 }}>
+                  Business Images ({formData.images.length + newImages.length}/5)
                 </Typography>
-                {formData.images?.length > 0 ? (
-                  <ImageList cols={3} gap={16} sx={{ mb: 4 }}>
-                    {formData.images.map((image, index) => (
-                      <ImageListItem key={index}>
-                        <img
-                          src={image.url}
-                          alt={`Business ${index}`}
-                          loading="lazy"
-                          style={{ height: 150, objectFit: 'cover', borderRadius: 8 }}
-                        />
-                        <ImageListItemBar
-                          position="top"
-                          actionIcon={
-                            <IconButton
-                              sx={{ color: 'white' }}
-                              onClick={() => handleRemoveImage(index, false)}
-                            >
-                              <Close />
-                            </IconButton>
-                          }
-                        />
-                      </ImageListItem>
-                    ))}
-                  </ImageList>
-                ) : (
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                    No images uploaded yet
-                  </Typography>
-                )}
 
-                <Typography variant="h6" gutterBottom>
-                  Add New Images
-                </Typography>
-                <Button
-                  variant="outlined"
-                  component="label"
-                  startIcon={<AddPhotoAlternate />}
-                  sx={{ mb: 3 }}
-                >
-                  Upload Images
-                  <input
-                    type="file"
-                    hidden
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                  />
-                </Button>
+                <ImageList cols={3} gap={16} sx={{ mb: 3 }}>
+                  {formData.images.map((img) => (
+                    <ImageListItem key={img._id}>
+                      <img
+                        src={img.url}
+                        alt={`Business ${img._id}`}
+                        loading="lazy"
+                        style={{ borderRadius: 8 }}
+                      />
+                      <ImageListItemBar
+                        position="top"
+                        actionIcon={
+                          <IconButton
+                            onClick={() => handleRemoveImage(img._id, false)}
+                            sx={{ color: 'white' }}
+                          >
+                            <Close />
+                          </IconButton>
+                        }
+                        sx={{
+                          background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+                          borderRadius: '8px 8px 0 0'
+                        }}
+                      />
+                    </ImageListItem>
+                  ))}
 
-                {newImages.length > 0 && (
-                  <ImageList cols={3} gap={16}>
-                    {newImages.map((image, index) => (
-                      <ImageListItem key={`new-${index}`}>
-                        <img
-                          src={image.url}
-                          alt={`New ${index}`}
-                          style={{ height: 150, objectFit: 'cover', borderRadius: 8 }}
-                        />
-                        <ImageListItemBar
-                          position="top"
-                          actionIcon={
-                            <IconButton
-                              sx={{ color: 'white' }}
-                              onClick={() => handleRemoveImage(index, true)}
-                            >
-                              <Close />
-                            </IconButton>
-                          }
-                        />
-                      </ImageListItem>
-                    ))}
-                  </ImageList>
+                  {newImages.map((img, index) => (
+                    <ImageListItem key={`new-${index}`}>
+                      <img
+                        src={img.url}
+                        alt={`New ${index}`}
+                        loading="lazy"
+                        style={{ borderRadius: 8 }}
+                      />
+                      <ImageListItemBar
+                        position="top"
+                        actionIcon={
+                          <IconButton
+                            onClick={() => handleRemoveImage(img.url, true)}
+                            sx={{ color: 'white' }}
+                          >
+                            <Close />
+                          </IconButton>
+                        }
+                        sx={{
+                          background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+                          borderRadius: '8px 8px 0 0'
+                        }}
+                      />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+
+                {formData.images.length + newImages.length < 5 && (
+                  <Button
+                    variant="outlined"
+                    component="label"
+                    startIcon={<AddPhotoAlternate />}
+                    fullWidth
+                    sx={{ py: 2 }}
+                  >
+                    Upload Images
+                    <input
+                      type="file"
+                      hidden
+                      multiple
+                      onChange={handleImageUpload}
+                      accept="image/*"
+                    />
+                  </Button>
                 )}
               </Box>
             )}
           </DialogContent>
-          <DialogActions sx={{ p: 3 }}>
+
+          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
             <Button
-              onClick={handleEditDialogClose}
+              onClick={handleCloseDialog}
               variant="outlined"
-              sx={{ borderRadius: 2 }}
+              sx={{
+                color: Colors.LOGOColor,
+                borderColor: Colors.LOGOColor,
+                "&:hover": {
+                  backgroundColor: Colors.LOGOlight,
+                  color: "#ffffff",
+                  borderColor: Colors.LOGOlight,
+                },
+              }}
             >
               Cancel
             </Button>
+
             <Button
-              onClick={handleUpdateBusiness}
+              onClick={handleUpdate}
               variant="contained"
-              sx={{ borderRadius: 2 }}
+              disabled={loading}
+              sx={{
+                px: 4,
+                backgroundColor: Colors.LOGOlight,
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: Colors.LOGOlight, 
+                },
+              }}
             >
-              Save Changes
+              {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Save Changes'}
             </Button>
+
           </DialogActions>
         </Dialog>
 
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Dialog */}
         <Dialog
-          open={openDeleteDialog}
-          onClose={handleDeleteDialogClose}
-          PaperProps={{
-            sx: {
-              borderRadius: 3,
-              overflow: 'hidden'
-            }
-          }}
+          open={openDialog && dialogType === "delete"}
+          onClose={handleCloseDialog}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{ sx: { borderRadius: 3 } }}
         >
           <DialogTitle sx={{
-            backgroundColor: 'error.main',
+            bgcolor: 'error.main',
             color: 'white',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
           }}>
-            Confirm Delete
-            <IconButton
-              aria-label="close"
-              onClick={handleDeleteDialogClose}
-              sx={{ color: 'white' }}
-            >
+            <Typography variant="h6">Confirm Deletion</Typography>
+            <IconButton onClick={handleCloseDialog} sx={{ color: 'white' }}>
               <Close />
             </IconButton>
           </DialogTitle>
-          <DialogContent sx={{ p: 3 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Delete color="error" sx={{ fontSize: 40, mr: 2 }} />
-              <Typography variant="h6">
-                Delete {selectedBusiness?.businessName}?
-              </Typography>
+
+          <DialogContent dividers sx={{ textAlign: 'center', py: 4 }}>
+            <Box sx={{
+              width: 100,
+              height: 100,
+              borderRadius: '50%',
+              bgcolor: 'error.light',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 3
+            }}>
+              <Delete sx={{ fontSize: 50, color: 'error.main' }} />
             </Box>
-            <Typography>
-              This will permanently delete the business and all its data. This action cannot be undone.
+            <Typography variant="h6" gutterBottom>
+              Delete {selectedBusiness?.businessName}?
+            </Typography>
+            <Typography color="text.secondary">
+              This will permanently remove all business data including images and reviews.
             </Typography>
           </DialogContent>
-          <DialogActions sx={{ p: 3 }}>
+
+          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
             <Button
-              onClick={handleDeleteDialogClose}
-              variant="outlined"
-              sx={{ borderRadius: 2 }}
+              onClick={handleCloseDialog}
+              sx={{ color: 'text.secondary' }}
             >
               Cancel
             </Button>
             <Button
-              onClick={handleDeleteBusiness}
+              onClick={handleDelete}
               variant="contained"
               color="error"
-              sx={{ borderRadius: 2 }}
+              disabled={loading}
+              sx={{ px: 4 }}
             >
-              Delete Business
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
             </Button>
           </DialogActions>
         </Dialog>

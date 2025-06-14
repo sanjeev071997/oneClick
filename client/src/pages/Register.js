@@ -29,7 +29,6 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  // const [instituteId, setInstituteId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -38,7 +37,6 @@ const Register = () => {
     try {
       const response = await axios.get("/api/status");
       if (response?.data?.data === true) {
-        // message.success("Server is running");
       } else {
         message.error(
           "Oops! Something went wrong. Please try again later or contact support."
@@ -106,13 +104,11 @@ const Register = () => {
       </Breadcrumbs>
       <Box
         sx={{
-          // height: "100vh",
           mt:5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           bgColor: "primary.white",
-          // marginTop: "50px",
         }}
       >
         <Box

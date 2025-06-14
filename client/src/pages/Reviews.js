@@ -11,6 +11,7 @@ import { message, Modal } from "antd";
 import axios from '../axiosInstance';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
+import { Colors } from "../Comman";
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -76,22 +77,22 @@ const ReviewsPage = () => {
       comment: editComment,
       rating: editRating
     }
-    
-  try {
-    const response = await axios.put('/api/v1/review/update', updateData);
-    if (response?.data?.success) {
-      message.success('Review updated successfully!');
-      setEditModalOpen(false);
-      fetchReviews();
-    } else {
-      message.error('Failed to update review.');
+
+    try {
+      const response = await axios.put('/api/v1/review/update', updateData);
+      if (response?.data?.success) {
+        message.success('Review updated successfully!');
+        setEditModalOpen(false);
+        fetchReviews();
+      } else {
+        message.error('Failed to update review.');
+      }
+    } catch (err) {
+      console.error('Failed to update review:', err);
+      message.error('Something went wrong. Please try again.');
     }
-  } catch (err) {
-    console.error('Failed to update review:', err);
-    message.error('Something went wrong. Please try again.');
-  }
-};
-  // delete Review
+  };
+
   const { confirm } = Modal;
   const handleDelete = async (id) => {
     confirm({
@@ -104,193 +105,245 @@ const ReviewsPage = () => {
           const data = await axios.delete(`/api/v1/review/delete`, {
             data: { id },
           });
-          console.log(data, "data")
           if (data?.data?.success === true) {
             message.success(data?.data?.message);
             fetchReviews();
           }
         } catch (err) {
           message.error(err || "Failed to delete review")
-       
         }
       },
-     
-      }
-    );
+    });
   };
 
   const paginatedReviews = reviews.slice((currentPage - 1) * 6, currentPage * 6);
 
   return (
     <>
-    <Navbar/>
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box textAlign="center" mb={6}>
-        <Typography variant="h3" fontWeight={700} color="primary.main">
-          Customer Reviews
-        </Typography>
-        <Typography variant="subtitle1" color="text.secondary">
-          See what our customers are saying about businesses
-        </Typography>
-      </Box>
-
-      <Paper elevation={2} sx={{ p: 3, mb: 6, borderRadius: 2 }}>
-        <Grid container spacing={2} justifyContent="space-around">
-          <Grid item xs={12} sm={4} md={3}>
-            <Box textAlign="center">
-              <Typography variant="h2" fontWeight={700} color="primary.main">{stats.averageRating}</Typography>
-              <Typography variant="body2" color="text.secondary">Average Rating</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <Box textAlign="center">
-              <Typography variant="h2" fontWeight={700} color="primary.main">{stats.totalReviews}</Typography>
-              <Typography variant="body2" color="text.secondary">Total Reviews</Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={4} md={3}>
-            <Box textAlign="center">
-              <Typography variant="h2" fontWeight={700} color="primary.main">{stats.recommendationRate}%</Typography>
-              <Typography variant="body2" color="text.secondary">Would Recommend</Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Paper>
-
-      {loading ? (
-        <Box textAlign="center" py={4}>
-          <Typography variant="h6" color="text.secondary">Loading reviews...</Typography>
+      <Navbar />
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box textAlign="center" mb={6}>
+          <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
+            Customer Reviews
+          </Typography>
+          <Typography variant="subtitle1" color={Colors.LOGOlight}>
+            See what our customers are saying about businesses
+          </Typography>
         </Box>
-      ) : reviews.length > 0 ? (
-        <>
-          <Grid container spacing={4}>
-            {paginatedReviews.map((review) => (
-              <Grid item key={review._id} xs={12} sm={6} md={4}>
-                <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s', '&:hover': { transform: 'translateY(-5px)' } }}>
-                  <CardHeader
-                    avatar={
-                      <Box sx={{ position: 'relative' }}>
-                        <Tooltip title={review.businessId?.businessName || "Business"}>
-                          <Avatar
-                            src={review.businessId?.images?.[0]?.url || ''}
-                            alt={review.businessId?.businessName}
-                            sx={{ width: 56, height: 56, bgcolor: 'primary.main' }}
-                          >
-                            {review.businessId?.businessName?.[0] || <Business />}
-                          </Avatar>
-                        </Tooltip>
-                        <Tooltip title={review.reviewer?.name || "User"}>
-                          <Avatar
-                            src={review.reviewer?.avatar || ''}
-                            alt={review.reviewer?.name}
-                            sx={{
-                              width: 32,
-                              height: 32,
-                              position: 'absolute',
-                              bottom: -8,
-                              right: -8,
-                              border: '2px solid white',
-                              bgcolor: 'secondary.main'
-                            }}
-                          >
-                            {review.reviewer?.name?.[0] || 'U'}
-                          </Avatar>
-                        </Tooltip>
-                      </Box>
-                    }
-                    title={
-                      <Box>
-                        <Typography fontWeight="bold">{review.businessId?.businessName || "Business"}</Typography>
-                        <Typography variant="body2">Reviewed by: {review.reviewer?.name || "Anonymous"}</Typography>
-                      </Box>
-                    }
-                    subheader={new Date(review.createdAt).toLocaleDateString()}
-                    subheaderTypographyProps={{ color: 'text.secondary' }}
-                    action={
-                      <Rating
-                        value={Number(review.rating)}
-                        readOnly
-                        precision={0.5}
-                        icon={<Star color="primary" />}
-                        emptyIcon={<StarBorder color="primary" />}
-                      />
-                    }
-                    sx={{ pb: 0, alignItems: 'flex-start' }}
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="body1" color="text.secondary" fontStyle="italic">
-                      "{review.comment}"
-                    </Typography>
-                  </CardContent>
-                  <Divider />
-                  <CardActions sx={{ justifyContent: 'space-between', px: 2 }}>
-                    <Chip
-                      label={`${review.rating} stars`}
-                      size="small"
-                      icon={<Star fontSize="small" />}
-                      sx={{ backgroundColor: 'rgba(255,215,0,0.2)', color: 'text.primary' }}
+
+        <Paper elevation={2} sx={{ p: 3, mb: 6, borderRadius: 2, background: Colors.LOGOColor }} >
+          <Grid container spacing={2} justifyContent="space-around">
+            <Grid item xs={12} sm={4} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" fontWeight={700} color={Colors.WHITE}>{stats.averageRating}</Typography>
+                <Typography variant="body2" color={Colors.WHITE}>Average Rating</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={4} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" fontWeight={700} color={Colors.WHITE}>{stats.totalReviews}</Typography>
+                <Typography variant="body2" color={Colors.WHITE}>Total Reviews</Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={4} md={3}>
+              <Box textAlign="center">
+                <Typography variant="h2" fontWeight={700} color={Colors.WHITE}>{stats.recommendationRate}%</Typography>
+                <Typography variant="body2" color={Colors.WHITE}>Would Recommend</Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {loading ? (
+          <Box textAlign="center" py={4}>
+            <Typography variant="h6" color={Colors.LOGOColor}>Loading reviews...</Typography>
+          </Box>
+        ) : reviews.length > 0 ? (
+          <>
+            <Grid container spacing={4}>
+              {paginatedReviews.map((review) => (
+                <Grid item key={review._id} xs={12} sm={6} md={4}>
+                  <Card elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column', transition: 'transform 0.3s', '&:hover': { transform: 'translateY(-5px)' } }}>
+                    <CardHeader
+                      avatar={
+                        <Box sx={{ position: 'relative' }}>
+                          <Tooltip title={review.businessId?.businessName || "Business"}>
+                            <Avatar
+                              src={review.businessId?.images?.[0]?.url || ''}
+                              alt={review.businessId?.businessName}
+                              sx={{ width: 56, height: 56, bgcolor: 'primary.main' }}
+                            >
+                              {review.businessId?.businessName?.[0] || <Business />}
+                            </Avatar>
+                          </Tooltip>
+                          <Tooltip title={review.reviewer?.name || "User"}>
+                            <Avatar
+                              src={review.reviewer?.avatar || ''}
+                              alt={review.reviewer?.name}
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                position: 'absolute',
+                                bottom: -8,
+                                right: -8,
+                                border: '2px solid white',
+                                bgcolor: Colors.LOGOlight,
+                              }}
+                            >
+                              {review.reviewer?.name?.[0] || 'U'}
+                            </Avatar>
+                          </Tooltip>
+                        </Box>
+                      }
+                      title={
+                        <Box>
+                          <Typography fontWeight="bold" >{review.businessId?.businessName || "Business"}</Typography>
+                          <Typography variant="body2" >Reviewed by: {review.reviewer?.name || "Anonymous"}</Typography>
+                        </Box>
+                      }
+                      subheader={new Date(review.createdAt).toLocaleDateString()}
+                      subheaderTypographyProps={{ color: Colors.BLACK }}
+                      action={
+                        <Rating
+                          value={Number(review.rating)}
+                          readOnly
+                          precision={0.5}
+                          icon={<Star htmlColor={Colors.LOGOlight} />}
+
+                          emptyIcon={<StarBorder htmlColor={Colors.LOGOlight} />}
+                        />
+                      }
+                      sx={{ pb: 0, alignItems: 'flex-start' }}
                     />
-                    <Box>
-                      <IconButton onClick={() => openEditModal(review)} color="primary">
-                        <Edit />
-                      </IconButton>
-                      <IconButton onClick={() => handleDelete(review._id)} color="error">
-                        <Delete />
-                      </IconButton>
-                    </Box>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="body1" fontStyle="italic">
+                        "{review.comment}"
+                      </Typography>
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ justifyContent: 'space-between', px: 2 }}>
 
-          <Box display="flex" justifyContent="center" mt={6}>
-            <Pagination
-              count={Math.ceil(reviews.length / 6)}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-              size="large"
-              showFirstButton
-              showLastButton
-            />
-          </Box>
-        </>
-      ) : (
-        <Box textAlign="center" py={6}>
-          <Star sx={{ fontSize: 60, color: 'text.disabled', mb: 2, opacity: 0.5 }} />
-          <Typography variant="h5" gutterBottom>No Reviews Yet</Typography>
-          <Typography variant="body1" color="text.secondary">Be the first to share your experience</Typography>
-        </Box>
-      )}
+                      <Chip
+                        icon={<Star fontSize="small" htmlColor={Colors.LOGOlight} />}
+                        label={`${review.rating} stars`}
+                        sx={{
+                          backgroundColor: Colors.WHITE,
+                          color: Colors.LOGOlight,
+                          border: `1px solid ${Colors.LOGOlight}`,
+                          fontWeight: 'bold',
+                        }}
+                      />
 
-      {/* Edit Review Modal */}
-      <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>Edit Your Review</DialogTitle>
-        <DialogContent>
-          <Box mb={2}>
-            <Rating
-              value={editRating}
-              precision={0.5}
-              onChange={(e, newValue) => setEditRating(newValue)}
-            />
+                      <Box>
+                        <IconButton onClick={() => openEditModal(review)} sx={{ color: Colors.LOGOColor }}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton onClick={() => handleDelete(review._id)} sx={{ color: Colors.LOGOlight }}>
+                          <Delete />
+                        </IconButton>
+                      </Box>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+
+            <Box display="flex" justifyContent="center" mt={6}>
+              <Pagination
+                count={Math.ceil(reviews.length / 6)}
+                page={currentPage}
+                onChange={handlePageChange}
+                size="large"
+                showFirstButton
+                showLastButton
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: Colors.LOGOlight,
+                    borderColor: Colors.LOGOlight,
+                  },
+                  '& .MuiPaginationItem-root.Mui-selected': {
+                    backgroundColor: Colors.LOGOlight,
+                    color: '#fff',
+                  },
+                  '& .MuiPaginationItem-previousNext, & .MuiPaginationItem-firstLast': {
+                    color: Colors.LOGOlight,
+                  },
+                }}
+              />
+            </Box>
+
+          </>
+        ) : (
+          <Box textAlign="center" py={6}>
+            <Star sx={{ fontSize: 60, color: 'text.disabled', mb: 2, opacity: 0.5 }} />
+            <Typography variant="h5" gutterBottom>No Reviews Yet</Typography>
+            <Typography variant="body1" color="text.secondary">Be the first to share your experience</Typography>
           </Box>
-          <TextField
-            fullWidth
-            multiline
-            minRows={3}
-            label="Comment"
-            value={editComment}
-            onChange={(e) => setEditComment(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditModalOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleEditSubmit}>Update</Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
-    <Footer />
+        )}
+
+        {/* Edit Review Modal */}
+        <Dialog open={editModalOpen} onClose={() => setEditModalOpen(false)} fullWidth maxWidth="sm">
+          <DialogTitle sx={{ color: Colors.LOGOColor }}>Edit Your Review</DialogTitle>
+          <DialogContent>
+            <Box mb={2}>
+              <Rating
+                value={editRating}
+                precision={0.5}
+                onChange={(e, newValue) => setEditRating(newValue)}
+                icon={<Star htmlColor={Colors.LOGOlight} />}
+                emptyIcon={<StarBorder htmlColor={Colors.LOGOlight} />}
+              />
+            </Box>
+            <TextField
+              fullWidth
+              multiline
+              minRows={3}
+              label="Comment"
+              value={editComment}
+              onChange={(e) => setEditComment(e.target.value)}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '&.Mui-focused fieldset': {
+                    borderColor: Colors.LOGOlight,
+                  },
+                },
+                '& .MuiInputLabel-root.Mui-focused': {
+                  color: Colors.LOGOlight,
+                },
+              }}
+            />
+
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="outlined"
+              onClick={() => setEditModalOpen(false)}
+              sx={{
+                color: Colors.LOGOColor,
+                borderColor: Colors.LOGOColor,
+                '&:hover': {
+                  backgroundColor: Colors.LOGOlight,
+                  color: '#fff',
+                  borderColor: Colors.LOGOlight,
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleEditSubmit}
+              sx={{
+                background: Colors.LOGOlight,
+                color: '#fff'
+              }}
+            >
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+      <Footer />
     </>
   );
 };

@@ -7,10 +7,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Categories from "../Components/Categories";
 import CategorySection from '../Components/CategorySection'
-import  TravelBookings from '../Components/ TravelBookings'
+import  TravelBookings from '../Components/TravelBookings'
 import Footer from '../Components/Footer';
 import CategoriesBanner from '../Components/CategoriesBanner'
-import Gatik from './gatik.jpg'
+import Gatik from '../Images/gatik.jpg'
 
 
 

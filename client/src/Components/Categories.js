@@ -20,6 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
+import { Colors, FontWeight,FontFamily } from "../Comman";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -31,7 +32,6 @@ const Categories = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Get all categories list
   const fetchCategories = async () => {
     try {
       const res = await axios.get("/api/v1/categories/get");
@@ -94,7 +94,7 @@ const Categories = () => {
     }
     setDrawerOpen(open);
     if (!open) {
-      setSearchTerm(""); // Reset search when closing drawer
+      setSearchTerm("");
     }
   };
 
@@ -115,29 +115,32 @@ const Categories = () => {
 
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1500, margin: "0 auto" }}>
- <Typography
-  variant="h5"
-  sx={{
-    fontWeight: 700,
-    mb: 3,
-    fontSize: { xs: "1.3rem", sm: "1.6rem" },
-    color: "black",
-    display: "inline-block",
-    px: 3,
-    py: 1,
-    borderLeft: "4px solid",
-    borderColor: "primary.main",
-    bgcolor: "rgba(0, 0, 0, 0.02)",
-    borderRadius: "0 8px 8px 0",
-  }}
->
-  Popular Categories
-</Typography>
+      <Typography
+        variant="h5"
+        sx={{
+          fontWeight: FontWeight.heading1,
+          mb: 3,
+          fontSize: { xs: "1.3rem", sm: "1.6rem" },
+          color: Colors.LOGOColor,
+          display: "inline-block",
+          px: 3,
+          py: 1,
+          fontFamily:FontFamily.Georgia,
+          borderLeft: "4px solid",
+          borderColor: Colors.LOGOlight,
+          bgcolor: "rgba(0, 0, 0, 0.02)",
+          borderRadius: "0 8px 8px 0",
+        }}
+      >
+        Popular Categories
+      </Typography>
+
       <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
         {categories.slice(0, 19).map((category) => (
           <Grid item xs={4} sm={2.4} md={1.7} lg={1.2} key={category._id}>
             <Box
               sx={{
+  
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -156,7 +159,8 @@ const Categories = () => {
                   height: { xs: 45, sm: 50, md: 60 },
                   mb: 1,
                   border: "1px solid",
-                  borderColor: "divider",
+                  
+                  borderColor: Colors.LOGOColor,
                   borderRadius: "12px",
                   p: 1,
                   cursor: "pointer",
@@ -164,7 +168,7 @@ const Categories = () => {
                   boxShadow: 1,
                   "&:hover": {
                     boxShadow: 3,
-                    borderColor: "primary.main",
+                    borderColor: Colors.LOGOlight,
                   },
                   display: "flex",
                   justifyContent: "center",
@@ -193,6 +197,7 @@ const Categories = () => {
                   textAlign: "center",
                   fontSize: { xs: "0.75rem", sm: "0.875rem" },
                   lineHeight: 1.2,
+                  color: Colors.LOGOColor,
                 }}
               >
                 {formatCategoryName(category.name)}
@@ -201,7 +206,7 @@ const Categories = () => {
           </Grid>
         ))}
 
-        {/* 20th item - Menu button */}
+        {/* View All Drawer Button */}
         <Grid item xs={4} sm={2.4} md={1.7} lg={1.2}>
           <Box
             sx={{
@@ -232,17 +237,16 @@ const Categories = () => {
                 boxShadow: 1,
                 "&:hover": {
                   boxShadow: 3,
-                  borderColor: "primary.main",
+                  borderColor: Colors.LOGOlight,
                 },
               }}
             >
               <MenuIcon
                 sx={{
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                  borderRadius: '50%',
+                  backgroundColor: Colors.LOGOlight,
+                  color: Colors.WHITE,
+                  borderRadius: "50%",
                   p: 1.2,
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                   fontSize: { xs: "1.2rem", sm: "1.5rem" },
                 }}
               />
@@ -250,6 +254,7 @@ const Categories = () => {
             <Typography
               variant="body2"
               sx={{
+                color: Colors.LOGOColor,
                 fontWeight: 500,
                 textAlign: "center",
                 fontSize: { xs: "0.75rem", sm: "0.875rem" },
@@ -273,30 +278,23 @@ const Categories = () => {
           },
         }}
       >
-        {/* Header with title and close button */}
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <Typography variant="h5" fontWeight="bold" color="primary">
+        {/* Header */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h5" fontWeight="bold" sx={{ color: Colors.LOGOColor}}>
             All Categories
           </Typography>
           <IconButton
             onClick={toggleDrawer(false)}
             sx={{
-              color: "text.secondary",
-              "&:hover": {
-                backgroundColor: "action.hover",
-              },
+              color: Colors.BLACK,
+             
             }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{color:Colors.LOGOlight}} />
           </IconButton>
         </Box>
 
-        {/* Search bar */}
+        {/* Search */}
         <Box mb={3}>
           <TextField
             fullWidth
@@ -308,15 +306,12 @@ const Categories = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon color="action" />
+                  <SearchIcon sx={{ color: Colors.LOGOColor}} />
                 </InputAdornment>
               ),
               sx: {
                 borderRadius: 2,
                 backgroundColor: "background.paper",
-                "&:hover": {
-                  backgroundColor: "action.hover",
-                },
               },
             }}
             sx={{
@@ -325,19 +320,18 @@ const Categories = () => {
                   borderColor: "divider",
                 },
                 "&:hover fieldset": {
-                  borderColor: "primary.main",
+                  borderColor: Colors.LOGOColor,
                 },
-                "&.Mui-focused fieldset": {
-                  borderColor: "primary.main",
-                },
+                
               },
             }}
           />
         </Box>
 
-        {/* Categories list in responsive grid */}
+        {/* Categories List */}
         <List
           sx={{
+          
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
             gap: 1,
@@ -347,11 +341,8 @@ const Categories = () => {
             "&::-webkit-scrollbar": {
               width: "6px",
             },
-            "&::-webkit-scrollbar-track": {
-              background: "transparent",
-            },
             "&::-webkit-scrollbar-thumb": {
-              backgroundColor: theme.palette.divider,
+              backgroundColor: Colors.LOGOColor,
               borderRadius: "3px",
             },
           }}
@@ -364,13 +355,14 @@ const Categories = () => {
                 setDrawerOpen(false);
               }}
               sx={{
+                mt:1,
                 p: 1.5,
                 borderRadius: 2,
                 cursor: "pointer",
                 transition: "all 0.3s",
                 "&:hover": {
                   backgroundColor: "action.hover",
-                  transform: "translateX(4px)",
+                  borderLeft: `3px solid ${Colors.LOGOlight}`,
                 },
               }}
             >
@@ -387,7 +379,6 @@ const Categories = () => {
                     objectFit: "contain",
                     borderRadius: "6px",
                   }}
-                  loading="lazy"
                 />
               </ListItemIcon>
               <ListItemText
@@ -395,7 +386,7 @@ const Categories = () => {
                 primaryTypographyProps={{
                   fontSize: 14,
                   fontWeight: 500,
-                  color: "text.primary",
+                  color: Colors.BLACK,
                 }}
               />
             </ListItem>

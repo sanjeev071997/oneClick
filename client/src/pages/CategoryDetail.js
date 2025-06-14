@@ -1,46 +1,49 @@
+
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Box,
-  Typography,
-  Grid,
-  Button,
   Avatar,
-  CircularProgress,
-  Modal,
-  TextField,
-  IconButton,
-  Stack,
+  Breadcrumb,
+  Button,
   Card,
-  CardMedia,
-  CardContent,
+  Col,
   Divider,
-  Rating,
-  Breadcrumbs,
-  Link,
-  Chip,
-  Paper,
-  Snackbar,
+  Form,
+  Input,
+  message,
+  Modal,
+  Row,
+  Spin,
+  Tag,
+  Typography,
   Alert
-} from "@mui/material";
+} from "antd";
 import {
-  Home,
-  LocationOn,
-  Phone,
-  Email,
-  Send,
-  Close,
-  Visibility,
-  Business,
-  Star,
-  ArrowBack
-} from "@mui/icons-material";
-import Navbar from "../Components/Navbar";
+  ArrowLeftOutlined,
+  HomeOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  EnvironmentOutlined,
+  StarFilled,
+  SendOutlined,
+  ShopOutlined
+} from "@ant-design/icons";
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
+import { Colors } from "../Comman";
+
+
+
+const { Title, Text, Paragraph } = Typography;
+const { Meta } = Card;
+const { TextArea } = Input;
+
 
 const CategoryDetail = () => {
-  const token = localStorage.getItem("token")
+  const [form] = Form.useForm();
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const { state } = useLocation();
   const category = state?.category;
@@ -49,33 +52,19 @@ const CategoryDetail = () => {
   const [reviewMap, setReviewMap] = useState({});
   const [openEnquiry, setOpenEnquiry] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
-  const [enquiryForm, setEnquiryForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: ""
-  });
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: '',
-    severity: 'success'
-  });
-
+  const [enquiryLoading, setEnquiryLoading] = useState(false);
 
   const { user } = useSelector((state) => state.user);
+
   const fetchBusinessesByCategory = async () => {
     try {
       const response = await axios.post("/api/v1/business/get", {
-        category: category._id,
+        userId: user._id,
       });
       setBusinesses(response.data.data);
     } catch (error) {
       console.error("Failed to fetch businesses:", error);
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || "Failed to fetch businesses",
-        severity: 'error'
-      });
+      message.error(error.response?.data?.message || "Failed to fetch businesses");
     } finally {
       setLoading(false);
     }
@@ -123,146 +112,89 @@ const CategoryDetail = () => {
 
   const handleEnquiryOpen = (business) => {
     setSelectedBusiness(business);
-    if (user) {
-      setEnquiryForm({
-        name: "",
-        email:  "",
-        phone:  "",
-        message: ""
-      });
-    }
+    form.resetFields();
     setOpenEnquiry(true);
   };
 
   const handleEnquiryClose = () => {
     setOpenEnquiry(false);
     setSelectedBusiness(null);
-    setEnquiryForm({
-      name: "",
-      email: "",
-      phone: "",
-      message: ""
-    });
+    form.resetFields();
   };
 
-  const handleEnquirySubmit = async (e) => {
-    e.preventDefault();
-
+  const handleEnquirySubmit = async (values) => {
     if (!selectedBusiness) return;
 
+    setEnquiryLoading(true);
     try {
       const enquiryData = {
         businessId: selectedBusiness._id,
         userId: user?._id || null,
-        name: enquiryForm.name,
-        email: enquiryForm.email,
-        phone: enquiryForm.phone,
-        message: enquiryForm.message
+        ...values
       };
 
-
       const response = await axios.post("/api/v1/enquiry/add", enquiryData);
-      console.log(response, "response ")
 
       if (response.data.success) {
-        setSnackbar({
-          open: true,
-          message: 'Enquiry sent successfully!',
-          severity: 'success'
-        });
+        message.success('Enquiry sent successfully!');
         handleEnquiryClose();
       }
     } catch (error) {
       console.error("Enquiry submission error:", error);
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Failed to send enquiry',
-        severity: 'error'
-      });
+      message.error(error.response?.data?.message || 'Failed to send enquiry');
+    } finally {
+      setEnquiryLoading(false);
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEnquiryForm(prev => ({
-      ...prev,
-      [name]: value
-    }));
   };
 
   if (!category) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Typography variant="h6">No category data available.</Typography>
-      </Box>
+      <div style={{ padding: 24 }}>
+        <Text>No category data available.</Text>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <Box sx={{
+      <div style={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         height: "80vh"
       }}>
-        <CircularProgress size={60} thickness={4} />
-      </Box>
+        <Spin size="large" />
+      </div>
     );
   }
 
   return (
     <>
       <Navbar />
-      <Box sx={{
-        maxWidth: 1400,
-        mx: "auto",
-        px: { xs: 2, md: 4 },
-        py: 3
+      <div style={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        padding: '20px 24px',
       }}>
         {/* Breadcrumb Navigation */}
-        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => navigate("/")}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              cursor: 'pointer',
-              '&:hover': {
-                color: 'primary.main'
-              }
-            }}
-          >
-            <Home sx={{ mr: 0.5 }} fontSize="inherit" />
-            Home
-          </Link>
-          <Typography color="text.primary" sx={{ fontWeight: 500 }}>
-            {category.name}
-          </Typography>
-        </Breadcrumbs>
+        <Breadcrumb style={{ marginBottom: 24 }}>
+          <Breadcrumb.Item onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
+            <HomeOutlined /> Home
+          </Breadcrumb.Item>
+          <Breadcrumb.Item style={{ color: Colors.BLACK }}>{category.name}</Breadcrumb.Item>
+        </Breadcrumb>
 
         {/* Category Header */}
-        <Paper elevation={0} sx={{
-          mb: 4,
-          p: 4,
-          borderRadius: 4,
-          background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%)',
+        <div style={{
+          marginBottom: 40,
+          padding: 40,
+          borderRadius: 12,
+          background: `linear-gradient(135deg, ${Colors.LOGOColor} 0%, #1a4a4d 100%)`,
           position: 'relative',
           overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            width: '40%',
-            height: '100%',
-            background: 'linear-gradient(45deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%)',
-            zIndex: 1
-          }
+          boxShadow: '0 8px 24px rgba(38, 91, 95, 0.2)'
         }}>
-          <Box sx={{
+          <div style={{
             display: 'flex',
             alignItems: 'center',
             position: 'relative',
@@ -271,381 +203,467 @@ const CategoryDetail = () => {
             <Avatar
               src={category.url || "https://cdn-icons-png.flaticon.com/512/1570/1570887.png"}
               alt={category.name}
-              sx={{
-                width: 100,
-                height: 100,
-                mr: 4,
+              size={100}
+              style={{
+                marginRight: 24,
                 border: '3px solid white',
-                boxShadow: 2
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
               }}
             />
-            <Box>
-              <Chip
-                label={`${businesses.length} ${businesses.length === 1 ? 'Business' : 'Businesses'}`}
-                color="primary"
-                size="small"
-                sx={{ mb: 1 }}
-              />
-              <Typography variant="h3" component="h1" sx={{
-                fontWeight: 700,
-                mb: 1,
-                color: 'text.primary',
-                fontSize: { xs: '2rem', md: '2.5rem' }
+            <div>
+              <Tag color={Colors.LOGOlight} style={{
+                marginBottom: 12,
+                color: Colors.textDark,
+                fontWeight: 500
+              }}>
+                {businesses.length} {businesses.length === 1 ? 'Business' : 'Businesses'}
+              </Tag>
+              <Title level={2} style={{
+                marginBottom: 8,
+                color: Colors.WHITE,
+                fontWeight: 600
               }}>
                 {category.name}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600 }}>
+              </Title>
+              <Paragraph style={{
+                color: 'rgba(255, 255, 255, 0.85)',
+                maxWidth: 600,
+                marginBottom: 0
+              }}>
                 Discover top-rated businesses in this category. Find the perfect service provider for your needs.
-              </Typography>
-            </Box>
-          </Box>
-        </Paper>
+              </Paragraph>
+            </div>
+          </div>
+        </div>
 
         {/* Businesses List */}
         {businesses.length === 0 ? (
-          <Box sx={{
-            p: 6,
+          <div style={{
+            padding: 40,
             textAlign: 'center',
-            borderRadius: 3,
-            backgroundColor: 'background.paper',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+            borderRadius: 12,
+            backgroundColor: '#fff',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
           }}>
-            <Business sx={{ fontSize: 60, color: 'text.disabled', mb: 2 }} />
-            <Typography variant="h5" sx={{ mb: 2 }}>
+            <ShopOutlined style={{
+              fontSize: 60,
+              color: Colors.LOGOColor,
+              marginBottom: 20
+            }} />
+            <Title level={4} style={{ marginBottom: 12, color: Colors.LOGOColor }}>
               No businesses found in this category
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            </Title>
+            <Paragraph type="secondary" style={{ marginBottom: 24 }}>
               We couldn't find any businesses listed under this category yet.
-            </Typography>
+            </Paragraph>
             <Button
-              variant="outlined"
-              startIcon={<ArrowBack />}
+              type="primary"
+              icon={<ArrowLeftOutlined />}
               onClick={() => navigate(-1)}
-              sx={{
-                borderRadius: 3,
-                textTransform: 'none',
-                fontWeight: 'bold',
-                px: 2,
-                py: 1,
-                boxShadow: 1,
-                bgcolor: 'white',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  borderColor: 'primary.main',
-                }
+              style={{
+                borderRadius: 6,
+                backgroundColor: Colors.LOGOColor,
+                borderColor: Colors.LOGOColor
               }}
             >
               Back to Categories
             </Button>
-          </Box>
+          </div>
         ) : (
           <>
-            <Box sx={{
+            <div style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              mb: 3
+              marginBottom: 24
             }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              <Title level={3} style={{ margin: 0, color: Colors.LOGOColor }}>
                 Featured Businesses
-              </Typography>
-            </Box>
+              </Title>
+            </div>
 
-            <Grid container spacing={3}>
+            <Row gutter={[24, 24]}>
               {businesses?.map((business) => (
-                <Grid item xs={12} sm={6} lg={4} key={business._id}>
-                  <Card sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderRadius: 3,
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 8px 24px rgba(0,0,0,0.1)'
-                    }
-                  }}>
-                    <Box sx={{ position: 'relative' }}>
-                      <CardMedia
-                        component="img"
-                        height="200"
-                        image={business.images.length > 0 ? business.images[0].url : "https://source.unsplash.com/random/400x200/?business"}
-                        alt={business.businessName}
-                        sx={{
-                          objectFit: 'cover',
-                          borderTopLeftRadius: 12,
-                          borderTopRightRadius: 12
-                        }}
-                      />
-                      <Box sx={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 10,
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        color: 'white',
-                        px: 1.5,
-                        py: 0.5,
-                        borderRadius: 12,
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}>
-                        <Star sx={{ fontSize: 16, mr: 0.5 }} />
-                        <Typography variant="caption">
-                          {reviewMap[business._id]?.avg || '0.0'}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Typography gutterBottom variant="h6" component="h2" sx={{
-                        fontWeight: 600,
-                        mb: 1.5
-                      }}>
-                        {business.businessName}
-                      </Typography>
-
-                      <Stack spacing={1.5} sx={{ mb: 2 }}>
-                        <Typography variant="body2" sx={{
+                <Col xs={24} sm={12} lg={8} key={business._id}>
+                  <Card
+                    hoverable
+                    cover={
+                      <div style={{ position: 'relative', height: 200 }}>
+                        <img
+                          alt={business.businessName}
+                          src={business.images.length > 0 ? business.images[0].url : 'https://source.unsplash.com/random/400x200/?business'}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderTopLeftRadius: 12,
+                            borderTopRightRadius: 12
+                          }}
+                        />
+                        <div style={{
+                          position: 'absolute',
+                          top: 12,
+                          right: 12,
+                          backgroundColor: 'white',
+                          padding: '4px 8px',
+                          borderRadius: 12,
                           display: 'flex',
-                          alignItems: 'flex-start',
-                          color: 'text.secondary'
+                          alignItems: 'center',
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                         }}>
-                          <LocationOn color="primary" sx={{ mr: 1, mt: 0.2 }} />
-                          {business.address}
-                        </Typography>
-
-                        {business.phone && (
-                          <Typography variant="body2" sx={{
+                          <StarFilled style={{
+                            fontSize: 14,
+                            marginRight: 4,
+                            color: Colors.LOGOlight
+                          }} />
+                          <Text style={{ fontSize: 12 }}>
+                            {reviewMap[business._id]?.avg || '0.0'}
+                          </Text>
+                        </div>
+                      </div>
+                    }
+                    style={{
+                      borderRadius: 12,
+                      overflow: 'hidden',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                      border: `1px solid ${Colors.lightBg}`
+                    }}
+                  >
+                    <Meta
+                      title={
+                        <Text strong style={{ fontSize: 18, color: Colors.LOGOColor }}>
+                          {business.businessName}
+                        </Text>
+                      }
+                      description={
+                        <div style={{ marginTop: 12 }}>
+                          <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            color: 'text.secondary'
+                            marginBottom: 8
                           }}>
-                            <Phone color="primary" sx={{ mr: 1 }} />
-                            {business.phone}
-                          </Typography>
-                        )}
-
-                        {business.email && (
-                          <Typography variant="body2" sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            color: 'text.secondary'
-                          }}>
-                            <Email color="primary" sx={{ mr: 1 }} />
-                            {business.email}
-                          </Typography>
-                        )}
-                      </Stack>
-                    </CardContent>
-
-                    <Divider sx={{ my: 0 }} />
-
-                    <Box sx={{
+                            <EnvironmentOutlined style={{
+                              marginRight: 8,
+                              color: Colors.LOGOColor
+                            }} />
+                            <Text type="secondary">
+                              {business.city && `${business.city}, `}
+                              {business.state}
+                            </Text>
+                          </div>
+                          {business.address && (
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginBottom: 8
+                            }}>
+                              <HomeOutlined style={{
+                                marginRight: 8,
+                                color: Colors.LOGOColor
+                              }} />
+                              <Text type="secondary">{business.address}</Text>
+                            </div>
+                          )}
+                          {business.phone && (
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginBottom: 8
+                            }}>
+                              <PhoneOutlined style={{
+                                marginRight: 8,
+                                color: Colors.LOGOColor
+                              }} />
+                              <Text type="secondary">{business.phone}</Text>
+                            </div>
+                          )}
+                          {business.email && (
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              marginBottom: 8
+                            }}>
+                              <MailOutlined style={{
+                                marginRight: 8,
+                                color: Colors.LOGOColor
+                              }} />
+                              <Text type="secondary">{business.email}</Text>
+                            </div>
+                          )}
+                        </div>
+                      }
+                    />
+                    <Divider style={{ margin: '16px 0' }} />
+                    <div style={{
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      p: 2
+                      justifyContent: 'space-between'
                     }}>
                       <Button
-                        size="small"
-                        variant="text"
-                        onClick={() => navigate(
-                          `/category/${category.name}/${business._id}`,
-                          { state: { business } }
-                        )}
-                        sx={{
-                          borderRadius: 2,
-                          px: 2,
-                          textTransform: 'none'
-                        }}
+                        type="text"
+                        onClick={() =>
+                          navigate(`/category/${category.name}/${business._id}`, {
+                            state: { business },
+                          })
+                        }
+                        style={{ color: Colors.LOGOColor }}
                       >
                         View Details
                       </Button>
                       <Button
-                        size="small"
-                        variant="contained"
+                        type="primary"
                         onClick={() => handleEnquiryOpen(business)}
-                        sx={{
-                          borderRadius: 2,
-                          px: 2,
-                          textTransform: 'none',
-                          boxShadow: 'none'
+                        style={{
+                          backgroundColor: Colors.LOGOlight,
+                          borderColor: Colors.LOGOlight,
+                          color: Colors.WHITE
                         }}
                       >
                         Contact Now
                       </Button>
-                    </Box>
+                    </div>
                   </Card>
-                </Grid>
+                </Col>
               ))}
-            </Grid>
+            </Row>
           </>
         )}
-      </Box>
+      </div>
 
       {/* Enquiry Modal */}
       <Modal
-        open={openEnquiry}
-        onClose={handleEnquiryClose}
-        aria-labelledby="enquiry-modal-title"
+        title={`Contact ${selectedBusiness?.businessName}`}
+        visible={openEnquiry}
+        onCancel={handleEnquiryClose}
+        footer={null}
+        width={800}
+        centered
+        destroyOnClose
+        style={{ borderRadius: 12 }}
+        bodyStyle={{ padding: 0 }}
       >
-        <Box sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: { xs: "90%", sm: 800 },
-          bgcolor: "background.paper",
-          boxShadow: 24,
-          borderRadius: 2,
-          outline: 'none',
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' }
-        }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
           {/* Form Section */}
-          <Box sx={{
-            flex: 1,
-            p: 3,
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            <Box sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 3
-            }}>
-              <Typography id="enquiry-modal-title" variant="h6" component="h2">
-                Contact {selectedBusiness?.businessName}
-              </Typography>
-              <IconButton onClick={handleEnquiryClose} size="small">
-                <Close />
-              </IconButton>
-            </Box>
-
-            <form onSubmit={handleEnquirySubmit} style={{ flex: 1 }}>
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Your Name"
+          <div style={{ flex: 1, padding: 24 }}>
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleEnquirySubmit}
+            >
+              {/* Name Field */}
+              <Form.Item
                 name="name"
-                value={enquiryForm.name}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-                size="small"
-              />
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Email Address"
-                type="email"
-                name="email"
-                value={enquiryForm.email}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-                size="small"
-              />
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Phone Number"
-                name="phone"
-                value={enquiryForm.phone}
-                onChange={handleInputChange}
-                required
-                variant="outlined"
-                size="small"
-              />
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Your Message"
-                name="message"
-                value={enquiryForm.message}
-                onChange={handleInputChange}
-                multiline
-                rows={4}
-                required
-                variant="outlined"
-                size="small"
-              />
-              <Box sx={{
-                mt: 3,
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: 2
-              }}>
-                <Button
-                  variant="outlined"
+                label="Your Name"
+                rules={[{ required: true, message: 'Please input your name!' }]}
+              >
+                <Input
+                  style={{
+                    borderColor: '#d9d9d9',
+                    '&:hover': { borderColor: Colors.LOGOlight },
+                    '&:focus': {
+                      borderColor: Colors.LOGOColor,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                    },
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.borderColor = Colors.LOGOlight;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = Colors.LOGOColor;
+                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </Form.Item>
 
-                  onClick={handleEnquiryClose}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={token ? false : true}
-                  startIcon={<Send />}
-                >
-                  Send Message
-                </Button>
-              </Box>
-            </form>
-          </Box>
+              {/* Email Field */}
+              <Form.Item
+                name="email"
+                label="Email Address"
+                rules={[
+                  { required: true, message: 'Please input your email!' },
+                  { type: 'email', message: 'Please enter a valid email!' },
+                ]}
+              >
+                <Input
+                  style={{
+                    borderColor: '#d9d9d9',
+                    '&:hover': { borderColor: Colors.LOGOlight },
+                    '&:focus': {
+                      borderColor: Colors.LOGOColor,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                    },
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.borderColor = Colors.LOGOlight;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = Colors.LOGOColor;
+                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </Form.Item>
+
+              {/* Phone Field */}
+              <Form.Item
+                name="phone"
+                label="Phone Number"
+                rules={[{ required: true, message: 'Please input your phone number!' }]}
+              >
+                <Input
+                  style={{
+                    borderColor: '#d9d9d9',
+                    '&:hover': { borderColor: Colors.LOGOlight },
+                    '&:focus': {
+                      borderColor: Colors.LOGOColor,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                    },
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.borderColor = Colors.LOGOlight;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = Colors.LOGOColor;
+                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </Form.Item>
+
+              {/* Message Field */}
+              <Form.Item
+                name="message"
+                label="Your Message"
+                rules={[{ required: true, message: 'Please input your message!' }]}
+              >
+                <TextArea
+                  rows={4}
+                  style={{
+                    borderColor: '#d9d9d9',
+                    '&:hover': { borderColor: Colors.LOGOlight },
+                    '&:focus': {
+                      borderColor: Colors.LOGOColor,
+                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                    },
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.borderColor = Colors.LOGOlight;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = Colors.LOGOColor;
+                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#d9d9d9';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </Form.Item>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: 12
+                }}>
+                  <Button
+                    onClick={handleEnquiryClose}
+                    style={{
+                      borderColor: Colors.LOGOColor,
+                      color: Colors.LOGOColor,
+                      '&:hover': {
+                        borderColor: Colors.LOGOlight,
+                        color: Colors.LOGOlight
+                      }
+                    }}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={enquiryLoading}
+                    icon={<SendOutlined />}
+                    disabled={!token}
+                    style={{
+                      backgroundColor: Colors.LOGOlight,
+                      borderColor: Colors.LOGOlight
+                    }}
+                  >
+                    Send Message
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
 
           {/* Divider */}
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'block' } }} />
+          <Divider type="vertical" style={{ height: '100%' }} />
 
-          {/* Image Section */}
-          <Box sx={{
+          {/* Business Info Section */}
+          <div style={{
             flex: 1,
-            borderRadius: 2,
-            p: 3,
+            padding: 24,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'background.default'
+            backgroundColor: Colors.lightBg
           }}>
             <Avatar
               src={selectedBusiness?.images?.[0]?.url || "https://via.placeholder.com/400x400?text=No+Image"}
               alt={selectedBusiness?.businessName}
-              sx={{
-                width: 200,
-                height: 200,
-                mb: 2,
-                border: '4px solid',
-                borderColor: 'primary.main'
+              size={160}
+              style={{
+                marginBottom: 24,
+                border: `4px solid ${Colors.LOGOColor}`
               }}
             />
-            <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center' }}>
+            <Title level={4} style={{ marginBottom: 8, color: Colors.LOGOColor }}>
               {selectedBusiness?.businessName}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-              {selectedBusiness?.address}
-            </Typography>
-          </Box>
-        </Box>
+            </Title>
+            {selectedBusiness?.city && selectedBusiness?.state && (
+              <Text type="secondary" style={{ marginBottom: 4 }}>
+                {`${selectedBusiness.city}, ${selectedBusiness.state}`}
+              </Text>
+            )}
+            <Text type="secondary">{selectedBusiness?.address}</Text>
+
+            {!token && (
+              <Alert
+                message="Login Required"
+                description="You need to be logged in to send an enquiry"
+                type="warning"
+                showIcon
+                style={{ marginTop: 24, width: '100%' }}
+              />
+            )}
+          </div>
+        </div>
       </Modal>
 
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <Footer />
     </>
   );
 };

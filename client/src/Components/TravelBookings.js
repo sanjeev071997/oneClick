@@ -10,9 +10,10 @@ import {
   DirectionsCar as CarIcon
 } from '@mui/icons-material';
 import axios from '../axiosInstance';
+import { Colors, FontFamily, FontWeight } from "../Comman";
 
 const TravelCard = styled(Box)(({ theme }) => ({
-  backgroundColor: '#ffffff',
+  backgroundColor: Colors.WHITE,
   borderRadius: '12px',
   padding: theme.spacing(3),
   [theme.breakpoints.up('sm')]: {
@@ -109,7 +110,7 @@ const TravelBookings = () => {
             }
           })}
         </Box>
-        <Typography variant="body2" fontWeight="600" sx={{ 
+        <Typography variant="body2" fontWeight="600" sx={{color:Colors.LOGOColor,
           fontSize: isSmall ? '0.75rem' : isMedium ? '0.8rem' : '0.875rem',
           whiteSpace: 'nowrap'
         }}>
@@ -152,34 +153,19 @@ const TravelBookings = () => {
             mb: { xs: 2, md: 0 },
             minWidth: isMedium ? '250px' : 'auto'
           }}>
-            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ 
+            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color:Colors.LOGOColor,fontFamily:FontFamily.Georgia,
               fontSize: { xs: '1.25rem', sm: '1.4rem', md: '1.5rem' } 
             }}>
               Travel Bookings
             </Typography>
             <Typography variant="body2" sx={{
               mb: 2,
-              fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1rem' },
-              color: theme.palette.text.secondary
+              fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1.2rem' },
+              color: Colors.LOGOColor,  fontFamily:FontFamily.inriaSerif
             }}>
               Instant ticket bookings for your best travel experience
             </Typography>
-            <Link
-              href="#"
-              underline="hover"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate('/explore');
-              }}
-              sx={{
-                fontWeight: 500,
-                color: '#0070f3',
-                alignSelf: { xs: 'center', md: 'flex-start' },
-                fontSize: { xs: '0.875rem', sm: '0.95rem', md: '1rem' }
-              }}
-            >
-              Explore More
-            </Link>
+            
             {isSmall && <Divider sx={{ width: '100%', my: 2 }} />}
           </Grid>
 
@@ -199,7 +185,7 @@ const TravelBookings = () => {
                 },
                 flexWrap: isMedium ? 'nowrap' : 'wrap', 
                 overflowX: isMedium ? 'auto' : 'visible', 
-                pb: isMedium ? 1 : 0, // Add padding for scrollbar
+                pb: isMedium ? 1 : 0, 
                 '&::-webkit-scrollbar': {
                   height: '4px',
                 },

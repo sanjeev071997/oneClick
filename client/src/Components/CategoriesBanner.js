@@ -16,6 +16,8 @@ import CarImage from '../Images/car.webp';
 import LocalImage from '../Images/local.jpg';
 import NationalImage from '../Images/National.webp';
 import InterImage from '../Images/interr.webp'
+import banner from '../Images/bannerr.webp'
+import { Colors, FontFamily, FontWeight } from '../Comman';
 
 
 const categories = [
@@ -90,7 +92,7 @@ const CategorySection = () => {
                     borderColor: '#D3D3D3',
                   }}
                 >
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom sx={{color:Colors.LOGOColor,fontFamily:FontFamily.Georgia}}>
                     {category.title}
                   </Typography>
                   <Grid container spacing={2}>
@@ -119,7 +121,8 @@ const CategorySection = () => {
                             <Typography
                               variant="body2"
                               align="center"
-                              fontWeight="500"
+                              fontWeight={FontWeight.heading2}
+                              sx={{color:Colors.LOGOColor,fontFamily:FontFamily.inriaSerif}}
                             >
                               {service.label}
                             </Typography>
@@ -144,7 +147,7 @@ const CategorySection = () => {
   }}
 >
           <img
-            src="https://img.freepik.com/free-photo/people-posing-indian-wedding-ceremony_53876-103870.jpg"
+            src={ banner }
             alt="Banner"
             style={{
               width: '100%',

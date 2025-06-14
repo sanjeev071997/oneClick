@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "../axiosInstance"; // your configured axios
+import axios from "../axiosInstance"; 
 import {
   Box,
   Grid,

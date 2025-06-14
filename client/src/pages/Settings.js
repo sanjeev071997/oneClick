@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import {
   Avatar,
@@ -19,7 +17,6 @@ import {
   Card,
   CardContent,
   Chip,
-  LinearProgress,
   useTheme
 } from "@mui/material";
 import { Person, Lock, Settings, Edit, CheckCircle, Security } from "@mui/icons-material";
@@ -40,6 +37,7 @@ import { message } from "antd";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import PageTitle from "../Components/PageTitle";
+import { Colors, FontSize, FontWeight } from "../Comman";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -103,21 +101,31 @@ export default function UserProfile() {
         <Grid container spacing={4}>
           {/* Sidebar Profile Summary */}
           <Grid item xs={12} md={3}>
-            <Card elevation={3} sx={{ borderRadius: 3, height: '100%' }}>
+            <Card elevation={3} sx={{
+              borderRadius: 3,
+              height: '100%',
+              background: `linear-gradient(135deg, ${Colors.LOGOColor}15, ${Colors.LOGOlight}15)`,
+              border: `1px solid ${Colors.LOGOlight}30`
+            }}>
               <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Avatar
                   sx={{
                     width: 120,
                     height: 120,
-                    fontSize: 48,
-                    bgcolor: theme.palette.primary.main,
+                    fontSize: FontSize.feight,
+                    background: Colors.LOGOColor,
                     mb: 3,
-                    border: `4px solid ${theme.palette.primary.light}`
+                    border: `4px solid ${Colors.LOGOlight}`,
                   }}
                 >
                   {user?.name?.charAt(0)}
                 </Avatar>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                <Typography variant="h5" fontWeight={FontWeight.bold} gutterBottom sx={{
+                  color: Colors.LOGOColor,
+                  background: `linear-gradient(135deg, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
                   {name}
                 </Typography>
                 <Chip
@@ -130,40 +138,53 @@ export default function UserProfile() {
 
                 <Stack spacing={1} width="100%" sx={{ mt: 2 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="text.secondary">Email:</Typography>
-                    <Typography variant="body2">{email}</Typography>
+                    <Typography variant="body2">Email:</Typography>
+                    <Typography variant="body2" >{email}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="text.secondary">Phone:</Typography>
+                    <Typography variant="body2">Phone:</Typography>
                     <Typography variant="body2">{phone || "Not set"}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="text.secondary">Member since:</Typography>
+                    <Typography variant="body2" >Member since:</Typography>
                     <Typography variant="body2">{created}</Typography>
                   </Box>
                 </Stack>
 
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   startIcon={<Edit />}
-                  sx={{ mt: 3, width: '100%' }}
+                  sx={{
+                    mt: 3,
+                    width: '100%',
+                    borderRadius: '8px',
+                    background: Colors.LOGOlight,
+
+                  }}
                   onClick={() => setTab(1)}
                 >
                   Edit Profile
                 </Button>
+                
+
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   startIcon={<Lock />}
-                  sx={{ mt: 3, width: '100%' }}
-                  onClick={() => setTab(2)} 
+                  sx={{
+                    mt: 2,
+                    width: '100%',
+                    borderRadius: '8px',
+
+                    background: Colors.LOGOlight,
+                    color: Colors.WHITE,
+
+                  }}
+                  onClick={() => setTab(2)}
                 >
                   Change Password
                 </Button>
               </CardContent>
             </Card>
-
-
-
           </Grid>
 
           {/* Main Content Area */}
@@ -184,14 +205,40 @@ export default function UserProfile() {
                   '& .MuiTab-root': {
                     py: 2,
                     textTransform: 'none',
-                    fontWeight: 600,
-                    minHeight: 60
-                  }
+                    fontWeight: FontWeight.heading2,
+                    minHeight: 60,
+                    color: Colors.LOGOColor,
+                    '&.Mui-selected': {
+                      color: Colors.LOGOlight,
+                    },
+                  },
+                  '& .MuiTabs-indicator': {
+                    backgroundColor: Colors.LOGOlight,
+                    height: 3,
+                  },
                 }}
               >
-                <Tab label="Profile Overview" icon={<Person />} iconPosition="start" />
-                <Tab label="Edit Profile" icon={<Settings />} iconPosition="start" />
-                <Tab label="Password & Security" icon={<Lock />} iconPosition="start" />
+                <Tab
+                  label="Profile Overview"
+                  icon={<Person sx={{
+                    color: tab === 0 ? Colors.LOGOlight : Colors.LOGOColor
+                  }} />}
+                  iconPosition="start"
+                />
+                <Tab
+                  label="Edit Profile"
+                  icon={<Settings sx={{
+                    color: tab === 1 ? Colors.LOGOlight : Colors.LOGOColor
+                  }} />}
+                  iconPosition="start"
+                />
+                <Tab
+                  label="Password & Security"
+                  icon={<Lock sx={{
+                    color: tab === 2 ? Colors.LOGOlight : Colors.LOGOColor
+                  }} />}
+                  iconPosition="start"
+                />
               </Tabs>
 
               <Box sx={{ p: 4 }}>
@@ -199,24 +246,34 @@ export default function UserProfile() {
                 {tab === 0 && (
                   <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
-                      <Card variant="outlined" sx={{ borderRadius: 3 }}>
+                      <Card variant="outlined" sx={{
+                        borderRadius: 3,
+                        borderColor: Colors.LOGOlight,
+                      }}>
                         <CardContent>
-                          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Person sx={{ mr: 1 }} /> Personal Information
+                          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: Colors.LOGOColor,
+                          }}>
+                            <Person sx={{ color: Colors.LOGOColor, mr: 1 }} /> Personal Information
                           </Typography>
-                          <Divider sx={{ mb: 2 }} />
+                          <Divider sx={{
+                            mb: 2,
+                            borderColor: Colors.LOGOlight,
+                          }} />
                           <Stack spacing={2}>
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Full Name</Typography>
+                              <Typography variant="caption" >Full Name</Typography>
                               <Typography>{name}</Typography>
                             </Box>
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Email Address</Typography>
-                              <Typography>{email}</Typography>
+                              <Typography variant="caption" >Email Address</Typography>
+                              <Typography >{email}</Typography>
                             </Box>
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Phone Number</Typography>
-                              <Typography>{phone || "Not provided"}</Typography>
+                              <Typography variant="caption" >Phone Number</Typography>
+                              <Typography >{phone || "Not provided"}</Typography>
                             </Box>
                           </Stack>
                         </CardContent>
@@ -224,34 +281,46 @@ export default function UserProfile() {
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-                      <Card variant="outlined" sx={{ borderRadius: 3 }}>
+                      <Card variant="outlined" sx={{
+                        borderRadius: 3,
+                        borderColor: Colors.LOGOlight,
+                      }}>
                         <CardContent>
-                          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Security sx={{ mr: 1 }} /> Account Details
+                          <Typography variant="h6" fontWeight="bold" gutterBottom sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: Colors.LOGOColor,
+                          }}>
+                            <Security sx={{ color: Colors.LOGOColor, mr: 1 }} /> Account Details
                           </Typography>
-                          <Divider sx={{ mb: 2 }} />
+                          <Divider sx={{
+                            mb: 2,
+                            borderColor: Colors.LOGOlight,
+                          }} />
                           <Stack spacing={2}>
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Account Created</Typography>
+                              <Typography variant="caption">Account Created</Typography>
                               <Typography>{created}</Typography>
                             </Box>
                             <Box>
-                              <Typography variant="caption" color="text.secondary">Last Updated</Typography>
-                              <Typography>{moment(user?.updatedAt).fromNow()}</Typography>
+                              <Typography variant="caption" >Last Updated</Typography>
+                              <Typography >{moment(user?.updatedAt).fromNow()}</Typography>
                             </Box>
-
                           </Stack>
                         </CardContent>
                       </Card>
                     </Grid>
-
                   </Grid>
                 )}
 
-                {/* Edit Profile */}
                 {tab === 1 && (
                   <Box>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{
+                      color: Colors.LOGOlight,
+                      background: `linear-gradient(135deg, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}>
                       Update Your Profile
                     </Typography>
                     <Typography color="text.secondary" sx={{ mb: 4 }}>
@@ -268,19 +337,53 @@ export default function UserProfile() {
                             onChange={(e) => setName(e.target.value)}
                             variant="outlined"
                             size="medium"
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                  borderColor: Colors.LOGOColor,
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                              },
+                              '& label.Mui-focused': {
+                                color: Colors.LOGOlight,
+                              },
+                            }}
                           />
                         </Grid>
+
                         <Grid item xs={12} md={6}>
                           <TextField
                             fullWidth
                             label="Email Address"
-                            value={email}
                             type="email"
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             variant="outlined"
                             size="medium"
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                  borderColor: Colors.LOGOColor,
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                              },
+                              '& label.Mui-focused': {
+                                color: Colors.LOGOlight,
+                              },
+                            }}
                           />
                         </Grid>
+
                         <Grid item xs={12} md={6}>
                           <TextField
                             fullWidth
@@ -289,14 +392,40 @@ export default function UserProfile() {
                             onChange={(e) => setPhone(e.target.value)}
                             variant="outlined"
                             size="medium"
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                '& fieldset': {
+                                  borderColor: Colors.LOGOColor,
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: Colors.LOGOlight,
+                                },
+                              },
+                              '& label.Mui-focused': {
+                                color: Colors.LOGOlight,
+                              },
+                            }}
                           />
                         </Grid>
+
                         <Grid item xs={12}>
                           <Stack direction="row" spacing={2} justifyContent="flex-end">
                             <Button
                               variant="outlined"
                               onClick={() => setTab(0)}
-                              sx={{ px: 4 }}
+                              sx={{
+                                px: 4,
+                                color: Colors.LOGOColor,
+                                borderColor: Colors.LOGOColor,
+                                '&:hover': {
+                                  backgroundColor: Colors.LOGOlight,
+                                  color: '#fff',
+                                  borderColor: Colors.LOGOlight,
+                                },
+                              }}
                             >
                               Cancel
                             </Button>
@@ -304,7 +433,11 @@ export default function UserProfile() {
                               type="submit"
                               variant="contained"
                               disabled={loading}
-                              sx={{ px: 4 }}
+                              sx={{
+                                px: 4,
+                                background: Colors.LOGOlight,
+
+                              }}
                             >
                               {loading ? "Saving..." : "Save Changes"}
                             </Button>
@@ -315,10 +448,14 @@ export default function UserProfile() {
                   </Box>
                 )}
 
-                {/* Change Password */}
                 {tab === 2 && (
                   <Box>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom>
+                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{
+                      color: Colors.LOGOlight,
+                      background: `linear-gradient(135deg, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent'
+                    }}>
                       Change Your Password
                     </Typography>
                     <Typography color="text.secondary" sx={{ mb: 4 }}>
@@ -335,6 +472,14 @@ export default function UserProfile() {
                           onChange={(e) => setOldPassword(e.target.value)}
                           variant="outlined"
                           size="medium"
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': { borderColor: Colors.LOGOColor },
+                              '&:hover fieldset': { borderColor: Colors.LOGOlight },
+                              '&.Mui-focused fieldset': { borderColor: Colors.LOGOlight },
+                            },
+                            '& label.Mui-focused': { color: Colors.LOGOlight },
+                          }}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -345,6 +490,7 @@ export default function UserProfile() {
                             ),
                           }}
                         />
+
                         <TextField
                           fullWidth
                           label="New Password"
@@ -354,6 +500,14 @@ export default function UserProfile() {
                           variant="outlined"
                           size="medium"
                           helperText="Minimum 8 characters with at least one number and one special character"
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': { borderColor: Colors.LOGOColor },
+                              '&:hover fieldset': { borderColor: Colors.LOGOlight },
+                              '&.Mui-focused fieldset': { borderColor: Colors.LOGOlight },
+                            },
+                            '& label.Mui-focused': { color: Colors.LOGOlight },
+                          }}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -364,6 +518,7 @@ export default function UserProfile() {
                             ),
                           }}
                         />
+
                         <TextField
                           fullWidth
                           label="Confirm New Password"
@@ -372,6 +527,14 @@ export default function UserProfile() {
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           variant="outlined"
                           size="medium"
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': { borderColor: Colors.LOGOColor },
+                              '&:hover fieldset': { borderColor: Colors.LOGOlight },
+                              '&.Mui-focused fieldset': { borderColor: Colors.LOGOlight },
+                            },
+                            '& label.Mui-focused': { color: Colors.LOGOlight },
+                          }}
                           InputProps={{
                             endAdornment: (
                               <InputAdornment position="end">
@@ -387,23 +550,34 @@ export default function UserProfile() {
                           <Button
                             variant="outlined"
                             onClick={() => setTab(0)}
-                            sx={{ px: 4 }}
+                            sx={{
+                              px: 4,
+                              color: Colors.LOGOColor,
+                              borderColor: Colors.LOGOColor,
+                              '&:hover': {
+                                backgroundColor: Colors.LOGOlight,
+                                color: '#fff',
+                                borderColor: Colors.LOGOlight,
+                              },
+                            }}
                           >
                             Cancel
                           </Button>
+
                           <Button
                             type="submit"
                             variant="contained"
                             disabled={loading}
-                            sx={{ px: 4 }}
+                            sx={{
+                              px: 4,
+                              background: Colors.LOGOlight,
+                            }}
                           >
                             {loading ? "Updating..." : "Update Password"}
                           </Button>
                         </Stack>
                       </Stack>
                     </Box>
-
-
                   </Box>
                 )}
               </Box>

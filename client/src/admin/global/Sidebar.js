@@ -13,7 +13,6 @@ import BusinessIcon from "@mui/icons-material/Business";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import PeopleIcon from '@mui/icons-material/People';
 import { logout } from "../../redux/actions/userAction";
-// import logo from "../../assets/favicon.png";
 import ContactsIcon from '@mui/icons-material/Contacts';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 
@@ -33,8 +32,6 @@ const SidebarAdm = () => {
         dispatch(logout());
         localStorage.clear();
         message.success("Logout Successfully");
-        // window.location.reload();
-        // navigate("/login");
         navigate("/login", { replace: true });
       },
     });
@@ -56,14 +53,14 @@ const SidebarAdm = () => {
               menuItemStyles={{
                 button: {
                   [`&.${menuClasses.button}`]: {
-                    color: "#000",
+                    color:'Black',
                   },
                   [`&.${menuClasses.disabled}`]: {
-                    color: "green",
+                    color:'Black',
                   },
                   "&:hover": {
                     backgroundColor: "#fafafa",
-                    color: "#1976d2",
+                    color: '#275559',
                   },
                 },
 
@@ -74,19 +71,19 @@ const SidebarAdm = () => {
                 },
               }}
             >
-              <MenuItem
-                style={{ marginTop: "20px", color: "#000" }}
+              <MenuItem 
+                style={{ marginTop: "20px", color: '#275559' }}
                 display="flex"
                 alignItems="center"
                 component={<Link to="/dashboard" />}
               >
                 <b> {user.name}</b>
               </MenuItem>
-              <MenuItem style={{ color: "#1976d2" }}>{user.email}</MenuItem>
+              <MenuItem style={{ color: '#9EDC29' }}>{user.email}</MenuItem>
               <hr />
               <MenuItem
                 component={<Link to="/dashboard" />}
-                icon={<DashboardIcon />}
+                icon={<DashboardIcon sx={{color:'#275559'}} />}
               >
                 {" "}
                 Dashboard{" "}
@@ -94,7 +91,7 @@ const SidebarAdm = () => {
               
               <MenuItem
                 component={<Link to="/admin/categories" />}
-                icon={<CategoryOutlinedIcon />}
+                icon={<CategoryOutlinedIcon  sx={{color:'#275559'}}/>}
               >
                 {" "}
                 Categories{" "}
@@ -102,7 +99,7 @@ const SidebarAdm = () => {
 
               <MenuItem
                 component={<Link to="/admin/business" />}
-                icon={<BusinessIcon />}
+                icon={<BusinessIcon sx={{color:'#275559'}} />}
               >
                 {" "}
                 Business{" "}
@@ -111,7 +108,7 @@ const SidebarAdm = () => {
 
               <MenuItem
                 component={<Link to="/admin/reviews" />}
-                icon={<RateReviewIcon />}
+                icon={<RateReviewIcon sx={{color:'#275559'}} />}
               >
                 {" "}
                 Reviews{" "}
@@ -119,14 +116,14 @@ const SidebarAdm = () => {
 
               <MenuItem
                 component={<Link to="/admin/users" />}
-                icon={<PeopleIcon />}
+                icon={<PeopleIcon sx={{color:'#275559'}} />}
               >
                 {" "}
                 Users{" "}
               </MenuItem> 
               <MenuItem
                 component={<Link to="/admin/contact" />}
-                icon={<ContactsIcon />}
+                icon={<ContactsIcon  sx={{color:'#275559'}} />}
               >
                 {" "}
                Contacts{" "}
@@ -134,7 +131,7 @@ const SidebarAdm = () => {
 
               <MenuItem
                 component={<Link to="/admin/profile" />}
-                icon={<ManageAccountsIcon />}
+                icon={<ManageAccountsIcon   sx={{color:'#275559'}}/>}
               >
                 {" "}
                 Manage Accounts{" "}
@@ -153,19 +150,21 @@ const SidebarAdm = () => {
 
                   "&:hover": {
                     backgroundColor: "#fafafa",
-                    color: "#1976d2",
+                    color: '#275559',
                   },
                 },
 
                 icon: {
                   [`&.${menuClasses.icon}`]: {
-                    color: "#1976d2",
+                    color: 'black',
                   },
                 },
               }}
             >
               <hr />
-              <MenuItem onClick={handleLogout} icon={<LoginIcon />}>
+              <MenuItem onClick={handleLogout} icon={<LoginIcon sx={{color:'#275559', 
+                    
+                }} />}>
                 {" "}
                 Log out{" "}
               </MenuItem>

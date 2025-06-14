@@ -14,7 +14,7 @@ import Ac from '../Images/ac.jpg';
 import  Movie from '../Images/movie.jpeg';
 import Grocery from '../Images/grocery.jpg';
 import  EImage from '../Images/Electercity.jpeg'
-
+import { Colors, FontSize, FontWeight, FontFamily } from "../Comman"
 
 const categories = [
   {
@@ -106,7 +106,7 @@ const CategorySection = () => {
         {categories.map((category, index) => (
           <Grid item xs={12} md={6} key={index} >
            <Paper elevation={3} sx={{ p: 2, mr:2, ml:2, mt:2, borderRadius: 2, border: '1px solid', borderColor:  '#D3D3D3' }}>
-              <Typography variant="h6" gutterBottom fontWeight="bold">
+              <Typography variant="h6" gutterBottom  sx={{color:Colors.LOGOColor,fontWeight:FontWeight.bold,fontFamily:FontFamily.Georgia}}>
                 {category.title}
               </Typography>
               <Grid container spacing={2}>
@@ -122,7 +122,7 @@ const CategorySection = () => {
                         sx={{ borderRadius: 2, cursor: 'pointer', '&:hover': { boxShadow: 3 } }}
                       />
                       <CardContent sx={{ p: 1 }}>
-                        <Typography variant="body2" align="center">
+                        <Typography variant="body2" align="center" fontFamily={FontFamily.inriaSerif} fontSize={FontSize.seventeen} sx={{color:Colors.LOGOColor }}>
                           {category.label}
                         </Typography>
                       </CardContent>

@@ -12,7 +12,6 @@ import {
   IconButton,
   CircularProgress,
   TextField,
-  InputAdornment,
   Breadcrumbs,
   Link,
   TablePagination,
@@ -27,7 +26,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import axios from '../../axiosInstance';
 import moment from 'moment';
 import { Divider, message, Modal } from 'antd';
-
 const { confirm } = Modal;
 
 const AdminContact = () => {
@@ -118,7 +116,7 @@ const AdminContact = () => {
                Dashboard
              </Link>
      
-             <Typography sx={{ color: "primary.main" }}>Business</Typography>
+             <Typography sx={{ color: "primary.main" }}>Contact</Typography>
            </Breadcrumbs>
            <Divider />
 
@@ -128,22 +126,38 @@ const AdminContact = () => {
           Contacts
         </Typography>
       </Box>
-
       {/* Search */}
       <Box sx={{ mb: 3 }}>
-        <TextField
+      <TextField
           fullWidth
           variant="outlined"
-          placeholder="Search by name..."
+          placeholder="Search by Categories Name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
+              <IconButton>
+                <SearchIcon sx={{ color: "#1976d2" }} />
+              </IconButton>
             ),
-            sx: { borderRadius: 10, backgroundColor: theme.palette.background.paper }
+          }}
+          sx={{
+            mb: 3,
+            mt: 2,
+            bgcolor: "white",
+            borderRadius: "20px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                border: "none",
+              },
+              "&:hover fieldset": {
+                border: "none",
+              },
+              "&.Mui-focused fieldset": {
+                border: "none",
+              },
+            },
           }}
         />
       </Box>

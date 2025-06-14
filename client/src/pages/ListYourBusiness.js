@@ -1,511 +1,3 @@
-
-
-
-// import React, { useState, useEffect } from "react";
-// import {
-//   Container,
-//   Typography,
-//   TextField,
-//   Button,
-//   Grid,
-//   Paper,
-//   InputAdornment,
-//   MenuItem,
-//   Box,
-//   CircularProgress,
-//   Divider,
-//   Card,
-//   CardMedia,
-//   IconButton,
-//   Autocomplete
-// } from "@mui/material";
-// import {
-//   PhotoCamera,
-//   Business,
-//   Person,
-//   Phone,
-//   Email,
-//   Home,
-//   Description,
-//   Close,
-//   Search
-// } from "@mui/icons-material";
-// import axios from "../axiosInstance";
-// import Navbar from "../Components/Navbar";
-// import { useSelector } from "react-redux";
-
-// const ListYourBusiness = () => {
-//   const { user } = useSelector((state) => state.user);
-//   const [formData, setFormData] = useState({
-//     businessName: "",
-//     ownerName: "",
-//     phone: "",
-//     email: "",
-//     address: "",
-//     category: "",
-//     // categoryId: "",
-//     description: "",
-//     images: [],
-//   });
-//   const [loading, setLoading] = useState(false);
-//   const [categories, setCategories] = useState([]);
-//   const [categoryInput, setCategoryInput] = useState("");
-
-//   const fetchCategories = async () => {
-//     try {
-//       const res = await axios.get('/api/v1/categories/get');
-//       const sorted = [...(res.data.getCategories || [])].sort((a, b) =>
-//         a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-//       );
-//       setCategories(sorted);
-//     } catch (error) {
-//       console.error('Failed to fetch categories:', error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchCategories();
-//   }, []);
-
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData(prev => ({ ...prev, [name]: value }));
-//   };
-
-//   const handleImageChange = (e) => {
-//     const files = Array.from(e.target.files).slice(0, 5 - formData.images.length);
-//     setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
-//   };
-
-//   const removeImage = (index) => {
-//     const newImages = formData.images.filter((_, i) => i !== index);
-//     setFormData(prev => ({ ...prev, images: newImages }));
-//   };
-
-//   const handleCategorySelect = (event, value) => {
-//     if (value) {
-//       const selectedCategory = categories.find(cat => cat.name === value);
-//       if (selectedCategory) {
-//         setFormData(prev => ({
-//           ...prev,
-//           // category: selectedCategory.name,
-//           category: selectedCategory._id
-//         }));
-//       } else {
-//         // For custom/new category
-//         setFormData(prev => ({
-//           ...prev,
-//           category: value,
-//           // categoryId: "" // No ID for custom categories
-//         }));
-//       }
-//     } else {
-//       setFormData(prev => ({
-//         ...prev,
-//         category: "",
-//         // categoryId: ""
-//       }));
-//     }
-//     setCategoryInput(value || "");
-//   };
-
-//   // add business 
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setLoading(true);
-
-//     const data = new FormData();
-//     Object.entries(formData).forEach(([key, value]) => {
-//       if (key === "images") {
-//         value.forEach(image => data.append("images", image));
-//       } else if (value !== undefined && value !== null) {
-//         data.append(key, value);
-//       }
-//     });
-//     data.append("userId", user._id)
-//     try {
-//       const res = await axios.post("/api/v1/business/add", data, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//       });
-
-//       alert(res.data.message || "Business added successfully!");
-//       setFormData({
-//         businessName: "",
-//         ownerName: "",
-//         phone: "",
-//         email: "",
-//         address: "",
-//         category: "",
-//         // categoryId: "",
-//         description: "",
-//         images: []
-//       });
-//       setCategoryInput("");
-
-//     } catch (error) {
-//       alert(error.response?.data?.message || "Submission failed.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       <Navbar />
-//       <Container maxWidth="md" sx={{ py: 6 }}>
-//         <Paper
-//           elevation={3}
-//           sx={{
-//             p: { xs: 3, md: 5 },
-//             borderRadius: 4,
-//             background: "linear-gradient(to bottom right, #f9f9ff, #ffffff)",
-//             boxShadow: "0px 8px 45px rgba(3, 0, 71, 0.09)",
-//             border: "1px solid rgba(0, 0, 0, 0.05)"
-//           }}
-//         >
-//           <Box textAlign="center" mb={5}>
-//             <Box
-//               sx={{
-//                 width: 80,
-//                 height: 80,
-//                 backgroundColor: "#84139520",
-//                 borderRadius: "50%",
-//                 display: "inline-flex",
-//                 alignItems: "center",
-//                 justifyContent: "center",
-//                 mb: 3
-//               }}
-//             >
-//               <Business sx={{ fontSize: 40, color: "#841395" }} />
-//             </Box>
-//             <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "#2d2d2d" }}>
-//               List Your Business
-//             </Typography>
-//             <Typography variant="subtitle1" color="text.secondary" sx={{ maxWidth: 600, mx: "auto" }}>
-//               Join our community of local businesses and reach thousands of potential customers
-//             </Typography>
-//           </Box>
-
-//           <Divider sx={{ mb: 4, borderColor: "rgba(0, 0, 0, 0.08)" }} />
-
-//           <Box component="form" onSubmit={handleSubmit}>
-//             <Grid container spacing={3}>
-//               {/* Business & Owner Info */}
-//               {[
-//                 { label: "Business Name", name: "businessName", icon: <Business /> },
-//                 { label: "Owner Name", name: "ownerName", icon: <Person /> },
-//                 { label: "Phone Number", name: "phone", icon: <Phone />, type: "tel" },
-//                 { label: "Email", name: "email", icon: <Email />, type: "email" }
-//               ].map((field, i) => (
-//                 <Grid item xs={12} sm={6} key={i}>
-//                   <TextField
-//                     fullWidth
-//                     required
-//                     label={field.label}
-//                     name={field.name}
-//                     type={field.type || "text"}
-//                     value={formData[field.name]}
-//                     onChange={handleChange}
-//                     variant="outlined"
-//                     InputProps={{
-//                       startAdornment: (
-//                         <InputAdornment position="start">
-//                           {React.cloneElement(field.icon, { color: "primary" })}
-//                         </InputAdornment>
-//                       ),
-//                     }}
-//                     sx={{
-//                       "& .MuiOutlinedInput-root": {
-//                         borderRadius: 2,
-//                         "& fieldset": {
-//                           borderColor: "rgba(0, 0, 0, 0.12)"
-//                         },
-//                         "&:hover fieldset": {
-//                           borderColor: "#841395"
-//                         }
-//                       }
-//                     }}
-//                   />
-//                 </Grid>
-//               ))}
-
-//               {/* Address */}
-//               <Grid item xs={12}>
-//                 <TextField
-//                   fullWidth
-//                   required
-//                   label="Business Address"
-//                   name="address"
-//                   multiline
-//                   rows={2}
-//                   value={formData.address}
-//                   onChange={handleChange}
-//                   variant="outlined"
-//                   InputProps={{
-//                     startAdornment: (
-//                       <InputAdornment position="start">
-//                         <Home color="primary" />
-//                       </InputAdornment>
-//                     ),
-//                   }}
-//                   sx={{
-//                     "& .MuiOutlinedInput-root": {
-//                       borderRadius: 2,
-//                       "& fieldset": {
-//                         borderColor: "rgba(0, 0, 0, 0.12)"
-//                       },
-//                       "&:hover fieldset": {
-//                         borderColor: "#841395"
-//                       }
-//                     }
-//                   }}
-//                 />
-//               </Grid>
-
-//               {/* Category Field with Search and Custom Entry */}
-//               <Grid item xs={12}>
-//                 <Autocomplete
-//                   freeSolo
-//                   options={categories.map((category) => category.name)}
-//                   inputValue={categoryInput}
-//                   onInputChange={(event, newInputValue) => {
-//                     setCategoryInput(newInputValue);
-//                   }}
-//                   onChange={handleCategorySelect}
-//                   value={formData.category}
-//                   renderInput={(params) => (
-//                     <TextField
-//                       {...params}
-//                       label="Business Category"
-//                       required
-//                       placeholder="Search or type a new category"
-//                       variant="outlined"
-//                       InputProps={{
-//                         ...params.InputProps,
-//                         startAdornment: (
-//                           <InputAdornment position="start">
-//                             <Search color="action" />
-//                           </InputAdornment>
-//                         ),
-//                       }}
-//                       sx={{
-//                         "& .MuiOutlinedInput-root": {
-//                           borderRadius: 2,
-//                           "& fieldset": {
-//                             borderColor: "rgba(0, 0, 0, 0.12)"
-//                           },
-//                           "&:hover fieldset": {
-//                             borderColor: "#841395"
-//                           }
-//                         }
-//                       }}
-//                     />
-//                   )}
-//                   renderOption={(props, option) => (
-//                     <MenuItem {...props} key={option}>
-//                       {option}
-//                     </MenuItem>
-//                   )}
-//                   noOptionsText={
-//                     categoryInput ? (
-//                       <Typography>
-//                         Press enter to use "{categoryInput}"
-//                       </Typography>
-//                     ) : (
-//                       "Type to search categories"
-//                     )
-//                   }
-//                 />
-//               </Grid>
-
-//               {/* Description */}
-//               <Grid item xs={12}>
-//                 <TextField
-//                   fullWidth
-//                   label="Business Description"
-//                   name="description"
-//                   value={formData.description}
-//                   onChange={handleChange}
-//                   multiline
-//                   rows={4}
-//                   variant="outlined"
-//                   InputProps={{
-//                     startAdornment: (
-//                       <InputAdornment position="start" sx={{mt:-7}}>
-//                         <Description color="primary" />
-//                       </InputAdornment>
-//                     ),
-//                   }}
-//                   sx={{
-//                     "& .MuiOutlinedInput-root": {
-//                       borderRadius: 2,
-//                       "& fieldset": {
-//                         borderColor: "rgba(0, 0, 0, 0.12)"
-//                       },
-//                       "&:hover fieldset": {
-//                         borderColor: "#841395"
-//                       }
-//                     }
-//                   }}
-//                 />
-//               </Grid>
-
-//               {/* Image Upload Section */}
-//               <Grid item xs={12}>
-//                 <Card
-//                   variant="outlined"
-//                   sx={{
-//                     p: 3,
-//                     borderRadius: 2,
-//                     border: "2px dashed rgba(132, 19, 149, 0.3)",
-//                     backgroundColor: "rgba(132, 19, 149, 0.03)",
-//                     transition: "all 0.3s ease",
-//                     "&:hover": {
-//                       borderColor: "rgba(132, 19, 149, 0.6)",
-//                       backgroundColor: "rgba(132, 19, 149, 0.05)"
-//                     }
-//                   }}
-//                 >
-//                   <Box textAlign="center">
-//                     <Box
-//                       sx={{
-//                         width: 60,
-//                         height: 60,
-//                         backgroundColor: "#84139510",
-//                         borderRadius: "50%",
-//                         display: "inline-flex",
-//                         alignItems: "center",
-//                         justifyContent: "center",
-//                         mb: 2
-//                       }}
-//                     >
-//                       <PhotoCamera sx={{ fontSize: 28, color: "#841395" }} />
-//                     </Box>
-//                     <Typography variant="h6" gutterBottom sx={{ color: "#2d2d2d" }}>
-//                       Business Images
-//                     </Typography>
-//                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-//                       Upload up to 5 high-quality images (JPG, PNG)
-//                     </Typography>
-
-//                     <Button
-//                       variant="outlined"
-//                       component="label"
-//                       startIcon={<PhotoCamera />}
-//                       disabled={formData.images.length >= 5}
-//                       sx={{
-//                         borderRadius: 2,
-//                         borderColor: "#841395",
-//                         color: "#841395",
-//                         "&:hover": {
-//                           backgroundColor: "#84139510",
-//                           borderColor: "#841395"
-//                         }
-//                       }}
-//                     >
-//                       Select Images
-//                       <input type="file" hidden multiple accept="image/*" onChange={handleImageChange} />
-//                     </Button>
-
-//                     <Typography variant="caption" display="block" mt={1} color="text.secondary">
-//                       {formData.images.length} of 5 files selected
-//                     </Typography>
-//                   </Box>
-
-//                   {/* Preview */}
-//                   {formData.images.length > 0 && (
-//                     <Box mt={3}>
-//                       <Grid container spacing={2}>
-//                         {formData.images.map((img, idx) => (
-//                           <Grid item xs={6} sm={4} md={3} key={idx}>
-//                             <Card sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
-//                               <CardMedia
-//                                 component="img"
-//                                 height="140"
-//                                 image={URL.createObjectURL(img)}
-//                                 alt={img.name}
-//                                 sx={{ objectFit: "cover" }}
-//                               />
-//                               <IconButton
-//                                 size="small"
-//                                 onClick={() => removeImage(idx)}
-//                                 sx={{
-//                                   position: "absolute",
-//                                   top: 5,
-//                                   right: 5,
-//                                   backgroundColor: "rgba(0,0,0,0.6)",
-//                                   color: "#fff",
-//                                   "&:hover": {
-//                                     backgroundColor: "rgba(0,0,0,0.8)"
-//                                   }
-//                                 }}
-//                               >
-//                                 <Close fontSize="small" />
-//                               </IconButton>
-//                             </Card>
-//                             <Typography
-//                               variant="caption"
-//                               noWrap
-//                               title={img.name}
-//                               sx={{
-//                                 display: "block",
-//                                 mt: 0.5,
-//                                 color: "text.secondary"
-//                               }}
-//                             >
-//                               {img.name.length > 20 ? `${img.name.substring(0, 17)}...` : img.name}
-//                             </Typography>
-//                           </Grid>
-//                         ))}
-//                       </Grid>
-//                     </Box>
-//                   )}
-//                 </Card>
-//               </Grid>
-
-//               {/* Submit Button */}
-//               <Grid item xs={12}>
-//                 <Button
-//                   type="submit"
-//                   fullWidth
-//                   size="large"
-//                   variant="contained"
-//                   disabled={loading}
-//                   startIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
-//                   sx={{
-//                     py: 2,
-//                     fontWeight: "bold",
-//                     fontSize: "1rem",
-//                     borderRadius: 2,
-//                     textTransform: "none",
-//                     letterSpacing: 0.5,
-//                     background: "linear-gradient(45deg, #841395, #a517ba)",
-//                     boxShadow: "0 4px 15px rgba(132, 19, 149, 0.3)",
-//                     "&:hover": {
-//                       background: "linear-gradient(45deg, #6a0d7a, #841395)",
-//                       boxShadow: "0 6px 20px rgba(132, 19, 149, 0.4)"
-//                     },
-//                     "&:disabled": {
-//                       background: "rgba(0, 0, 0, 0.12)"
-//                     }
-//                   }}
-//                 >
-//                   {loading ? "Processing..." : "Submit Business Listing"}
-//                 </Button>
-//               </Grid>
-//             </Grid>
-//           </Box>
-//         </Paper>
-//       </Container>
-//     </>
-//   );
-// };
-
-// export default ListYourBusiness;
-
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -523,7 +15,7 @@ import {
   IconButton,
   Autocomplete,
   Avatar,
-  Chip
+  Chip,
 } from "@mui/material";
 import {
   PhotoCamera,
@@ -536,12 +28,16 @@ import {
   Close,
   Search,
   Add,
-  CheckCircle
+  CheckCircle,
 } from "@mui/icons-material";
 import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
 import { useSelector } from "react-redux";
 import Footer from "../Components/Footer";
+import { State, City } from "country-state-city";
+import { message } from 'antd';
+
+import { Colors, FontWeight } from "../Comman";
 
 const ListYourBusiness = () => {
   const { user } = useSelector((state) => state.user);
@@ -551,10 +47,16 @@ const ListYourBusiness = () => {
     phone: "",
     email: "",
     address: "",
+    state: "",
+    city: "",
     category: "",
     description: "",
     images: [],
   });
+
+  const [statesList, setStatesList] = useState([]);
+  const [citiesList, setCitiesList] = useState([]);
+  const states = State.getStatesOfCountry("IN");
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoryInput, setCategoryInput] = useState("");
@@ -572,6 +74,7 @@ const ListYourBusiness = () => {
       setCategories(sorted);
     } catch (error) {
       console.error('Failed to fetch categories:', error);
+      message.error('Failed to load business categories.');
     } finally {
       setLoading(false);
     }
@@ -579,9 +82,40 @@ const ListYourBusiness = () => {
 
   useEffect(() => {
     fetchCategories();
+    setStatesList(states);
   }, []);
 
+  useEffect(() => {
+    if (formData.state) {
+      const selectedState = statesList.find(s => s.name === formData.state);
+      if (selectedState) {
+        setCitiesList(City.getCitiesOfState("IN", selectedState.isoCode));
+      } else {
+        setCitiesList([]);
+      }
+      setFormData(prev => ({ ...prev, city: "" }));
+    } else {
+      setCitiesList([]);
+    }
+  }, [formData.state, statesList]);
+
   const handleNext = () => {
+    if (activeStep === 0) {
+      if (!formData.businessName || !formData.state || !formData.city || !formData.category || !formData.description) {
+        message.error("Please fill in all required fields for Business Information.");
+        return;
+      }
+    } else if (activeStep === 1) {
+      if (!formData.ownerName || !formData.phone || !formData.email || !formData.address) {
+        message.error("Please fill in all required fields for Contact Details.");
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (formData.email && !emailRegex.test(formData.email)) {
+        message.error("Please enter a valid email address.");
+        return;
+      }
+    }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
 
@@ -595,8 +129,15 @@ const ListYourBusiness = () => {
   };
 
   const handleImageChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 5 - formData.images.length);
-    setFormData(prev => ({ ...prev, images: [...prev.images, ...files] }));
+    const files = Array.from(e.target.files);
+    const currentImagesCount = formData.images.length;
+    const filesToAdd = files.slice(0, 5 - currentImagesCount);
+
+    if (files.length > filesToAdd.length) {
+        message.warn(`You can only upload a maximum of 5 images. ${files.length - filesToAdd.length} image(s) were not added.`);
+    }
+
+    setFormData(prev => ({ ...prev, images: [...prev.images, ...filesToAdd] }));
   };
 
   const removeImage = (index) => {
@@ -639,33 +180,69 @@ const ListYourBusiness = () => {
         data.append(key, value);
       }
     });
-    data.append("userId", user._id)
+    data.append("userId", user._id);
+
     try {
       const res = await axios.post("/api/v1/business/add", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setSuccess(true);
-      setFormData({
-        businessName: "",
-        ownerName: "",
-        phone: "",
-        email: "",
-        address: "",
-        category: "",
-        description: "",
-        images: []
-      });
-      setCategoryInput("");
+      if (res.data.success) {
+        message.success("Your business has been successfully listed!");
+        setSuccess(true);
+        setFormData({
+          businessName: "",
+          ownerName: "",
+          phone: "",
+          email: "",
+          address: "",
+          state: "",
+          city: "",
+          category: "",
+          description: "",
+          images: []
+        });
+        setCategoryInput("");
+        setCitiesList([]);
+      } else {
+        message.error(res.data.message || "Submission failed.");
+      }
 
     } catch (error) {
-      alert(error.response?.data?.message || "Submission failed.");
+      console.error("Submission error:", error);
+      message.error(error.response?.data?.message || "An error occurred during submission.");
     } finally {
       setLoading(false);
     }
   };
 
   const getStepContent = (step) => {
+    
+    const textFieldSx = {
+      mb: 3,
+      '& .MuiOutlinedInput-root': {
+        '& fieldset': {
+          borderColor: Colors.BLACK, 
+        },
+        '&:hover fieldset': {
+          borderColor: Colors.BLACK, 
+        },
+        '&.Mui-focused fieldset': {
+          borderColor: Colors.LOGOlight, 
+        },
+      },
+      '& .MuiInputLabel-root': {
+        color: Colors.BLACK,
+      },
+      '& .MuiInputLabel-root.Mui-focused': {
+        color: Colors.LOGOlight, 
+      },
+      '& .MuiInputBase-input': {
+        color: '#000000', 
+      },
+    };
+    
+
     switch (step) {
       case 0:
         return (
@@ -682,13 +259,87 @@ const ListYourBusiness = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Business color="primary" />
+                      <Business sx={{ color: Colors.LOGOColor }} />
                     </InputAdornment>
                   ),
                 }}
-                sx={{ mb: 3 }}
+                sx={textFieldSx}
               />
             </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                select
+                required
+                label="Select State"
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                variant="outlined"
+                sx={{
+                  ...textFieldSx,
+                  minWidth: 280,
+                }}
+                SelectProps={{
+                  MenuProps: {
+                    PaperProps: {
+                      sx: {
+                        maxHeight: 300,
+                        width: 300,
+                      },
+                    },
+                  },
+                }}
+              >
+                {statesList.map((state) => (
+                  <MenuItem key={state.isoCode} value={state.name} sx={{ color: Colors.LOGOColor }}>
+                    {state.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+
+            {formData.state && (
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  select
+                  required
+                  label="Select City"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  variant="outlined"
+                  sx={{
+                    ...textFieldSx,
+                    minWidth: 280,
+                  }}
+                  SelectProps={{
+                    MenuProps: {
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 300,
+                          width: 300,
+                        },
+                      },
+                    },
+                  }}
+                  disabled={citiesList.length === 0}
+                >
+                  {citiesList.length > 0 ? (
+                    citiesList.map((city) => (
+                      <MenuItem key={city.name} value={city.name} sx={{ color: Colors.LOGOColor }}>
+                        {city.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="" disabled sx={{ color: Colors.LOGOlight }}>
+                      No cities available for this state
+                    </MenuItem>
+                  )}
+                </TextField>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Autocomplete
@@ -699,7 +350,7 @@ const ListYourBusiness = () => {
                   setCategoryInput(newInputValue);
                 }}
                 onChange={handleCategorySelect}
-                value={formData.category.name}
+                value={categoryInput}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -707,18 +358,19 @@ const ListYourBusiness = () => {
                     required
                     placeholder="Search or type a new category"
                     variant="outlined"
+                    sx={textFieldSx}
                     InputProps={{
                       ...params.InputProps,
                       startAdornment: (
                         <InputAdornment position="start">
-                          <Search color="action" />
+                          <Search sx={{ color: Colors.LOGOColor }} />
                         </InputAdornment>
                       ),
                     }}
                   />
                 )}
                 renderOption={(props, option) => (
-                  <MenuItem {...props} key={option}>
+                  <MenuItem {...props} key={option} sx={{ color: Colors.LOGOColor }}>
                     {option}
                   </MenuItem>
                 )}
@@ -738,10 +390,11 @@ const ListYourBusiness = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start" sx={{ mt: -7 }}>
-                      <Description color="primary" />
+                      <Description sx={{ color: Colors.LOGOColor }} />
                     </InputAdornment>
                   ),
                 }}
+                sx={textFieldSx}
               />
             </Grid>
           </Grid>
@@ -770,10 +423,11 @@ const ListYourBusiness = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        {React.cloneElement(field.icon, { color: "primary" })}
+                        {React.cloneElement(field.icon, { sx: { color: Colors.LOGOColor } })}
                       </InputAdornment>
                     ),
                   }}
+                  sx={textFieldSx}
                 />
               </Grid>
             ))}
@@ -785,14 +439,14 @@ const ListYourBusiness = () => {
             <Grid item xs={12}>
               <Box
                 sx={{
-                  border: '2px dashed #841395',
+                  border: `2px dashed ${Colors.LOGOColor}`,
                   borderRadius: 2,
                   p: 4,
                   textAlign: 'center',
-                  backgroundColor: 'rgba(132, 19, 149, 0.05)',
+                  backgroundColor: `${Colors.LOGOColor}10`,
                   cursor: 'pointer',
                   '&:hover': {
-                    backgroundColor: 'rgba(132, 19, 149, 0.1)'
+                    backgroundColor: `${Colors.LOGOColor}20`
                   }
                 }}
               >
@@ -806,8 +460,8 @@ const ListYourBusiness = () => {
                 />
                 <label htmlFor="business-images">
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Avatar sx={{ bgcolor: '#84139520', width: 60, height: 60, mb: 2 }}>
-                      <PhotoCamera sx={{ fontSize: 30, color: '#841395' }} />
+                    <Avatar sx={{ bgcolor: `${Colors.LOGOColor}20`, width: 60, height: 60, mb: 2 }}>
+                      <PhotoCamera sx={{ fontSize: 30, color: Colors.LOGOColor }} />
                     </Avatar>
                     <Typography variant="h6" gutterBottom>
                       Upload Business Images
@@ -817,7 +471,11 @@ const ListYourBusiness = () => {
                     </Typography>
                     <Button
                       variant="outlined"
-                      color="primary"
+                      sx={{
+                        color: Colors.WHITE,
+                        borderColor: Colors.LOGOlight,
+                        
+                      }}
                       startIcon={<Add />}
                       component="span"
                       disabled={formData.images.length >= 5}
@@ -873,33 +531,38 @@ const ListYourBusiness = () => {
         return (
           <Box sx={{ p: 3, border: '1px solid rgba(0,0,0,0.12)', borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
-              <CheckCircle color="primary" sx={{ mr: 1 }} /> Review Your Business Information
+              <CheckCircle sx={{ color: Colors.LOGOColor, mr: 1 }} /> Review Your Business Information
             </Typography>
 
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" color="text.secondary">Business Name</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>{formData.businessName}</Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>{formData.businessName}</Typography>
+
+                <Typography variant="subtitle2" color="text.secondary">Location</Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>
+                  {formData.city ? `${formData.city}, ` : ''}{formData.state}
+                </Typography>
 
                 <Typography variant="subtitle2" color="text.secondary">Category</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  {categories.find(c => c._id === formData.category)?.name || formData.category}
+                <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>
+                  {categories.find(c => c._id === formData.category)?.name || categoryInput || "N/A"}
                 </Typography>
 
                 <Typography variant="subtitle2" color="text.secondary">Description</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>{formData.description || "Not provided"}</Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>{formData.description || "Not provided"}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" color="text.secondary">Contact Information</Typography>
                 <Box sx={{ mb: 2 }}>
-                  <Chip icon={<Person />} label={formData.ownerName} sx={{ mr: 1, mb: 1 }} />
-                  <Chip icon={<Phone />} label={formData.phone} sx={{ mr: 1, mb: 1 }} />
-                  {formData.email && <Chip icon={<Email />} label={formData.email} sx={{ mb: 1 }} />}
+                  <Chip icon={<Person sx={{ color: Colors.LOGOColor }} />} label={formData.ownerName} sx={{ mr: 1, mb: 1, color: Colors.LOGOColor, borderColor: Colors.LOGOlight }} variant="outlined" />
+                  <Chip icon={<Phone sx={{ color: Colors.LOGOColor }} />} label={formData.phone} sx={{ mr: 1, mb: 1, color: Colors.LOGOColor, borderColor: Colors.LOGOlight }} variant="outlined" />
+                  {formData.email && <Chip icon={<Email sx={{ color: Colors.LOGOColor }} />} label={formData.email} sx={{ mb: 1, color: Colors.LOGOColor, borderColor: Colors.LOGOlight }} variant="outlined" />}
                 </Box>
 
                 <Typography variant="subtitle2" color="text.secondary">Address</Typography>
-                <Typography variant="body1" sx={{ mb: 2 }}>{formData.address}</Typography>
+                <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>{formData.address}</Typography>
 
                 <Typography variant="subtitle2" color="text.secondary">Images</Typography>
 
@@ -915,11 +578,12 @@ const ListYourBusiness = () => {
                           height: '100px',
                           objectFit: 'cover',
                           borderRadius: '8px',
+                          border: `1px solid ${Colors.LOGOlight}`
                         }}
                       />
                     ))
                   ) : (
-                    <Typography variant="body1">No images uploaded</Typography>
+                    <Typography variant="body1" sx={{ color: Colors.LOGOlight }}>No images uploaded</Typography>
                   )}
                 </Box>
 
@@ -939,8 +603,8 @@ const ListYourBusiness = () => {
         <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
           <Paper elevation={3} sx={{ p: 6, borderRadius: 4 }}>
             <Box sx={{ mb: 4 }}>
-              <Avatar sx={{ bgcolor: '#4caf50', width: 80, height: 80, mx: 'auto' }}>
-                <CheckCircle sx={{ fontSize: 50 }} />
+              <Avatar sx={{ bgcolor: Colors.LOGOColor, width: 80, height: 80, mx: 'auto' }}>
+                <CheckCircle sx={{ fontSize: 50, color: Colors.WHITE }} />
               </Avatar>
             </Box>
             <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#2d2d2d' }}>
@@ -952,7 +616,6 @@ const ListYourBusiness = () => {
             <Button
               variant="contained"
               size="large"
-              color="primary"
               onClick={() => {
                 setSuccess(false);
                 setActiveStep(0);
@@ -963,13 +626,16 @@ const ListYourBusiness = () => {
                 borderRadius: 2,
                 fontWeight: 'bold',
                 textTransform: 'none',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: Colors.LOGOlight, 
+              
               }}
             >
               List Another Business
             </Button>
           </Paper>
         </Container>
+        <Footer />
       </>
     );
   }
@@ -993,7 +659,7 @@ const ListYourBusiness = () => {
               sx={{
                 width: 100,
                 height: 100,
-                backgroundColor: '#84139510',
+                backgroundColor: `${Colors.LOGOColor}10`,
                 borderRadius: '50%',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -1001,7 +667,7 @@ const ListYourBusiness = () => {
                 mb: 3
               }}
             >
-              <Business sx={{ fontSize: 50, color: '#841395' }} />
+              <Business sx={{ fontSize: 50, color: Colors.LOGOColor }} />
             </Box>
             <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: '#2d2d2d' }}>
               List Your Business
@@ -1020,8 +686,8 @@ const ListYourBusiness = () => {
                       sx={{
                         width: 36,
                         height: 36,
-                        bgcolor: activeStep >= index ? '#841395' : 'rgba(0, 0, 0, 0.12)',
-                        color: activeStep >= index ? '#fff' : 'rgba(0, 0, 0, 0.5)',
+                        bgcolor: activeStep >= index ? Colors.LOGOColor : 'rgba(0, 0, 0, 0.12)',
+                        color: activeStep >= index ? Colors.WHITE : 'rgba(0, 0, 0, 0.5)',
                         fontWeight: 'bold'
                       }}
                     >
@@ -1032,7 +698,7 @@ const ListYourBusiness = () => {
                       sx={{
                         mt: 1,
                         fontWeight: activeStep === index ? 'bold' : 'normal',
-                        color: activeStep >= index ? '#841395' : 'text.secondary'
+                        color: activeStep >= index ? Colors.LOGOColor : 'text.secondary'
                       }}
                     >
                       {label}
@@ -1043,7 +709,7 @@ const ListYourBusiness = () => {
                       sx={{
                         width: 50,
                         height: 2,
-                        bgcolor: activeStep > index ? '#841395' : 'rgba(0, 0, 0, 0.12)',
+                        bgcolor: activeStep > index ? Colors.LOGOColor : 'rgba(0, 0, 0, 0.12)',
                         alignSelf: 'center',
                         mx: 1
                       }}
@@ -1068,7 +734,10 @@ const ListYourBusiness = () => {
                 borderRadius: 2,
                 fontWeight: 'bold',
                 textTransform: 'none',
-                fontSize: '1rem'
+                fontSize: '1rem',
+                backgroundColor: Colors.LOGOlight, 
+                color:'white'
+                
               }}
             >
               Back
@@ -1077,7 +746,6 @@ const ListYourBusiness = () => {
             {activeStep === steps.length - 1 ? (
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleSubmit}
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
@@ -1088,11 +756,8 @@ const ListYourBusiness = () => {
                   fontWeight: 'bold',
                   textTransform: 'none',
                   fontSize: '1rem',
-                  background: 'linear-gradient(45deg, #841395, #a517ba)',
-                  boxShadow: '0 4px 15px rgba(132, 19, 149, 0.3)',
-                  '&:hover': {
-                    background: 'linear-gradient(45deg, #6a0d7a, #841395)'
-                  }
+                  backgroundColor: Colors.LOGOlight, 
+                  
                 }}
               >
                 {loading ? 'Submitting...' : 'Submit Listing'}
@@ -1100,7 +765,6 @@ const ListYourBusiness = () => {
             ) : (
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleNext}
                 sx={{
                   px: 6,
@@ -1109,11 +773,8 @@ const ListYourBusiness = () => {
                   fontWeight: 'bold',
                   textTransform: 'none',
                   fontSize: '1rem',
-                  background: 'linear-gradient(45deg, #841395, #a517ba)',
-                  boxShadow: '0 4px 15px rgba(132, 19, 149, 0.3)',
-                  '&:hover': {
-                    background: 'linear-gradient(45deg, #6a0d7a, #841395)'
-                  }
+                  backgroundColor: Colors.LOGOlight, 
+                  
                 }}
               >
                 Next

@@ -17,7 +17,6 @@ import AdminBusiness from "./admin/Business/Business.js";
 import AdminReviews from "./admin/Reviews/Reviews.js";
 import AdminUsers from "./admin/Users/User.js"
 import AdminContact from './admin/Contact/AdminContact.js'
-
 import NotFound from "./pages/Error";
 import ConnectionStatus from "./Components/ConnectionStatus.js";
 import { useSelector } from "react-redux";
@@ -30,6 +29,7 @@ import Addedbusiness from "./pages/Addedbusiness.js";
 import Reviews from "./pages/Reviews.js";
 import Quries from "./pages/Quries.js";
 import Settings from './pages/Settings.js'
+import Plans from './pages/Plans.js'
 
 
 function App() {
@@ -85,7 +85,9 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+           
             <Route path="/Added/business" element={<Addedbusiness/>} />
+            <Route path="/plans" element={<Plans/>} />
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/quries" element={<Quries/>} />
             <Route path="/settings" element={<Settings/>} />
