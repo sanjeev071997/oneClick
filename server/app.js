@@ -13,7 +13,7 @@ import listBusinessRoute from "./routes/listBusinessRoute.js";
 import reviewRoute from "./routes/reviewRoute.js";
 import enquiryRoute from "./routes/enquiryRoute.js";
 import contactRoute from "./routes/contactRoute.js"
-import adsRoute from "./routes/adsRoute.js";
+import homeHighlightsRoute from "./routes/homeHighlightsRoute.js";
 import plansRoute from "./routes/plansRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -55,7 +55,7 @@ app.use("/api/v1/business", listBusinessRoute);
 app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/enquiry", enquiryRoute);
 app.use("/api/v1/contact", contactRoute);
-app.use("/api/v1/ads", adsRoute);
+app.use("/api/v1/homehighlights", homeHighlightsRoute);
 app.use("/api/v1/plans", plansRoute);
 
 // Static files

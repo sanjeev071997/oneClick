@@ -213,7 +213,7 @@ export const resetPassword = catchAsyncErrors(async (req, res, next) => {
 // Admin Get All Users
 export const getAllUsers = catchAsyncErrors(async (req, res, next) => {
   try {
-    const adminUsers = await User.find({}).sort({ createdAt: -1 });
+    const adminUsers = await User.find({ role: 0 }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       adminUsers,

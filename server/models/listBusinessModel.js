@@ -16,13 +16,13 @@ const businessSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Phone number is required'],
     validate: {
-      validator: (v) => /^[0-9]{10,15}$/.test(v),
-      message: (props) => `${props.value} is not a valid phone number!`
+      validator: (v) => /^\+\d{1,3}\s?[0-9]{10}$/.test(v),
+      message: (props) => `${props.value} is not a valid phone number. Please use a valid country code followed by a 10-digit number, like "+91 998XXXXXXX"!`
     }
   },
 
   email: {
-    type: String,
+    type: String, 
     validate: {
       validator: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
       message: (props) => `${props.value} is not a valid email!`

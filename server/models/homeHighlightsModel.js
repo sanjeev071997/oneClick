@@ -2,7 +2,7 @@
 
 import mongoose from "mongoose";
 
-const AdsSchema = new mongoose.Schema(
+const HomeHighlightsSchema = new mongoose.Schema(
   {
     imageUrl: {
       type: String,
@@ -21,6 +21,6 @@ const AdsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const adsModel = mongoose.model("ADS", AdsSchema);
+const homeHighlightsModel = mongoose.model("HomeHighlights", HomeHighlightsSchema);
 
-export default adsModel;
+export default homeHighlightsModel;

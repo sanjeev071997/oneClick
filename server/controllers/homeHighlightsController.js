@@ -1,5 +1,5 @@
 import multer from "multer";
-import ADS from "../models/adsModel.js";
+import HomeHighlights from "../models/homeHighlightsModel.js";
 import Errorhandler from "../utils/Errorhandler.js";
 import cloudinary from "../utils/cloudinary.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
@@ -13,7 +13,7 @@ const uploadBase64ToCloudinary = async (base64String) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       `data:image/jpeg;base64,${base64String}`,
-      { folder: "ADS" },
+      { folder: "HomeHighlights" },
       (error, result) => {
         if (error) {
           reject(new Error("Error uploading image to Cloudinary"));
@@ -25,8 +25,8 @@ const uploadBase64ToCloudinary = async (base64String) => {
   });
 };
 
-// Add ADS (Supports Multiple File Uploads)
-export const addADS = catchAsyncErrors(async (req, res, next) => {
+// Add HomeHighlights (Supports Multiple File Uploads)
+export const addHomeHighlights = catchAsyncErrors(async (req, res, next) => {
   try {
     let { images } = req.body;
 
@@ -43,26 +43,26 @@ export const addADS = catchAsyncErrors(async (req, res, next) => {
     });
 
     const uploadedImages = await Promise.all(uploadPromises);
-    const savedImages = await ADS.insertMany(uploadedImages);
+    const savedImages = await HomeHighlights.insertMany(uploadedImages);
 
     res.status(200).json({
       success: true,
       images: savedImages,
-      message: "ADs images added successfully",
+      message: "Home highlights images added successfully",
     });
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
   }
 });
 
-// Get ADs Image 
-export const getADS = catchAsyncErrors(async (req, res, next) => {
+// Get HomeHighlights Image 
+export const getHomeHighlights = catchAsyncErrors(async (req, res, next) => {
   try {
-   const ADs = await ADS.find({}).sort({ createdAt: -1 });
+   const homeHighlights = await HomeHighlights.find({}).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      ADs,
-      message: "ADs images get successfully",
+      homeHighlights,
+      message: "Home highlights images get successfully",
     });
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
@@ -80,7 +80,7 @@ const deleteImageFromCloudinary = async (publicId) => {
 };
 
 // Delete About Highlights Image
-export const deleteADS = catchAsyncErrors(async (req, res, next) => {
+export const deleteHomeHighlights = catchAsyncErrors(async (req, res, next) => {
   try {
     const { publicId } = req.body;
 
@@ -92,15 +92,15 @@ export const deleteADS = catchAsyncErrors(async (req, res, next) => {
     await deleteImageFromCloudinary(publicId);
 
     // Delete from Database
-    const deletedImage = await ADS.findOneAndDelete({ publicId });
+    const deletedImage = await HomeHighlights.findOneAndDelete({ publicId });
 
     if (!deletedImage) {
-      return next(new Errorhandler("ADs image not found in database", 404));
+      return next(new Errorhandler("Home highlights image not found in database", 404));
     }
 
     res.status(200).json({
       success: true,
-      message: "ADs image deleted successfully",
+      message: "Home highlights image deleted successfully",
     });
   } catch (error) {
     return next(new Errorhandler(error.message, 500));
