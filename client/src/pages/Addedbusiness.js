@@ -35,17 +35,18 @@ import {
   AddBusiness,
   Image,
 } from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { message } from "antd";
 import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
-import { Colors } from "../Comman";
+import { Colors, FontSize } from "../Comman";
+import FontWeight from '../Comman/FontWeight';
 
 const AddedBusiness = () => {
   const { user } = useSelector((state) => state.user);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -186,7 +187,7 @@ const AddedBusiness = () => {
       const res = await axios.delete("/api/v1/business/delete", {
         data: { id: selectedBusiness._id },
       });
-  
+
       if (res.data.success === true) {
         message.success("Business deleted successfully");
         fetchBusinesses();
@@ -200,7 +201,7 @@ const AddedBusiness = () => {
       setLoading(false);
     }
   };
-  
+
 
   if (loading && !businesses.length) {
     return (
@@ -218,11 +219,40 @@ const AddedBusiness = () => {
   return (
     <>
       <Navbar />
+
       <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box sx={{ textAlign: 'center', my: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+           fontSize:FontSize.fourty,
+              color: Colors.LOGOColor,
+              fontWeight: 'bold',
+              display: 'inline-block',
+              position: 'relative',
+              pb: 1
+            }}
+          >
+            Business
+            <Box
+              sx={{
+                content: '""',
+                width: 60,
+                height: 3,
+                bgcolor: Colors.LOGOColor,
+                margin: '8px auto 0',
+                borderRadius: 2
+              }}
+            />
+          </Typography>
+        </Box>
+
+
         {businesses.length === 0 ? (
           <Paper
             elevation={0}
             sx={{
+
               p: 6,
               textAlign: "center",
               borderRadius: 3,
@@ -243,7 +273,7 @@ const AddedBusiness = () => {
                 mb: 3,
               }}
             >
-              <AddBusiness sx={{ fontSize: 60,  color: "#ffffff" }} />
+              <AddBusiness sx={{ fontSize: 60, color: "#ffffff" }} />
             </Box>
             <Typography variant="h5" gutterBottom>
               No Businesses Listed Yet
@@ -252,10 +282,10 @@ const AddedBusiness = () => {
               Get started by adding your first business to showcase your services
             </Typography>
             <Button
-             onClick={() => navigate('/plans')}
+              onClick={() => navigate('/plans')}
               variant="contained"
               size="large"
-              sx={{ px: 5, borderRadius: 2 , color: "#ffffff", backgroundColor: Colors.LOGOlight, "&:hover": { backgroundColor: Colors.LOGOlight } }}
+              sx={{ px: 5, borderRadius: 2, color: "#ffffff", backgroundColor: Colors.LOGOlight, "&:hover": { backgroundColor: Colors.LOGOlight } }}
               startIcon={<AddBusiness />}
             >
               Create Your First Listing
@@ -267,6 +297,7 @@ const AddedBusiness = () => {
               <Grid item xs={12} sm={6} lg={4} key={business._id}>
                 <Card
                   sx={{
+                    mt: 1,
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",

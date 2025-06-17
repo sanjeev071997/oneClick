@@ -16,6 +16,7 @@ import {
   Popconfirm,
   Divider,
   Empty,
+  Button as AntButton, 
 } from "antd";
 import {
   UserOutlined,
@@ -30,7 +31,7 @@ import {
   CloseOutlined,
   CommentOutlined,
 } from "@ant-design/icons";
-import { Button } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors, FontSize } from "../Comman";
@@ -153,22 +154,26 @@ const Queries = () => {
           style={{ marginBottom: 20, flexWrap: "wrap" }}
         >
           <Col xs={24} sm={12} md={8}>
-            <Title
-              level={2}
-              style={{ color: Colors.LOGOColor, marginBottom: 0 }}
-            >
-              Customer Enquiries
-            </Title>
-            <div
-              style={{
-                ml: 2,
-                height: 3,
-                width: "60%",
-                backgroundColor: Colors.LOGOlight,
-                marginTop: 4,
-                borderRadius: 2,
-              }}
-            />
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <Title
+                level={2}
+                style={{
+                  color: Colors.LOGOColor,
+                  fontWeight: "bold",
+                }}
+              >
+                Customer Enquiries
+              </Title>
+              <div
+                style={{
+                  height: 3,
+                  width: 60,
+                  backgroundColor: Colors.LOGOlight,
+                  margin: "0 auto",
+                  borderRadius: 2,
+                }}
+              />
+            </div>
           </Col>
 
           <Col xs={24} sm={12} md={8}>
@@ -271,7 +276,7 @@ const Queries = () => {
                 </Space>
               }
             >
-              <Button
+              <MuiButton 
                 variant="contained"
                 size="large"
                 sx={{
@@ -284,7 +289,7 @@ const Queries = () => {
                 onClick={fetchQueries}
               >
                 Check for New Enquiries
-              </Button>
+              </MuiButton>
             </Empty>
           </div>
         ) : (
@@ -410,7 +415,7 @@ const Queries = () => {
 
                       <Space size="middle">
                         <Tooltip title="View Message">
-                          <Button
+                          <AntButton // Use AntButton for icon buttons
                             shape="circle"
                             type="default"
                             icon={
@@ -427,7 +432,7 @@ const Queries = () => {
                         </Tooltip>
 
                         <Tooltip title="Edit Enquiry">
-                          <Button
+                          <AntButton 
                             shape="circle"
                             style={{
                               backgroundColor: Colors.LOGOColor,
@@ -444,7 +449,7 @@ const Queries = () => {
                             okText="Yes"
                             cancelText="No"
                           >
-                            <Button
+                            <AntButton
                               shape="circle"
                               danger
                               icon={<DeleteOutlined />}
@@ -469,29 +474,31 @@ const Queries = () => {
           bodyStyle={{ paddingBottom: 40 }}
           footer={
             <div style={{ textAlign: "right" }}>
-              <Button
+              <MuiButton 
                 onClick={closeEditDrawer}
-                style={{
-                  marginRight: 8,
+                sx={{
+                  marginRight: 1,
                   backgroundColor: Colors.LOGOlight,
                   border: "none",
                   color: Colors.WHITE,
+                  "&:hover": { backgroundColor: Colors.LOGOlight },
                 }}
               >
                 Cancel
-              </Button>
+              </MuiButton>
 
-              <Button
+              <MuiButton 
                 onClick={handleUpdate}
-                type="primary"
-                style={{
+                variant="contained"
+                sx={{
                   backgroundColor: Colors.LOGOlight,
                   border: "none",
                   color: Colors.WHITE,
+                  "&:hover": { backgroundColor: Colors.LOGOlight },
                 }}
               >
                 Update
-              </Button>
+              </MuiButton>
             </div>
           }
           maskClosable={false}
@@ -652,17 +659,18 @@ const Queries = () => {
           open={viewModalVisible}
           onCancel={closeViewModal}
           footer={[
-            <Button
+            <MuiButton 
               key="close"
               onClick={closeViewModal}
-              style={{
+              sx={{
                 backgroundColor: Colors.LOGOlight,
                 border: "none",
                 color: Colors.WHITE,
+                "&:hover": { backgroundColor: Colors.LOGOlight },
               }}
             >
               Close
-            </Button>,
+            </MuiButton>,
           ]}
           width={Math.min(window.innerWidth * 0.85, 600)}
           bodyStyle={{ fontSize: 16, color: Colors.LOGOColor }}

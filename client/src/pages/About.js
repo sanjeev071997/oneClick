@@ -3,7 +3,7 @@ import { Grid, Typography, Box, Container, useTheme, useMediaQuery } from "@mui/
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
 import { styled } from "@mui/system";
-import { Colors,  FontWeight, FontFamily } from "../Comman"
+import { Colors, FontWeight, FontFamily } from "../Comman"
 
 const SectionContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(8, 0),
@@ -44,7 +44,7 @@ const AboutUs = () => {
                   <GradientText>Our Story</GradientText> Begins Here
                 </Typography>
                 <Typography variant="h6" paragraph sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                  HubSpot's company and culture are crafted, not cobbled, for a delightful experience.
+                  QuickDials was born from a simple idea — to bridge the gap between small businesses and the customers searching for them. In a world where visibility is everything, we built a platform that empowers local vendors, startups, and entrepreneurs to showcase their services, get discovered, and thrive.
                 </Typography>
                 <Typography
                   variant="body1"
@@ -53,7 +53,7 @@ const AboutUs = () => {
                     fontFamily: FontFamily.inriaSerif,
                   }}
                 >
-                  Founded in 2006, we've grown from a simple idea to a global platform helping millions of businesses grow better.
+                  Whether you're just starting out or looking to scale, QuickDials offers the tools, reach, and community to help your business grow faster and smarter.
                 </Typography>
 
               </Grid>
@@ -84,13 +84,13 @@ const AboutUs = () => {
                   Our <GradientText>Mission</GradientText>
                 </Typography>
                 <Typography variant="h6" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                  Helping Millions of Organizations Grow Better
+                  Empowering Local Businesses to Be Seen, Heard, and Chosen
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                  We believe not just in growing bigger, but in growing better. Growing better means aligning the success of your business with the success of your customers.
+                  At QuickDials, our mission is to provide every business — big or small — the digital visibility they deserve. We believe growth starts with being discovered.
                 </Typography>
                 <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                  Our platform is designed to create win-win scenarios where businesses and their customers thrive together.
+                  Our platform connects businesses with real customers through quality leads, allowing them to thrive in a competitive digital world without needing technical expertise.
                 </Typography>
               </Grid>
             </Grid>
@@ -119,14 +119,14 @@ const AboutUs = () => {
                     borderRadius: "2px",
                   }
                 }}>
-                  <Typography variant="body1"sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                    In 2004, fellow MIT graduate students Brian Halligan and Dharmesh Shah noticed a major shift in consumer behavior. Buyers no longer responded to interruptive ads—they wanted helpful information.
-                  </Typography>
-                  <Typography variant="body1"sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                    In 2006, they founded HubSpot to help companies shift from interruptive marketing to inbound marketing.
+                  <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
+                    At QuickDials, we saw a growing challenge — small and local businesses struggling to be found in the crowded digital space.
                   </Typography>
                   <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
-                    Today, led by CEO Yamini Rangan, HubSpot serves millions of customers worldwide with our AI-powered Smart CRM platform.
+                    We envisioned a platform where visibility doesn't depend on big budgets, but on simplicity, accessibility, and performance.
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: FontWeight.heading1, fontFamily: FontFamily.inriaSerif, color: Colors.LOGOColor }}>
+                    Today, QuickDials is building a platform to empower local businesses by helping them get discovered and connect with potential customers — simply, quickly, and effectively.
                   </Typography>
                 </Box>
               </Grid>

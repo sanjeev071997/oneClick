@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-
 import {
   Container,
   Typography,
@@ -17,6 +16,7 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import StarIcon from "@mui/icons-material/Star";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Footer from '../Components/Footer';
 import Navbar from '../Components/Navbar';
 import { FontWeight, Colors } from "../Comman";
@@ -83,16 +83,7 @@ const PricingPlans = () => {
   ];
 
   const handlePlanSelect = (plan) => {
-    if (plan.name === "Enterprise") {
-      navigate("/contact"); 
-
-    } else if (plan.name === "Growth") {
-      navigate("/contact"); 
-    } 
-   else if (plan.name === "Starter") {
-    navigate("/contact"); 
-  } 
-     else {
+    if (plan.name === "Free") {
       navigate("/add/business", {
         state: {
           planName: plan.name,
@@ -143,7 +134,7 @@ const PricingPlans = () => {
           </Box>
 
           <Grid container spacing={3} justifyContent="center">
-            {plans?.map((plan, index) => (
+            {plans.map((plan, index) => (
               <Grid item xs={12} md={3} key={index}>
                 <Card
                   sx={{
@@ -180,6 +171,7 @@ const PricingPlans = () => {
                       MOST POPULAR
                     </Box>
                   )}
+
                   <CardContent
                     sx={{
                       flexGrow: 1,
@@ -228,18 +220,34 @@ const PricingPlans = () => {
 
                     <Box sx={{ mb: 3 }}>
                       <Box sx={{ display: "flex", alignItems: "flex-end", mb: 1 }}>
-                        <Typography
-                          variant="h3"
-                          sx={{
-                            fontWeight: FontWeight.heading2,
-                            fontSize:20,
-                            color: Colors.LOGOColor,
-                            lineHeight:1,
-                         
-                          }}
-                        >
-                          {plan.price === "0" ? "Free" : plan.price === "Custom" ? plan.price : `${plan.price}`}
-                        </Typography>
+                        {plan.price === "0" ? (
+                          <Typography
+                            variant="h3"
+                            sx={{
+                              fontWeight: FontWeight.heading2,
+                              fontSize: 20,
+                              color: Colors.LOGOColor,
+                              lineHeight: 1
+                            }}
+                          >
+                            Free
+                          </Typography>
+                        ) : (
+                          <>
+                            <CurrencyRupeeIcon sx={{ color: Colors.LOGOColor, fontSize: 18 }} />
+                            <Typography
+                              variant="h3"
+                              sx={{
+                                fontWeight: FontWeight.heading2,
+                                fontSize: 18,
+                                color: Colors.LOGOColor,
+                                lineHeight: 1
+                              }}
+                            >
+                              {plan.price}
+                            </Typography>
+                          </>
+                        )}
                         {plan.period && (
                           <Typography
                             variant="body1"
@@ -299,6 +307,7 @@ const PricingPlans = () => {
                       fullWidth
                       size="large"
                       onClick={() => handlePlanSelect(plan)}
+                      disabled={plan.name !== "Free"}
                       sx={{
                         fontWeight: FontWeight.heading1,
                         py: 1.5,

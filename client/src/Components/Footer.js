@@ -57,13 +57,15 @@ const Footer = () => {
 
   return (
     <Box sx={{
+      ml:5,
+      mr:5,
       mt: 5,
       bgcolor: Colors.WHITE,
       pt: 5,
       pb: 4,
       borderTop: `4px solid ${Colors.LOGOColor}`
     }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="xxl">
         <Grid container spacing={4}>
           {/* Logo and About Us */}
           <Grid item xs={12} md={3}> 
@@ -73,21 +75,19 @@ const Footer = () => {
                 <img
                   src={logo}
                   alt="Company Logo"
-                  style={{ width: '150px' }}
+                  style={{ width: '180px' }}
                 />
               </Box>
-
-              {/* Text Box */}
-              <Box>
+            </Box>
+            <Box>
                 <Typography
                   variant="body2"
                   color={Colors.LOGOColor}
-                  sx={{ lineHeight: 1.2, fontFamily: FontFamily.arial }}
+                  sx={{ lineHeight: 1.5, fontFamily: FontFamily.arial, fontWeight:FontWeight.heading2,mt:3,letterSpacing:1 }}
                 >
                   Connecting customers with trusted local services across India. Find professionals for all your home service needs.
                 </Typography>
               </Box>
-            </Box>
           </Grid>
 
           {/* Quick Links */}
@@ -227,7 +227,7 @@ const Footer = () => {
         {/* Copyright */}
         <Box sx={{ mt: 4, pt: 2, borderTop: `1px solid ${Colors.LOGOColor}`, textAlign: "center" }}>
           <Typography variant="body2" color={Colors.LOGOColor}>
-            © {new Date().getFullYear()} Your Company Name. All rights reserved.
+            © {new Date().getFullYear()} Quickdials. All rights reserved.
           </Typography>
         </Box>
       </Container>

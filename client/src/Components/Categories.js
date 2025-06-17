@@ -184,7 +184,7 @@ const Categories = () => {
                   style={{
                     width: "100%",
                     height: "100%",
-                    objectFit: "contain",
+                    // objectFit: "contain",
                     borderRadius: "8px",
                   }}
                   loading="lazy"
@@ -376,7 +376,7 @@ const Categories = () => {
                   style={{
                     width: 30,
                     height: 30,
-                    objectFit: "contain",
+                    // objectFit: "contain",
                     borderRadius: "6px",
                   }}
                 />

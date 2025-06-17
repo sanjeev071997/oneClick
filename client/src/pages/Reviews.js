@@ -11,7 +11,7 @@ import { message, Modal } from "antd";
 import axios from '../axiosInstance';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
-import { Colors } from "../Comman";
+import { Colors, FontSize } from "../Comman";
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -122,15 +122,34 @@ const ReviewsPage = () => {
     <>
       <Navbar />
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box textAlign="center" mb={6}>
-          <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
-            Customer Reviews
+      <Box sx={{ textAlign: 'center', my: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+           fontSize:FontSize.fourty,
+              color: Colors.LOGOColor,
+              fontWeight: 'bold',
+              display: 'inline-block',
+              position: 'relative',
+              pb: 1
+            }}
+          >
+           Customer Reviews
+            <Box
+              sx={{
+                content: '""',
+                width: 100,
+                height: 3,
+                bgcolor: Colors.LOGOColor,
+                margin: '8px auto 0',
+                borderRadius: 2
+              }}
+            />
           </Typography>
           <Typography variant="subtitle1" color={Colors.LOGOlight}>
             See what our customers are saying about businesses
           </Typography>
         </Box>
-
         <Paper elevation={2} sx={{ p: 3, mb: 6, borderRadius: 2, background: Colors.LOGOColor }} >
           <Grid container spacing={2} justifyContent="space-around">
             <Grid item xs={12} sm={4} md={3}>
