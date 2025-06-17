@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   clearErrors,
@@ -27,7 +27,10 @@ import {
   updatePassword,
   reloadUser,
 } from "../redux/actions/userAction";
-import { UPDATE_PROFILE_RESET, UPDATE_PASSWORD_RESET } from "../redux/constants/userConstants";
+import {
+  UPDATE_PROFILE_RESET,
+  UPDATE_PASSWORD_RESET,
+} from "../redux/constants/userConstants";
 import { message } from "antd";
 import EditIcon from "@mui/icons-material/Edit";
 import Password from "@mui/icons-material/Password";
@@ -45,11 +48,7 @@ function TabPanel(props) {
       aria-labelledby={`profile-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: { xs: 1, sm: 3 } }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: { xs: 1, sm: 3 } }}>{children}</Box>}
     </div>
   );
 }
@@ -63,7 +62,7 @@ TabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `profile-tab-${index}`,
-    'aria-controls': `profile-tabpanel-${index}`,
+    "aria-controls": `profile-tabpanel-${index}`,
   };
 }
 
@@ -88,7 +87,8 @@ export default function Profile() {
 
   const handleClickShowOldPassword = () => setShowOldPassword(!showOldPassword);
   const handleClickShowNewPassword = () => setShowNewPassword(!showNewPassword);
-  const handleClickShowConfirmPassword = () => setShowNewConfirmPassword(!showConfirmNewPassword);
+  const handleClickShowConfirmPassword = () =>
+    setShowNewConfirmPassword(!showConfirmNewPassword);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -111,65 +111,69 @@ export default function Profile() {
       setEmail(user.email || "");
       setPhone(user.phone || "");
     }
-    
+
     if (error) {
       message.error(error);
       dispatch(clearErrors());
     }
-    
+
     if (isUpdated) {
-      message.success(value === 1 ? "Profile Updated Successfully" : "Password Updated Successfully");
+      message.success(
+        value === 1
+          ? "Profile Updated Successfully"
+          : "Password Updated Successfully"
+      );
       dispatch(reloadUser());
-      dispatch({ type: value === 1 ? UPDATE_PROFILE_RESET : UPDATE_PASSWORD_RESET });
+      dispatch({
+        type: value === 1 ? UPDATE_PROFILE_RESET : UPDATE_PASSWORD_RESET,
+      });
     }
   }, [dispatch, error, isUpdated, user, value]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-       <Typography
-                    variant="h5"
-                    align="center"
-                    gutterBottom
-                    sx={{
-                      mb: 3,
-                      fontFamily: "Poppins, sans-serif",
-                      color: "#2C3E50",
-                      letterSpacing: "2.5px",
-                      lineHeight: 1.8,
-                    }}
-                  >
-               Profile
-                  </Typography>
-       
+      <Typography
+        variant="h5"
+        align="center"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontFamily: "Poppins, sans-serif",
+          color: "#2C3E50",
+          letterSpacing: "2.5px",
+          lineHeight: 1.8,
+        }}
+      >
+        Profile
+      </Typography>
+
       <PageTitle title={`${user?.name}'s Profile | LAMPS`} />
 
       <Box sx={{ mb: 4 }}>
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        sx={{
-          mb: 5,
-          backgroundColor: "#fff",
-          padding: "20px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-        }}
-      >
-        <MUILink
-          component={Link}
-          to="/dashboard"
-          sx={{ color: "inherit", textDecoration: "none" }}
+        <Breadcrumbs
+          aria-label="breadcrumb"
+          sx={{
+            mb: 5,
+            backgroundColor: "#fff",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          }}
         >
-          Dashboard
-        </MUILink>
-        <Typography sx={{ color: "primary.main" }}>Profile</Typography>
-      </Breadcrumbs>
-      <Divider />
-
-       
+          <MUILink
+            component={Link}
+            to="/dashboard"
+            sx={{ color: "inherit", textDecoration: "none" }}
+          >
+            Dashboard
+          </MUILink>
+          <Typography sx={{ color: "primary.main" }}>Profile</Typography>
+        </Breadcrumbs>
+        <Divider />
       </Box>
 
       <Card>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -186,17 +190,23 @@ export default function Profile() {
         <TabPanel value={value} index={0}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <Avatar
-                  sx={{ 
-                    width: 120, 
-                    height: 120, 
+                  sx={{
+                    width: 120,
+                    height: 120,
                     mb: 2,
-                    bgcolor: 'primary.main',
-                    fontSize: '3rem'
+                    bgcolor: "primary.main",
+                    fontSize: "3rem",
                   }}
                 >
-                  {user?.name?.charAt(0) || 'U'}
+                  {user?.name?.charAt(0) || "U"}
                 </Avatar>
                 <Typography variant="h6" sx={{ fontWeight: 600 }}>
                   {user?.name}
@@ -209,18 +219,22 @@ export default function Profile() {
             <Grid item xs={12} md={8}>
               <Card variant="outlined">
                 <CardContent>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{ fontWeight: 600 }}
+                  >
                     Personal Information
                   </Typography>
                   <Divider sx={{ mb: 2 }} />
-                  
+
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <Typography variant="subtitle2" color="text.secondary">
                         Full Name
                       </Typography>
                       <Typography variant="body1">
-                        {user?.name || 'Not provided'}
+                        {user?.name || "Not provided"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -228,7 +242,7 @@ export default function Profile() {
                         Email Address
                       </Typography>
                       <Typography variant="body1">
-                        {user?.email || 'Not provided'}
+                        {user?.email || "Not provided"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -236,7 +250,7 @@ export default function Profile() {
                         Phone Number
                       </Typography>
                       <Typography variant="body1">
-                        {user?.phone || 'Not provided'}
+                        {user?.phone || "Not provided"}
                       </Typography>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -255,7 +269,11 @@ export default function Profile() {
         </TabPanel>
 
         <TabPanel value={value} index={1}>
-          <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto' }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ maxWidth: 600, mx: "auto" }}
+          >
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
@@ -305,7 +323,11 @@ export default function Profile() {
         </TabPanel>
 
         <TabPanel value={value} index={2}>
-          <Box component="form" onSubmit={handleSubmitPassword} sx={{ maxWidth: 600, mx: 'auto' }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmitPassword}
+            sx={{ maxWidth: 600, mx: "auto" }}
+          >
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <TextField
@@ -319,7 +341,10 @@ export default function Profile() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={handleClickShowOldPassword} edge="end">
+                        <IconButton
+                          onClick={handleClickShowOldPassword}
+                          edge="end"
+                        >
                           {showOldPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -339,7 +364,10 @@ export default function Profile() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={handleClickShowNewPassword} edge="end">
+                        <IconButton
+                          onClick={handleClickShowNewPassword}
+                          edge="end"
+                        >
                           {showNewPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -359,8 +387,15 @@ export default function Profile() {
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
-                        <IconButton onClick={handleClickShowConfirmPassword} edge="end">
-                          {showConfirmNewPassword ? <VisibilityOff /> : <Visibility />}
+                        <IconButton
+                          onClick={handleClickShowConfirmPassword}
+                          edge="end"
+                        >
+                          {showConfirmNewPassword ? (
+                            <VisibilityOff />
+                          ) : (
+                            <Visibility />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     ),

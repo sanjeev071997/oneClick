@@ -262,7 +262,7 @@ const Navbar = () => {
               </Box>
 
               {/* Profile Menu */}
-              {user ? (
+              {user && user._id  ? (
                 <>
                   <IconButton sx={{ color: Colors.WHITE}} onClick={handleProfileClick}>
                     <AccountCircleIcon fontSize="large" />
@@ -345,8 +345,6 @@ const Navbar = () => {
               >
                 Login
               </Button>
-              
-
               )}
             </Box>
           </Toolbar>
