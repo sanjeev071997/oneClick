@@ -49,6 +49,7 @@ const Queries = () => {
   const [hovered, setHovered] = useState(false);
   const isActive = focused || hovered;
 
+  //get quries
   const fetchQueries = async () => {
     setLoading(true);
     try {
@@ -65,6 +66,7 @@ const Queries = () => {
     fetchQueries();
   }, []);
 
+  //filter quries
   const filteredQueries = queries.filter((q) => {
     const userName = q.userId?.name?.toLowerCase() || '';
     const businessName = q.businessId?.businessName?.toLowerCase() || '';
@@ -101,6 +103,9 @@ const Queries = () => {
     setCurrentQuery(null);
   };
 
+
+//handle delete quries
+
   const handleDelete = async (id) => {
     try {
       await axios.delete('/api/v1/enquiry/delete', { data: { id } });
@@ -109,8 +114,9 @@ const Queries = () => {
     } catch {
       message.error('Failed to delete enquiry');
     }
-  };
-
+  }
+  
+  // handle Update quries
   const handleUpdate = async () => {
     try {
       const values = await form.validateFields();
@@ -153,7 +159,7 @@ const Queries = () => {
             </Title>
             <div
               style={{
-               
+                ml:2,
                 height: 3,
                 width: '60%',
                 backgroundColor: Colors.LOGOlight,
@@ -417,9 +423,9 @@ const Queries = () => {
                 onClick={closeEditDrawer}
                 style={{
                   marginRight: 8,
-                  backgroundImage: `linear-gradient(to right, ${Colors.LOGOlight}, ${Colors.LOGOColor})`,
+                  backgroundColor: Colors.LOGOlight,
                   border: 'none',
-                  color: '#fff',
+                  color:Colors.WHITE,
                 }}
               >
                 Cancel
@@ -429,9 +435,9 @@ const Queries = () => {
                 onClick={handleUpdate}
                 type="primary"
                 style={{
-                  backgroundImage: `linear-gradient(to right, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                  backgroundColor: Colors.LOGOlight,
                   border: 'none',
-                  color: '#fff',
+                  color:Colors.WHITE,
                 }}
               >
                 Update
@@ -458,11 +464,11 @@ const Queries = () => {
                   rules={[{ required: true, message: 'Please input the name!' }]}
                 >
                   <Input
-                    prefix={<UserOutlined style={{ color: Colors.LOGOlight }} />}
+                    prefix={<UserOutlined style={{ color: Colors.LOGOColor}} />}
                     placeholder="Name"
                     style={{
-                      borderColor: Colors.LOGOlight,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                      borderColor: Colors.textDark,
+                     
                     }}
                   />
                 </Form.Item>
@@ -474,11 +480,10 @@ const Queries = () => {
                   rules={[{ required: true, message: 'Please input the phone!' }]}
                 >
                   <Input
-                    prefix={<PhoneOutlined style={{ color: Colors.LOGOlight }} />}
+                    prefix={<PhoneOutlined style={{  color: Colors.LOGOColor}} />}
                     placeholder="Phone"
                     style={{
-                      borderColor: Colors.LOGOlight,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                      borderColor: Colors.textDark,
                     }}
                   />
                 </Form.Item>
@@ -494,11 +499,10 @@ const Queries = () => {
               ]}
             >
               <Input
-                prefix={<MailOutlined style={{ color: Colors.LOGOlight }} />}
+                prefix={<MailOutlined style={{color: Colors.LOGOColor}} />}
                 placeholder="Email"
                 style={{
-                  borderColor: Colors.LOGOlight,
-                  boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                  borderColor: Colors.textDark,
                 }}
               />
             </Form.Item>
@@ -513,10 +517,10 @@ const Queries = () => {
                   name="businessName"
                 >
                   <Input
-                    prefix={<ShopOutlined style={{ color: Colors.LOGOlight }} />}
+                    prefix={<ShopOutlined style={{ color: Colors.LOGOColor }} />}
                     readOnly
                     style={{
-                      borderColor: Colors.LOGOlight,
+                      borderColor: Colors.textDark,
                     }}
                   />
                 </Form.Item>
@@ -527,10 +531,10 @@ const Queries = () => {
                   name="businessPhone"
                 >
                   <Input
-                    prefix={<PhoneOutlined style={{ color: Colors.LOGOlight }} />}
+                    prefix={<PhoneOutlined style={{color: Colors.LOGOColor }} />}
                     readOnly
                     style={{
-                      borderColor: Colors.LOGOlight,
+                      borderColor: Colors.textDark,
                     }}
                   />
                 </Form.Item>
@@ -549,8 +553,7 @@ const Queries = () => {
                 rows={4}
                 placeholder="Message"
                 style={{
-                  borderColor: Colors.LOGOlight,
-                  boxShadow: `0 0 0 2px ${Colors.LOGOlight}20`,
+                  borderColor: Colors.textDark,
                 }}
               />
             </Form.Item>
@@ -567,9 +570,9 @@ const Queries = () => {
               key="close"
               onClick={closeViewModal}
               style={{
-                backgroundImage: `linear-gradient(to right, ${Colors.LOGOColor}, ${Colors.LOGOlight})`,
+                backgroundColor: Colors.LOGOlight,
                 border: 'none',
-                color: '#fff',
+                color:Colors.WHITE,
               }}
             >
               Close

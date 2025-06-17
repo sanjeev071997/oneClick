@@ -42,11 +42,12 @@ const { TextArea } = Input;
 
 
 const CategoryDetail = () => {
-  const [form] = Form.useForm();
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const { state } = useLocation();
+  const { user } = useSelector((state) => state.user);
   const category = state?.category;
+  const token = localStorage.getItem("token");
+  const [form] = Form.useForm();
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewMap, setReviewMap] = useState({});
@@ -54,12 +55,10 @@ const CategoryDetail = () => {
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [enquiryLoading, setEnquiryLoading] = useState(false);
 
-  const { user } = useSelector((state) => state.user);
-
   const fetchBusinessesByCategory = async () => {
     try {
       const response = await axios.post("/api/v1/business/get", {
-        userId: user._id,
+        category: category._id,
       });
       setBusinesses(response.data.data);
     } catch (error) {
@@ -88,7 +87,7 @@ const CategoryDetail = () => {
       }
     };
     fetchAllData();
-  }, [category]);
+  }, []);
 
   useEffect(() => {
     const fetchReviewsForBusinesses = async () => {

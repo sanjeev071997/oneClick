@@ -88,6 +88,14 @@ const SidebarAdm = () => {
                 {" "}
                 Dashboard{" "}
               </MenuItem>
+
+              <MenuItem
+                component={<Link to="/admin/ads" />}
+                icon={<DashboardIcon sx={{color:'#275559'}} />}
+              >
+                {" "}
+                ADs{" "}
+              </MenuItem>
               
               <MenuItem
                 component={<Link to="/admin/categories" />}

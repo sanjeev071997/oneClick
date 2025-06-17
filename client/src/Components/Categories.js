@@ -136,7 +136,7 @@ const Categories = () => {
       </Typography>
 
       <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
-        {categories.slice(0, 19).map((category) => (
+        {categories?.slice(0, 19).map((category) => (
           <Grid item xs={4} sm={2.4} md={1.7} lg={1.2} key={category._id}>
             <Box
               sx={{

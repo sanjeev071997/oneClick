@@ -11,6 +11,7 @@ import ListYourBusiness from "./pages/ListYourBusiness.js";
 import CategoryBusinesseView from "./pages/CategoryBusinesseView.js";
 import Layout from "./admin/global/Layout";
 import AdminDashboard from "./admin/Dashboard";
+import AdminADS from "./admin/ADS"
 import AdminProfile from "./admin/Profile";
 import AdminCategories from "./admin/Categories/Categories.js";
 import AdminBusiness from "./admin/Business/Business.js";
@@ -30,6 +31,7 @@ import Reviews from "./pages/Reviews.js";
 import Quries from "./pages/Quries.js";
 import Settings from './pages/Settings.js'
 import Plans from './pages/Plans.js'
+import PlansView from './pages/PlanView.js'
 
 
 function App() {
@@ -42,6 +44,7 @@ function App() {
     }
   }, []);
   const AdminDashboardHDC = Layout(AdminDashboard);
+  const AdminADSHDC = Layout(AdminADS);
   const AdminProfileHDC = Layout(AdminProfile);
   const AdminCategoriesHDC = Layout(AdminCategories);
   const AdminBusinessHDC = Layout(AdminBusiness);
@@ -85,9 +88,9 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-           
             <Route path="/Added/business" element={<Addedbusiness/>} />
             <Route path="/plans" element={<Plans/>} />
+            <Route path="/plansview" element={<PlansView/>} />
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/quries" element={<Quries/>} />
             <Route path="/settings" element={<Settings/>} />
@@ -100,6 +103,7 @@ function App() {
             {/* Admin Routes */}
             {user?.role >= 1 ? (
               <>
+              <Route path="/admin/ads" element={<AdminADSHDC />} />
                 <Route path="/admin/profile" element={<AdminProfileHDC />} />
                 <Route
                   path="/admin/categories"

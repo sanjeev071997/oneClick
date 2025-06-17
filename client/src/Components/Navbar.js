@@ -28,6 +28,7 @@ import {
   ExitToApp as LogoutIcon,
   Mic as MicIcon,
 } from "@mui/icons-material";
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, message } from "antd";
@@ -162,7 +163,7 @@ const Navbar = () => {
                   gap: 1,
                 }}
               >
-              BuzzDails
+             Quickdails
               </Typography>
             </Box>
 
@@ -300,6 +301,12 @@ const Navbar = () => {
                         <ReviewsIcon sx={{ color:Colors.WHITE}} />
                       </ListItemIcon>
                       <ListItemText primary="Reviews"  sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+                    <MenuItem component={Link} to="/plansview" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                      <CurrencyRupeeIcon sx={{ color:Colors.WHITE }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Plans" sx={{ color:Colors.WHITE}} />
                     </MenuItem>
 
                     <Divider sx={{ my: 0.5 }} />

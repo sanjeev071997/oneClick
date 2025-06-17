@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -17,29 +16,23 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Avatar,
-  Chip,
   Paper,
-  MenuItem,
   ImageList,
   ImageListItem,
   ImageListItemBar,
   Tabs,
   Tab,
-  Badge,
 } from "@mui/material";
 import {
   Edit,
   Delete,
   AddPhotoAlternate,
   Close,
-  Business,
   Phone,
   Email,
   LocationOn,
   Star,
   AddBusiness,
-  CheckCircle,
   Image,
 } from "@mui/icons-material";
 import axios from "../axiosInstance";
@@ -48,6 +41,7 @@ import { message } from "antd";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors } from "../Comman";
+import { useLocation } from "react-router-dom";
 
 const AddedBusiness = () => {
   const { user } = useSelector((state) => state.user);
@@ -71,7 +65,7 @@ const AddedBusiness = () => {
   // Fetch businesses
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.post("/api/v1/business/get", { userId: user._id });
+      const res = await axios.get("/api/v1/business/get", { userId: user._id });
       setBusinesses(res.data.data);
     } catch (error) {
       message.error("Failed to fetch businesses");
@@ -90,7 +84,7 @@ const AddedBusiness = () => {
     setSelectedBusiness(business);
     if (type === "edit" && business) {
       setFormData({
-        businessName: business.businessName,
+        businessName: business?.businessName,
         phone: business.phone,
         email: business.email,
         address: business.address,
@@ -98,6 +92,7 @@ const AddedBusiness = () => {
         images: business.images || [],
       });
       setDeletedImages([]);
+      setNewImages([]);
     }
     setOpenDialog(true);
   };
@@ -111,28 +106,31 @@ const AddedBusiness = () => {
   // Handle form changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle image upload
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files).slice(0, 5 - formData.images.length + deletedImages.length - newImages.length);
-    const previews = files.map(file => ({
+    const files = Array.from(e.target.files).slice(
+      0,
+      5 - formData.images.length + deletedImages.length - newImages.length
+    );
+    const previews = files.map((file) => ({
       file,
       url: URL.createObjectURL(file),
-      isNew: true
+      isNew: true,
     }));
-    setNewImages(prev => [...prev, ...previews]);
+    setNewImages((prev) => [...prev, ...previews]);
   };
 
   const handleRemoveImage = (imageId, isNew) => {
     if (isNew) {
-      setNewImages(prev => prev.filter(img => img.url !== imageId));
+      setNewImages((prev) => prev.filter((img) => img.url !== imageId));
     } else {
-      setDeletedImages(prev => [...prev, imageId]);
-      setFormData(prev => ({
+      setDeletedImages((prev) => [...prev, imageId]);
+      setFormData((prev) => ({
         ...prev,
-        images: prev.images.filter(img => img._id !== imageId)
+        images: prev.images.filter((img) => img._id !== imageId),
       }));
     }
   };
@@ -142,46 +140,75 @@ const AddedBusiness = () => {
     setLoading(true);
     try {
       const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key !== "images") formDataToSend.append(key, value);
+      formDataToSend.append("businessName", formData.businessName);
+      formDataToSend.append("phone", formData.phone);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("address", formData.address);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("id", selectedBusiness._id);
+
+      // Append new images
+      newImages.forEach((img) => {
+        formDataToSend.append("images", img.file);
       });
 
-      newImages.forEach(img => formDataToSend.append("images", img.file));
-      formDataToSend.append("deletedImages", JSON.stringify(deletedImages));
+      // Append deleted image IDs
+      deletedImages.forEach((id) => {
+        formDataToSend.append("deletedImages", id);
+      });
 
-      const res = await axios.put(`/api/v1/business/update/${selectedBusiness._id}`, formDataToSend);
+      const res = await axios.put("/api/v1/business/update", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       if (res.data.success) {
         message.success("Business updated successfully");
         fetchBusinesses();
         handleCloseDialog();
       }
     } catch (error) {
-      message.error(error.response?.data?.message || "Update failed");
+      message.error(
+        error.response?.data?.message || "Failed to update business"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   // Handle business deletion
+
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const res = await axios.delete(`/api/v1/business/delete/${selectedBusiness._id}`);
-      if (res.data.success) {
+      const res = await axios.delete("/api/v1/business/delete", {
+        data: { id: selectedBusiness._id },
+      });
+  
+      if (res.data.success === true) {
         message.success("Business deleted successfully");
         fetchBusinesses();
         handleCloseDialog();
+      } else {
+        message.error("Failed to delete business");
       }
     } catch (error) {
-      message.error("Deletion failed");
+      message.error(error.response?.data?.message || "Deletion failed");
     } finally {
       setLoading(false);
     }
   };
+  
 
   if (loading && !businesses.length) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
         <CircularProgress size={60} />
       </Box>
     );
@@ -192,24 +219,29 @@ const AddedBusiness = () => {
       <Navbar />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {businesses.length === 0 ? (
-          <Paper elevation={0} sx={{
-            p: 6,
-            textAlign: "center",
-            borderRadius: 3,
-            background: 'rgba(245, 245, 245, 0.7)',
-            backdropFilter: 'blur(10px)'
-          }}>
-            <Box sx={{
-              width: 120,
-              height: 120,
-              borderRadius: '50%',
-              bgcolor: 'primary.light',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mx: 'auto',
-              mb: 3
-            }}>
+          <Paper
+            elevation={0}
+            sx={{
+              p: 6,
+              textAlign: "center",
+              borderRadius: 3,
+              background: "rgba(245, 245, 245, 0.7)",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <Box
+              sx={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                bgcolor: "primary.light",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mx: "auto",
+                mb: 3,
+              }}
+            >
               <AddBusiness sx={{ fontSize: 60, color: "primary.main" }} />
             </Box>
             <Typography variant="h5" gutterBottom>
@@ -230,92 +262,115 @@ const AddedBusiness = () => {
           <Grid container spacing={3}>
             {businesses.map((business) => (
               <Grid item xs={12} sm={6} lg={4} key={business._id}>
-                <Card sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: 3
-                  }
-                }}>
-                  <Box sx={{ position: 'relative' }}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      transform: "translateY(-5px)",
+                      boxShadow: 3,
+                    },
+                  }}
+                >
+                  <Box sx={{ position: "relative" }}>
                     <CardMedia
                       component="img"
                       height="200"
-                      image={business.images?.[0]?.url || "/placeholder-business.jpg"}
+                      image={
+                        business.images?.[0]?.url || "/placeholder-business.jpg"
+                      }
                       alt={business.businessName}
-                      sx={{ objectFit: 'cover' }}
+                      sx={{ objectFit: "cover" }}
                     />
                     <Box
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 10,
                         right: 10,
                         color: Colors.LOGOlight,
-
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 2,
-                        display: 'flex',
-                        alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                       }}
                     >
                       <Star fontSize="small" sx={{ mr: 0.5 }} />
                       <Typography variant="caption">
-                        {Number(business?.rating || 0).toFixed(1)} ({business?.ratingCount || 0})
+                        {Number(business?.rating || 0).toFixed(1)} (
+                        {business?.ratingCount || 0})
                       </Typography>
                     </Box>
-
                   </Box>
 
                   <CardContent sx={{ flexGrow: 1 }}>
-                    <Box display="flex" justifyContent="space-between" alignItems="flex-start">
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                    >
                       <Typography variant="h6" fontWeight="bold" gutterBottom>
                         {business.businessName}
                       </Typography>
-
                     </Box>
 
                     <Box display="flex" alignItems="center" mb={1.5}>
-                      <LocationOn fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <LocationOn
+                        fontSize="small"
+                        color="primary"
+                        sx={{ mr: 1 }}
+                      />
                       <Typography variant="body2" color="text.secondary">
                         {business.address}
                       </Typography>
                     </Box>
 
                     <Box display="flex" alignItems="center" mb={1.5}>
-                      <Phone fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <Phone
+                        fontSize="small"
+                        color="primary"
+                        sx={{ mr: 1 }}
+                      />
                       <Typography variant="body2" color="text.secondary">
                         {business.phone}
                       </Typography>
                     </Box>
 
                     <Box display="flex" alignItems="center" mb={2}>
-                      <Email fontSize="small" color="primary" sx={{ mr: 1 }} />
+                      <Email
+                        fontSize="small"
+                        color="primary"
+                        sx={{ mr: 1 }}
+                      />
                       <Typography variant="body2" color="text.secondary">
                         {business.email}
                       </Typography>
                     </Box>
 
-                    <Typography variant="body2" sx={{
-                      mb: 2,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 3,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
-                    }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 2,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 3,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
                       {business.description}
                     </Typography>
                   </CardContent>
 
-                  <Box sx={{
-                    p: 2,
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    borderTop: '1px solid rgba(0,0,0,0.1)'
-                  }}>
+                  <Box
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      borderTop: "1px solid rgba(0,0,0,0.1)",
+                    }}
+                  >
                     <Button
                       size="small"
                       startIcon={<Image />}
@@ -326,13 +381,13 @@ const AddedBusiness = () => {
                     <Box>
                       <IconButton
                         onClick={() => handleOpenDialog("edit", business)}
-                        sx={{ color: 'primary.main' }}
+                        sx={{ color: "primary.main" }}
                       >
                         <Edit />
                       </IconButton>
                       <IconButton
                         onClick={() => handleOpenDialog("delete", business)}
-                        sx={{ color: 'error.main', ml: 1 }}
+                        sx={{ color: "error.main", ml: 1 }}
                       >
                         <Delete />
                       </IconButton>
@@ -352,15 +407,17 @@ const AddedBusiness = () => {
           maxWidth="md"
           PaperProps={{ sx: { borderRadius: 3 } }}
         >
-          <DialogTitle sx={{
-            bgcolor: 'primary.main',
-            color: 'white',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
+          <DialogTitle
+            sx={{
+              bgcolor: "primary.main",
+              color: "white",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Typography variant="h6">Edit Business</Typography>
-            <IconButton onClick={handleCloseDialog} sx={{ color: 'white' }}>
+            <IconButton onClick={handleCloseDialog} sx={{ color: "white" }}>
               <Close />
             </IconButton>
           </DialogTitle>
@@ -369,7 +426,7 @@ const AddedBusiness = () => {
             value={activeTab}
             onChange={(e, newValue) => setActiveTab(newValue)}
             variant="fullWidth"
-            sx={{ borderBottom: 1, borderColor: 'divider' }}
+            sx={{ borderBottom: 1, borderColor: "divider" }}
           >
             <Tab label="Details" />
             <Tab label="Images" />
@@ -451,14 +508,15 @@ const AddedBusiness = () => {
                         actionIcon={
                           <IconButton
                             onClick={() => handleRemoveImage(img._id, false)}
-                            sx={{ color: 'white' }}
+                            sx={{ color: "white" }}
                           >
                             <Close />
                           </IconButton>
                         }
                         sx={{
-                          background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
-                          borderRadius: '8px 8px 0 0'
+                          background:
+                            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+                          borderRadius: "8px 8px 0 0",
                         }}
                       />
                     </ImageListItem>
@@ -477,14 +535,15 @@ const AddedBusiness = () => {
                         actionIcon={
                           <IconButton
                             onClick={() => handleRemoveImage(img.url, true)}
-                            sx={{ color: 'white' }}
+                            sx={{ color: "white" }}
                           >
                             <Close />
                           </IconButton>
                         }
                         sx={{
-                          background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
-                          borderRadius: '8px 8px 0 0'
+                          background:
+                            "linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)",
+                          borderRadius: "8px 8px 0 0",
                         }}
                       />
                     </ImageListItem>
@@ -513,7 +572,7 @@ const AddedBusiness = () => {
             )}
           </DialogContent>
 
-          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
+          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
             <Button
               onClick={handleCloseDialog}
               variant="outlined"
@@ -539,13 +598,16 @@ const AddedBusiness = () => {
                 backgroundColor: Colors.LOGOlight,
                 color: "#ffffff",
                 "&:hover": {
-                  backgroundColor: Colors.LOGOlight, 
+                  backgroundColor: Colors.LOGOlight,
                 },
               }}
             >
-              {loading ? <CircularProgress size={24} sx={{ color: '#ffffff' }} /> : 'Save Changes'}
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "#ffffff" }} />
+              ) : (
+                "Save Changes"
+              )}
             </Button>
-
           </DialogActions>
         </Dialog>
 
@@ -557,46 +619,48 @@ const AddedBusiness = () => {
           fullWidth
           PaperProps={{ sx: { borderRadius: 3 } }}
         >
-          <DialogTitle sx={{
-            bgcolor: 'error.main',
-            color: 'white',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
+          <DialogTitle
+            sx={{
+              bgcolor: "error.main",
+              color: "white",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <Typography variant="h6">Confirm Deletion</Typography>
-            <IconButton onClick={handleCloseDialog} sx={{ color: 'white' }}>
+            <IconButton onClick={handleCloseDialog} sx={{ color: "white" }}>
               <Close />
             </IconButton>
           </DialogTitle>
 
-          <DialogContent dividers sx={{ textAlign: 'center', py: 4 }}>
-            <Box sx={{
-              width: 100,
-              height: 100,
-              borderRadius: '50%',
-              bgcolor: 'error.light',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              mx: 'auto',
-              mb: 3
-            }}>
-              <Delete sx={{ fontSize: 50, color: 'error.main' }} />
+          <DialogContent dividers sx={{ textAlign: "center", py: 4 }}>
+            <Box
+              sx={{
+                width: 100,
+                height: 100,
+                borderRadius: "50%",
+                bgcolor: "error.light",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                mx: "auto",
+                mb: 3,
+              }}
+            >
+              <Delete sx={{ fontSize: 50, color: "error.main" }} />
             </Box>
             <Typography variant="h6" gutterBottom>
               Delete {selectedBusiness?.businessName}?
             </Typography>
             <Typography color="text.secondary">
-              This will permanently remove all business data including images and reviews.
+              This will permanently remove all business data including images and
+              reviews.
             </Typography>
           </DialogContent>
 
-          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: 'divider' }}>
-            <Button
-              onClick={handleCloseDialog}
-              sx={{ color: 'text.secondary' }}
-            >
+          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
+            <Button onClick={handleCloseDialog} sx={{ color: "text.secondary" }}>
               Cancel
             </Button>
             <Button
@@ -606,7 +670,11 @@ const AddedBusiness = () => {
               disabled={loading}
               sx={{ px: 4 }}
             >
-              {loading ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Delete"
+              )}
             </Button>
           </DialogActions>
         </Dialog>

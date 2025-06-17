@@ -126,6 +126,21 @@ export default function Profile() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+       <Typography
+                    variant="h5"
+                    align="center"
+                    gutterBottom
+                    sx={{
+                      mb: 3,
+                      fontFamily: "Poppins, sans-serif",
+                      color: "#2C3E50",
+                      letterSpacing: "2.5px",
+                      lineHeight: 1.8,
+                    }}
+                  >
+               Profile
+                  </Typography>
+       
       <PageTitle title={`${user?.name}'s Profile | LAMPS`} />
 
       <Box sx={{ mb: 4 }}>
@@ -150,9 +165,7 @@ export default function Profile() {
       </Breadcrumbs>
       <Divider />
 
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, color: 'text.primary' }}>
-          My Profile
-        </Typography>
+       
       </Box>
 
       <Card>

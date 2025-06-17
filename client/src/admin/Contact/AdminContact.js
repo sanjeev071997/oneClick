@@ -97,6 +97,20 @@ const AdminContact = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      <Typography
+              variant="h5"
+              align="center"
+              gutterBottom
+              sx={{
+                mb: 3,
+                fontFamily: "Poppins, sans-serif",
+                color: "#2C3E50",
+                letterSpacing: "2.5px",
+                lineHeight: 1.8,
+              }}
+            >
+           Contacts
+            </Typography>
      {/* Breadcrumbs */}
            <Breadcrumbs
              aria-label="breadcrumb"
@@ -122,9 +136,7 @@ const AdminContact = () => {
 
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>
-          Contacts
-        </Typography>
+      
       </Box>
       {/* Search */}
       <Box sx={{ mb: 3 }}>

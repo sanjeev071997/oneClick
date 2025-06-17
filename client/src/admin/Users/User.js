@@ -74,6 +74,20 @@ const UserDashboard = () => {
       marginBottom: '2rem',
       padding: { xs: '0.5rem', sm: '1rem' }
     }}>
+      <Typography
+              variant="h5"
+              align="center"
+              gutterBottom
+              sx={{
+                mb: 3,
+                fontFamily: "Poppins, sans-serif",
+                color: "#2C3E50",
+                letterSpacing: "2.5px",
+                lineHeight: 1.8,
+              }}
+            >
+            User Management
+            </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs
         aria-label="breadcrumb"
@@ -96,14 +110,6 @@ const UserDashboard = () => {
       </Breadcrumbs>
 
       <Divider />
-
-      <Typography variant="h4" gutterBottom sx={{
-        fontWeight: 'bold',
-        mb: 3,
-        fontSize: { xs: '1.5rem', sm: '2rem' }
-      }}>
-        User Management
-      </Typography>
 
       <Paper elevation={3} sx={{
         p: { xs: 1, sm: 3 },

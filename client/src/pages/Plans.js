@@ -21,7 +21,6 @@ import Footer from '../Components/Footer';
 import Navbar from '../Components/Navbar';
 import { FontWeight, Colors } from "../Comman";
 
-
 const PricingPlans = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -42,8 +41,8 @@ const PricingPlans = () => {
     },
     {
       name: "Starter",
-      price: "99",
-      period: "per month",
+      price: "Coming soon",
+      period: "",
       description: "Perfect for small businesses getting started",
       features: [
         "Up to 50 leads/month",
@@ -55,8 +54,8 @@ const PricingPlans = () => {
     },
     {
       name: "Growth",
-      price: "299",
-      period: "six month",
+      price: "Coming soon",
+      period: "",
       description: "For businesses ready to scale",
       features: [
         "Unlimited leads",
@@ -69,7 +68,7 @@ const PricingPlans = () => {
     },
     {
       name: "Enterprise",
-      price: "Custom",
+      price: "Coming soon",
       period: "",
       description: "Tailored solutions for large businesses",
       features: [
@@ -83,10 +82,30 @@ const PricingPlans = () => {
     }
   ];
 
+  const handlePlanSelect = (plan) => {
+    if (plan.name === "Enterprise") {
+      navigate("/contact"); 
+
+    } else if (plan.name === "Growth") {
+      navigate("/contact"); 
+    } 
+   else if (plan.name === "Starter") {
+    navigate("/contact"); 
+  } 
+     else {
+      navigate("/add/business", {
+        state: {
+          planName: plan.name,
+          planPrice: plan.price,
+        }
+      });
+    }
+  };
+
   return (
     <>
       <Navbar />
-      <Box sx={{ py: 8, }}>
+      <Box sx={{ py: 8 }}>
         <Container maxWidth="lg">
           <Box textAlign="center" mb={6}>
             <Chip
@@ -154,7 +173,7 @@ const PricingPlans = () => {
                         color: Colors.LOGOColor,
                         py: 1,
                         textAlign: "center",
-                        fontWeight: 700,
+                        fontWeight: FontWeight.heading2,
                         fontSize: "0.9rem"
                       }}
                     >
@@ -179,7 +198,7 @@ const PricingPlans = () => {
                       <Typography
                         variant="h5"
                         sx={{
-                          fontWeight: 700,
+                          fontWeight: FontWeight.heading2,
                           color: Colors.darkText
                         }}
                       >
@@ -212,12 +231,14 @@ const PricingPlans = () => {
                         <Typography
                           variant="h3"
                           sx={{
-                            fontWeight: FontWeight.Bold,
+                            fontWeight: FontWeight.heading2,
+                            fontSize:20,
                             color: Colors.LOGOColor,
-                            lineHeight: 1
+                            lineHeight:1,
+                         
                           }}
                         >
-                          {plan.price === "0" ? "Free" : `$${plan.price}`}
+                          {plan.price === "0" ? "Free" : plan.price === "Custom" ? plan.price : `$${plan.price}`}
                         </Typography>
                         {plan.period && (
                           <Typography
@@ -277,7 +298,7 @@ const PricingPlans = () => {
                       variant={plan.popular ? "contained" : "outlined"}
                       fullWidth
                       size="large"
-                      onClick={() => navigate("/add/business" )}
+                      onClick={() => handlePlanSelect(plan)}
                       sx={{
                         fontWeight: FontWeight.heading1,
                         py: 1.5,
@@ -300,7 +321,7 @@ const PricingPlans = () => {
                           })
                       }}
                     >
-                      Get Started
+                      {plan.name === "Enterprise" ? "Contact Us" : "Get Started"}
                     </Button>
                   </Box>
                 </Card>

@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Grid,
@@ -8,76 +9,67 @@ import {
   CardContent,
   Paper,
   Container,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import TruckIamge from '../Images/truck.jpg';
-import BikeImage from '../Images/bike.jpg';
-import CarImage from '../Images/car.webp';
-import LocalImage from '../Images/local.jpg';
-import NationalImage from '../Images/National.webp';
-import InterImage from '../Images/interr.webp'
-import banner from '../Images/bannerr.webp'
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import axios from '../axiosInstance';
 import { Colors, FontFamily, FontWeight } from '../Comman';
-
 
 const categories = [
   {
     title: 'Transporters',
     services: [
-      {
-        label: 'Truck Transport',
-        image: TruckIamge ,
-        name: 'Transport Services',
-      },
-      {
-        label: 'Bike Transport',
-        image:  BikeImage ,
-        name: 'Transport Services',
-      },
-      {
-        label: 'Car Transport',
-        image:  CarImage ,
-        name: 'Transport Services',
-      },
+      { label: 'Truck Transport', image: require('../Images/truck.jpg'), name: 'Transport Services' },
+      { label: 'Bike Transport', image: require('../Images/bike.jpg'), name: 'Transport Services' },
+      { label: 'Car Transport', image: require('../Images/car.webp'), name: 'Transport Services' },
     ],
   },
   {
     title: 'Courier Service',
     services: [
-      {
-        label: 'Local Courier',
-        image:  LocalImage,
-        name: 'Courier Delivery',
-      },
-      {
-        label: 'National Courier',
-        image: NationalImage,
-        name: 'Courier Delivery',
-      },
-      {
-        label: 'International Courier',
-        image:InterImage,
-        name: 'Courier Delivery',
-      },
+      { label: 'Local Courier', image: require('../Images/local.jpg'), name: 'Courier Delivery' },
+      { label: 'National Courier', image: require('../Images/National.webp'), name: 'Courier Delivery' },
+      { label: 'International Courier', image: require('../Images/interr.webp'), name: 'Courier Delivery' },
     ],
   },
 ];
 
-
 const CategorySection = () => {
   const navigate = useNavigate();
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await axios.get('/api/v1/ads/get');
+        setBanners(res.data.ADs || []);
+      } catch (error) {
+        console.error('Failed to fetch banners', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    autoplay: true,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
-   <Container maxWidth={false} sx={{ 
-        mt: 5,
-        px: { xs: 2, sm: 3, md: 4 } 
-      }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: 3,
-        }}
-      >
+    <Container maxWidth={false} sx={{ mt: 5, px: { xs: 2, sm: 3, md: 4 } }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3,  alignItems: 'stretch' }}>
         {/* Left Side - Categories */}
         <Box sx={{ flex: 1 }}>
           <Grid container spacing={2}>
@@ -85,14 +77,14 @@ const CategorySection = () => {
               <Grid item xs={12} key={index}>
                 <Paper
                   elevation={3}
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    border: '1px solid',
-                    borderColor: '#D3D3D3',
-                  }}
+                  sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: '#D3D3D3' }}
                 >
-                  <Typography variant="h6" fontWeight="bold" gutterBottom sx={{color:Colors.LOGOColor,fontFamily:FontFamily.Georgia}}>
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    gutterBottom
+                    sx={{ color: Colors.LOGOColor, fontFamily: FontFamily.Georgia }}
+                  >
                     {category.title}
                   </Typography>
                   <Grid container spacing={2}>
@@ -122,7 +114,7 @@ const CategorySection = () => {
                               variant="body2"
                               align="center"
                               fontWeight={FontWeight.heading2}
-                              sx={{color:Colors.LOGOColor,fontFamily:FontFamily.inriaSerif}}
+                              sx={{ color: Colors.LOGOColor, fontFamily: FontFamily.inriaSerif }}
                             >
                               {service.label}
                             </Typography>
@@ -137,29 +129,51 @@ const CategorySection = () => {
           </Grid>
         </Box>
 
-        {/* Right Side - Banner */}
+        {/* Right Side - Banner Slider */}
         <Box
   sx={{
     flex: 1,
     borderRadius: 3,
     overflow: 'hidden',
-    height: { xs: 250, sm: 450, md: 545 }, 
+    height: { xs: 250, sm: 450, md: 548 },
+    position: 'relative',
+    pb: 4,
   }}
 >
+  {loading ? (
+    <CircularProgress />
+  ) : (
+    <Slider {...sliderSettings}>
+      {banners?.map((banner, index) => (
+        <Box
+          key={index}
+          sx={{
+            height: { xs: 250, sm: 450, md: 548 }, 
+          }}
+        >
           <img
-            src={ banner }
-            alt="Banner"
+            src={banner?.imageUrl}
+            alt={`Banner ${index + 1}`}
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
+              // objectFit: 'cover',
+               backgroundSize:"cover",
               borderRadius: '16px',
+              display: 'block',
             }}
           />
         </Box>
+      ))}
+    </Slider>
+  )}
+</Box>
+
+
       </Box>
     </Container>
   );
 };
 
 export default CategorySection;
+

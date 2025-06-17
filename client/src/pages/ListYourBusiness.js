@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -16,6 +17,11 @@ import {
   Autocomplete,
   Avatar,
   Chip,
+  Dialog,
+  DialogActions, 
+  DialogContent, 
+  DialogContentText, 
+  DialogTitle, 
 } from "@mui/material";
 import {
   PhotoCamera,
@@ -36,8 +42,9 @@ import { useSelector } from "react-redux";
 import Footer from "../Components/Footer";
 import { State, City } from "country-state-city";
 import { message } from 'antd';
-
+import QRCode from "react-qr-code";
 import { Colors, FontWeight } from "../Comman";
+import { useLocation } from "react-router-dom";
 
 const ListYourBusiness = () => {
   const { user } = useSelector((state) => state.user);
@@ -53,7 +60,8 @@ const ListYourBusiness = () => {
     description: "",
     images: [],
   });
-
+  const location = useLocation();
+  const { planName, planPrice } = location.state || {};
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
   const states = State.getStatesOfCountry("IN");
@@ -62,8 +70,9 @@ const ListYourBusiness = () => {
   const [categoryInput, setCategoryInput] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [success, setSuccess] = useState(false);
+  const [openPaymentConfirmDialog, setOpenPaymentConfirmDialog] = useState(false); 
 
-  const steps = ["Business Information", "Contact Details", "Media & Description", "Review & Submit"];
+  const steps = ["Business Information", "Contact Details", "Media & Description", "Review & Submit", "Payment"];
 
   const fetchCategories = async () => {
     try {
@@ -115,6 +124,10 @@ const ListYourBusiness = () => {
         message.error("Please enter a valid email address.");
         return;
       }
+    } else if (activeStep === steps.length - 2) {
+      if (!formData.images || formData.images.length === 0) {
+        message.warning("Are you sure you want to proceed without adding any business images?");
+      }
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -136,7 +149,6 @@ const ListYourBusiness = () => {
     if (files.length > filesToAdd.length) {
         message.warn(`You can only upload a maximum of 5 images. ${files.length - filesToAdd.length} image(s) were not added.`);
     }
-
     setFormData(prev => ({ ...prev, images: [...prev.images, ...filesToAdd] }));
   };
 
@@ -168,8 +180,16 @@ const ListYourBusiness = () => {
     setCategoryInput(value || "");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleOpenPaymentConfirmDialog = () => {
+    setOpenPaymentConfirmDialog(true);
+  };
+
+  const handleClosePaymentConfirmDialog = () => {
+    setOpenPaymentConfirmDialog(false);
+  };
+
+  const handleConfirmPaymentAndSubmit = async () => {
+    handleClosePaymentConfirmDialog(); 
     setLoading(true);
 
     const data = new FormData();
@@ -181,6 +201,8 @@ const ListYourBusiness = () => {
       }
     });
     data.append("userId", user._id);
+    data.append("planName", planName || "Growth");
+    data.append("planPrice", planPrice || "299");
 
     try {
       const res = await axios.post("/api/v1/business/add", data, {
@@ -217,31 +239,29 @@ const ListYourBusiness = () => {
   };
 
   const getStepContent = (step) => {
-    
     const textFieldSx = {
       mb: 3,
       '& .MuiOutlinedInput-root': {
         '& fieldset': {
-          borderColor: Colors.BLACK, 
+          borderColor: Colors.BLACK,
         },
         '&:hover fieldset': {
-          borderColor: Colors.BLACK, 
+          borderColor: Colors.BLACK,
         },
         '&.Mui-focused fieldset': {
-          borderColor: Colors.LOGOlight, 
+          borderColor: Colors.LOGOlight,
         },
       },
       '& .MuiInputLabel-root': {
         color: Colors.BLACK,
       },
       '& .MuiInputLabel-root.Mui-focused': {
-        color: Colors.LOGOlight, 
+        color: Colors.LOGOlight,
       },
       '& .MuiInputBase-input': {
-        color: '#000000', 
+        color: '#000000',
       },
     };
-    
 
     switch (step) {
       case 0:
@@ -474,7 +494,6 @@ const ListYourBusiness = () => {
                       sx={{
                         color: Colors.WHITE,
                         borderColor: Colors.LOGOlight,
-                        
                       }}
                       startIcon={<Add />}
                       component="span"
@@ -586,9 +605,60 @@ const ListYourBusiness = () => {
                     <Typography variant="body1" sx={{ color: Colors.LOGOlight }}>No images uploaded</Typography>
                   )}
                 </Box>
-
               </Grid>
             </Grid>
+          </Box>
+        );
+      case 4:
+        return (
+          <Box sx={{
+            p: 3,
+            border: '1px solid rgba(0,0,0,0.12)',
+            borderRadius: 2,
+            textAlign: 'center'
+          }}>
+            <Typography variant="h5" gutterBottom sx={{ mb: 3, color: Colors.LOGOColor }}>
+              Complete Your Payment
+            </Typography>
+
+            <Box sx={{
+              backgroundColor: '#f5f5f5',
+              p: 3,
+              borderRadius: 2,
+              mb: 3,
+              display: 'inline-block'
+            }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Plan: <strong>{planName || "Growth"}</strong>
+              </Typography>
+              <Typography variant="h4" sx={{ mb: 3, color: Colors.LOGOColor }}>
+                Price: <strong>${planPrice || "299"}</strong>
+              </Typography>
+
+              <Box sx={{
+                p: 2,
+                backgroundColor: 'white',
+                borderRadius: 1,
+                display: 'inline-block',
+                mb: 3
+              }}>
+                <QRCode
+                  value={`Payment for ${planName || "Growth"} plan - $${planPrice || "299"}`}
+                  size={128}
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                  level="L"
+                />
+              </Box>
+
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Scan the QR code to complete payment
+              </Typography>
+            </Box>
+
+            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
+              Your business listing will be activated once payment is confirmed.
+            </Typography>
           </Box>
         );
       default:
@@ -627,8 +697,7 @@ const ListYourBusiness = () => {
                 fontWeight: 'bold',
                 textTransform: 'none',
                 fontSize: '1rem',
-                backgroundColor: Colors.LOGOlight, 
-              
+                backgroundColor: Colors.LOGOlight,
               }}
             >
               List Another Business
@@ -735,9 +804,8 @@ const ListYourBusiness = () => {
                 fontWeight: 'bold',
                 textTransform: 'none',
                 fontSize: '1rem',
-                backgroundColor: Colors.LOGOlight, 
+                backgroundColor: Colors.LOGOlight,
                 color:'white'
-                
               }}
             >
               Back
@@ -746,7 +814,7 @@ const ListYourBusiness = () => {
             {activeStep === steps.length - 1 ? (
               <Button
                 variant="contained"
-                onClick={handleSubmit}
+                onClick={handleOpenPaymentConfirmDialog} // Open dialog here
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
                 sx={{
@@ -756,11 +824,10 @@ const ListYourBusiness = () => {
                   fontWeight: 'bold',
                   textTransform: 'none',
                   fontSize: '1rem',
-                  backgroundColor: Colors.LOGOlight, 
-                  
+                  backgroundColor: Colors.LOGOlight,
                 }}
               >
-                {loading ? 'Submitting...' : 'Submit Listing'}
+                {loading ? 'Submitting...' : 'Complete Payment & Submit'}
               </Button>
             ) : (
               <Button
@@ -773,8 +840,7 @@ const ListYourBusiness = () => {
                   fontWeight: 'bold',
                   textTransform: 'none',
                   fontSize: '1rem',
-                  backgroundColor: Colors.LOGOlight, 
-                  
+                  backgroundColor: Colors.LOGOlight,
                 }}
               >
                 Next
@@ -784,6 +850,46 @@ const ListYourBusiness = () => {
         </Paper>
       </Container>
       <Footer />
+
+      {/* Payment Confirmation Dialog */}
+      <Dialog
+        open={openPaymentConfirmDialog}
+        onClose={handleClosePaymentConfirmDialog}
+        aria-labelledby="payment-confirmation-dialog-title"
+        aria-describedby="payment-confirmation-dialog-description"
+      >
+        <DialogTitle id="payment-confirmation-dialog-title" sx={{ color: Colors.LOGOColor, fontWeight: 'bold' }}>
+          Confirm Your Business Listing
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="payment-confirmation-dialog-description" sx={{ color: 'text.secondary' }}>
+            Your business listing will be **activated within 24 hours** after successful payment confirmation.
+            Do you want to proceed and submit your business now?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleClosePaymentConfirmDialog}
+            sx={{ color: Colors.LOGOlight }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={handleConfirmPaymentAndSubmit}
+            variant="contained"
+            disableElevation
+            sx={{
+              backgroundColor: Colors.LOGOlight,
+              '&:hover': {
+                backgroundColor: Colors.LOGOColor,
+              },
+            }}
+            autoFocus
+          >
+            Yes, Submit My Business
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

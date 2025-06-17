@@ -23,7 +23,7 @@ import {
   Bolt,
   Verified
 } from "@mui/icons-material";
-import logo from '../Images/LOGO.png';
+import logo from '../Images/LOGO1.png';
 
 import { Colors, FontFamily, FontWeight } from "../Comman";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -73,7 +73,7 @@ const Footer = () => {
                 <img
                   src={logo}
                   alt="Company Logo"
-                  style={{ height: '150px', width: '150px' }}
+                  style={{ width: '150px' }}
                 />
               </Box>
 

@@ -113,3 +113,9 @@ html {
 body {
   cursor: pointer;
 }
+
+
+.slick-dots li button:before {
+  color: #1976d2; 
+  font-size: 12px;
+}

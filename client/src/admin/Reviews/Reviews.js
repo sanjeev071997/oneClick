@@ -19,10 +19,9 @@ import {
   Link
 } from '@mui/material';
 import { Delete, Star} from '@mui/icons-material';
-import { Divider, message } from 'antd';
+import { Divider, message, Modal } from 'antd';
 import { Link as RouterLink } from 'react-router-dom';
 import SearchIcon from "@mui/icons-material/Search";
-
 
 const ReviewsDashboard = () => {
   const [reviews, setReviews] = useState([]);
@@ -61,15 +60,28 @@ const ReviewsDashboard = () => {
   };
 
   const handleDeleteReview = async (id) => {
-    try {
-      await axios.delete("/api/v1/review/delete", { data: { id } });
-      message.success('Review deleted successfully!');
-      fetchReviews();
-    } catch (err) {
-      message.error('Failed to delete review. Please try again.');
-      console.error('Error deleting review:', err);
-    }
+    Modal.confirm({
+      title: 'Are you sure you want to delete this review?',
+      content: 'This action cannot be undone',
+      okText: 'Yes, delete it',
+      okType: 'danger',
+      cancelText: 'No, cancel',
+      onOk: async () => {
+        try {
+          await axios.delete("/api/v1/review/delete", { data: { id } });
+          message.success('Review deleted successfully!');
+          fetchReviews();
+        } catch (err) {
+          message.error('Failed to delete review. Please try again.');
+          console.error('Error deleting review:', err);
+        }
+      },
+      onCancel: () => {
+        message.info('Deletion cancelled');
+      },
+    });
   };
+  
 
   if (loading) {
     return (
@@ -90,6 +102,20 @@ const ReviewsDashboard = () => {
       marginBottom: '2rem',
       padding: { xs: '0.5rem', sm: '1rem' }
     }}>
+        <Typography
+        variant="h5"
+        align="center"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontFamily: "Poppins, sans-serif",
+          color: "#2C3E50",
+          letterSpacing: "2.5px",
+          lineHeight: 1.8,
+        }}
+      >
+      Customer Reviews
+      </Typography>
       {/* Breadcrumbs */}
       <Breadcrumbs
         aria-label="breadcrumb"
@@ -113,18 +139,8 @@ const ReviewsDashboard = () => {
       </Breadcrumbs>
       <Divider />
 
-
-      <Typography variant="h4" gutterBottom sx={{
-        fontWeight: 'bold',
-        mb: 3,
-        fontSize: { xs: '1.5rem', sm: '2rem' }
-      }}>
-        Customer Reviews
-      </Typography>
-
       {/* Search Bar */}
       <Box sx={{ mb: 3 }}>
-       
          <TextField
           fullWidth
           variant="outlined"
@@ -158,7 +174,6 @@ const ReviewsDashboard = () => {
           }}
         />
       </Box>
-
 
       <Paper elevation={3} sx={{
         p: { xs: 1, sm: 3 },
