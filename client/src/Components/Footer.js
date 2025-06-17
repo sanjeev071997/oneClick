@@ -26,7 +26,7 @@ import {
 import logo from '../Images/LOGO1.png';
 
 import { Colors, FontFamily, FontWeight } from "../Comman";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -45,13 +45,13 @@ const Footer = () => {
     { name: "Home", path: "/", icon: <Bolt fontSize="small" /> },
     { name: "About Us", path: "/about", icon: <Verified fontSize="small" /> },
     { name: "Contact", path: "/contact", icon: <Email fontSize="small" /> },
-    { name: "Plans", path: "/plans", icon: <AttachMoneyIcon fontSize="small" /> },
+    { name: "Plans", path: "/plans", icon: <CurrencyRupeeIcon fontSize="small" /> },
   ];
 
   const socialLinks = [
     { icon: <Facebook />, color: "#3b5998", url: "#", name: "Facebook" },
     { icon: <Twitter />, color: "#1da1f2", url: "#", name: "Twitter" },
-    { icon: <Instagram />, color: "#e1306c", url: "#", name: "Instagram" },
+    { icon: <Instagram />, color: "#e1306c", url: "https://www.instagram.com/quick_dials?igsh=MXVpbDYxdzlseXBuZw==", name: "Instagram" },
     { icon: <YouTube />, color: "#ff0000", url: "#", name: "YouTube" }
   ];
 
@@ -227,7 +227,7 @@ const Footer = () => {
         {/* Copyright */}
         <Box sx={{ mt: 4, pt: 2, borderTop: `1px solid ${Colors.LOGOColor}`, textAlign: "center" }}>
           <Typography variant="body2" color={Colors.LOGOColor}>
-            © {new Date().getFullYear()} Quickdials. All rights reserved.
+            © {new Date().getFullYear()} Copyright by Quickdials. All Rights Reserved.
           </Typography>
         </Box>
       </Container>

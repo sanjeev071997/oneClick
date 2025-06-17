@@ -132,7 +132,23 @@ const ResetPassword = () => {
                 lineHeight: 1.8,
               }}
             >
-              Reset Password
+              Reset Your Password
+            </Typography>
+
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{
+                fontFamily: "Poppins, sans-serif",
+                color: "#555",
+                letterSpacing: "1.5px",
+                lineHeight: 1.8,
+                fontSize: "16px",
+              }}
+            >
+              Enter your email to receive password reset instructions and regain
+              access to your Quickdails account.
             </Typography>
 
             <TextField
@@ -205,23 +221,20 @@ const ResetPassword = () => {
             >
               {loading ? "loading..." : "Reset Password"}
             </Button>
-            <hr
-              style={{
-                marginTop: "20px",
-              }}
-            />
-            <p
-              style={{
-                marginTop: "20px",
-                fontSize: "12px",
-                letterSpacing: ".1rem",
-                lineHeight: "1.5rem",
-                marginBottom: "-20px",
-              }}
-            >
-              &copy; {currentYear} Copyright by One Click . All
-              rights reserved.
-            </p>
+            <Box sx={{ pt: 2 }}>
+              <hr />
+              <p
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  letterSpacing: ".1rem",
+                  lineHeight: "1.5rem",
+                  marginBottom: "-20px",
+                }}
+              >
+                &copy; {currentYear} Copyright by Quickdails. All Rights Reserved.
+              </p>
+            </Box>
           </Box>
         </Box>
       </Box>

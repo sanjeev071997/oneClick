@@ -43,10 +43,11 @@ import Footer from "../Components/Footer";
 import { State, City } from "country-state-city";
 import { message } from 'antd';
 import QRCode from "react-qr-code";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Colors, FontWeight } from "../Comman";
-import { useLocation } from "react-router-dom";
 
 const ListYourBusiness = () => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     businessName: "",
@@ -687,8 +688,9 @@ const ListYourBusiness = () => {
               variant="contained"
               size="large"
               onClick={() => {
-                setSuccess(false);
-                setActiveStep(0);
+                // setSuccess(false);
+                // setActiveStep(0);
+                 navigate("/plans");
               }}
               sx={{
                 px: 6,

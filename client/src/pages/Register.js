@@ -22,7 +22,7 @@ import axios from "../axiosInstance";
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, isAuthenticated,  } = useSelector(
+  const { error, loading, isAuthenticated } = useSelector(
     (state) => state.user
   );
 
@@ -78,6 +78,7 @@ const Register = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, error, isAuthenticated]);
+  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -98,13 +99,11 @@ const Register = () => {
         >
           Home
         </MUILink>
-        <Typography sx={{ color: "primary.main",  }}>
-        Register
-        </Typography>
+        <Typography sx={{ color: "primary.main" }}>Register</Typography>
       </Breadcrumbs>
       <Box
         sx={{
-          mt:5,
+          mt: 5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -119,7 +118,7 @@ const Register = () => {
             backgroundColor: "#fff",
             padding: "40px",
             borderRadius: "12px",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.1)", 
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
             maxWidth: "400px",
             width: "100%",
             textAlign: "center",
@@ -143,12 +142,27 @@ const Register = () => {
               sx={{
                 fontFamily: "Poppins, sans-serif",
                 color: "#333",
-                letterSpacing: "2.5px",
+                letterSpacing: "2px",
                 lineHeight: 1.8,
                 // fontSize: "16px",
               }}
             >
-              Create a new account
+              Create Your Quickdails Account
+            </Typography>
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{
+                fontFamily: "Poppins, sans-serif",
+                color: "#555",
+                letterSpacing: "1.5px",
+                lineHeight: 1.8,
+                fontSize: "16px",
+              }}
+            >
+              Please fill in the details to register and get started with
+              Quickdails.
             </Typography>
             <TextField
               sx={{
@@ -263,6 +277,22 @@ const Register = () => {
             >
               {" "}
               Already a member ?{""} <Link to="/login"> Sign In </Link>{" "}
+            </Box>
+
+            <Box sx={{ pt: 2 }}>
+              <hr />
+              <p
+                style={{
+                  marginTop: "10px",
+                  fontSize: "12px",
+                  letterSpacing: ".1rem",
+                  lineHeight: "1.5rem",
+                  marginBottom: "-20px",
+                }}
+              >
+                &copy; {currentYear} Copyright by Quickdails. All Rights
+                Reserved.
+              </p>
             </Box>
           </Box>
         </Box>

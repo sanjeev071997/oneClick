@@ -75,13 +75,13 @@ const Login = () => {
       }
     }
   }, [error, isAuthenticated, user, dispatch, navigate]);
-  
+
   const currentYear = new Date().getFullYear();
 
   return (
     <>
       <PageTitle
-        title="Login - One Click"
+        title="Login - Quickdails"
         description="Log in to your account to access your courses and exams."
       />
       <Breadcrumbs
@@ -105,23 +105,24 @@ const Login = () => {
 
       <Box
         sx={{
-          // height: "100vh",
           mt: 5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "primary.white",
+          bgColor: "primary.white",
         }}
       >
         <Box
           onSubmit={handleSubmit}
           component="form"
-          className="form_style border-style"
+          className="form_style border-style needs-validation"
           sx={{
             backgroundColor: "#fff",
             padding: "40px",
             borderRadius: "12px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            maxWidth: "400px",
+            width: "100%",
             textAlign: "center",
           }}
         >
@@ -147,7 +148,7 @@ const Login = () => {
                 lineHeight: 1.8,
               }}
             >
-              Login
+              Welcome Back to Quickdails
             </Typography>
 
             {/* Toggle between regular login and student login */}
@@ -163,7 +164,7 @@ const Login = () => {
                 fontSize: "16px",
               }}
             >
-              Please fill your login details to access your One Click Account.
+              Please enter your login details to access your Quickdails account.
             </Typography>
 
             <TextField
@@ -222,7 +223,7 @@ const Login = () => {
               color="primary"
               className="courses_desc"
               sx={{
-                mt:2,
+                mt: 2,
                 borderRadius: "5px",
                 textTransform: "none",
                 fontFamily: "Poppins, sans-serif",
@@ -252,22 +253,17 @@ const Login = () => {
 
             {/* Toggle between student and general login */}
             <Box sx={{ pt: 2 }}>
-              <hr
-                style={{
-                  marginTop: "20px",
-                }}
-              />
+              <hr />
               <p
                 style={{
-                  marginTop: "20px",
+                  marginTop: "10px",
                   fontSize: "12px",
                   letterSpacing: ".1rem",
                   lineHeight: "1.5rem",
                   marginBottom: "-20px",
                 }}
               >
-                &copy; {currentYear} Copyright by One Click . All
-                rights reserved.
+                &copy; {currentYear} Copyright by Quickdails. All Rights Reserved.
               </p>
             </Box>
           </Box>

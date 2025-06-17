@@ -45,8 +45,8 @@ const CategorySection = () => {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const res = await axios.get('/api/v1/ads/get');
-        setBanners(res.data.ADs || []);
+        const res = await axios.get('/api/v1/homehighlights/get');
+        setBanners(res.data.homeHighlights || []);
       } catch (error) {
         console.error('Failed to fetch banners', error);
       } finally {
@@ -56,6 +56,8 @@ const CategorySection = () => {
 
     fetchBanners();
   }, []);
+
+  
 
   const sliderSettings = {
     dots: true,

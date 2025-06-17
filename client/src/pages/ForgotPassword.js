@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import PageTitle from "../Components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, forgotPassword } from "../redux/actions/userAction";
-import { message as antdMessage } from 'antd';
-
+import { message as antdMessage } from "antd";
 
 const ForgotPassword = () => {
   const dispatch = useDispatch();
@@ -49,10 +48,10 @@ const ForgotPassword = () => {
 
   return (
     <div>
-    <PageTitle
-      title="Forgot Password -  One Click"
-      description="Reset your password to regain access to your account."
-    />
+      <PageTitle
+        title="Forgot Password -  One Click"
+        description="Reset your password to regain access to your account."
+      />
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
@@ -69,14 +68,12 @@ const ForgotPassword = () => {
         >
           Home
         </MUILink>
-        <Typography sx={{ color: "primary.main",}}>
-          Forgot Password
-        </Typography>
+        <Typography sx={{ color: "primary.main" }}>Forgot Password</Typography>
       </Breadcrumbs>
       <Box
         sx={{
           // height: "100vh",
-          mt:5,
+          mt: 5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -134,8 +131,7 @@ const ForgotPassword = () => {
                 fontSize: "16px",
               }}
             >
-              Don't fret! Just type in your email and we will send you a code to
-              reset your password!
+              Don't fret! Enter your registered email to receive password reset instructions for your Quickdails account.
             </Typography>
             <TextField
               sx={{
@@ -188,7 +184,7 @@ const ForgotPassword = () => {
             >
               {" "}
               Already a member ?{""} <Link to="/login"> Sign In </Link>{" "}
-              <hr
+              {/* <hr
                 style={{
                   marginTop: "20px",
                 }}
@@ -204,7 +200,22 @@ const ForgotPassword = () => {
               >
                 &copy; {currentYear} Copyright by One Click . All
                 rights reserved.
-              </p>
+              </p> */}
+              <Box sx={{ pt: 2 }}>
+                <hr />
+                <p
+                  style={{
+                    marginTop: "10px",
+                    fontSize: "12px",
+                    letterSpacing: ".1rem",
+                    lineHeight: "1.5rem",
+                    marginBottom: "-20px",
+                  }}
+                >
+                  &copy; {currentYear} Copyright by Quickdails. All Rights
+                  Reserved.
+                </p>
+              </Box>
             </Box>
           </Box>
         </Box>

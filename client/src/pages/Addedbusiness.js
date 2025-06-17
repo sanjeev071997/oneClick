@@ -42,11 +42,10 @@ import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors, FontSize } from "../Comman";
-import FontWeight from '../Comman/FontWeight';
 
 const AddedBusiness = () => {
-  const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -252,7 +251,6 @@ const AddedBusiness = () => {
           <Paper
             elevation={0}
             sx={{
-
               p: 6,
               textAlign: "center",
               borderRadius: 3,

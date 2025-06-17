@@ -1,4 +1,12 @@
+// import React from 'react'
 
+// const HomeHighlights = () => {
+//   return (
+//     <div>HomeHighlights</div>
+//   )
+// }
+
+// export default HomeHighlights
 
 import React, { useState, useEffect } from "react";
 import {
@@ -16,12 +24,13 @@ import imageCompression from "browser-image-compression";
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import PageTitle from "../Components/PageTitle";
-import axios from '../axiosInstance'; 
+import axios from "../axiosInstance";
 
-const ADS = () => {
-  const [images, setImages] = useState([]);
+const HomeHighlights = () => {
+  const [uploadedImages, setUploadedImages] = useState([]); // from server
+  const [previewImages, setPreviewImages] = useState([]);   // for new uploads
   const [imageBase64List, setImageBase64List] = useState([]);
-  const [loading, setLoading] = useState("")
+  const [loading, setLoading] = useState(false);
 
   const VisuallyHiddenInput = styled("input")({
     display: "none",
@@ -29,107 +38,117 @@ const ADS = () => {
 
   const fetchAds = async () => {
     try {
-      const response = await axios.get('/api/v1/ads/get');
-      if (response.status === 200) {
-        setImages(response.data.ADs); 
+      const response = await axios.get("/api/v1/homehighlights/get");
+       if (response.data.success === true) {
+        setUploadedImages(response.data.homeHighlights || []);
       } else {
-        message.error("Failed to fetch ads.");
+        message.error("Failed to fetch home highlights.");
       }
     } catch (error) {
-      console.error("Fetch error:", error);
-      message.error("An error occurred while fetching ads.");
+      message.error(error.response.data.message ||"An error occurred while fetching home highlights.");
     }
   };
-
 
   useEffect(() => {
     fetchAds();
   }, []);
 
-
   const handleImageUpload = async (event) => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
+
     const maxSizeInMB = 5;
     const base64Images = [];
+    const previews = [];
+
     try {
       const promises = Array.from(files).map(async (file) => {
         if (file.size / (1024 * 1024) > maxSizeInMB) {
           message.error(`Image size should not exceed ${maxSizeInMB} MB.`);
           return null;
         }
+
         const options = {
           maxSizeMB: 1,
           maxWidthOrHeight: 800,
           useWebWorker: true,
         };
+
         const compressedFile = await imageCompression(file, options);
         const reader = new FileReader();
+
         return new Promise((resolve) => {
           reader.onloadend = () => {
-            let imageBase64 = reader.result;
-            if (imageBase64.includes("base64,")) {
-              base64Images.push(imageBase64.split("base64,")[1]);
+            const base64 = reader.result;
+            previews.push(base64);
+            if (base64.includes("base64,")) {
+              base64Images.push(base64.split("base64,")[1]);
             }
-            resolve(imageBase64);
+            resolve();
           };
           reader.readAsDataURL(compressedFile);
         });
       });
-      const compressedImages = await Promise.all(promises);
-      setImages(compressedImages.filter(Boolean));
+
+      await Promise.all(promises);
+      setPreviewImages(previews);
       setImageBase64List(base64Images);
     } catch (error) {
-      console.error("Error compressing images:", error);
+      console.error("Compression error:", error);
     }
   };
 
-// Upload Images 
-const handleSubmit = async (event) => {
-  event.preventDefault();
+    // Handle form submission to upload images
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  if (imageBase64List.length === 0) {
-    message.error("Please upload at least one image.");
-    return;
-  }
-
-  try {
-    const response = await axios.post('/api/v1/ads/upload', {
-      images: imageBase64List,
-    });
-
-    if (response.status === 200) {
-      message.success("Images uploaded successfully.");
-      setImages([]);
-      setImageBase64List([]);
-    } else {
-      message.error("Failed to upload images.");
+    if (imageBase64List.length === 0) {
+      message.error("Please upload at least one image.");
+      return;
     }
-  } catch (error) {
-    console.error("Upload error:", error);
-    message.error("An error occurred while uploading images.");
-  }
-};
 
-// Delete ADs 
-const handleDelete = async (publicId) => {
-  if (!publicId) return;
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/v1/homehighlights/upload", {
+        images: imageBase64List,
+      });
 
-  try {
-    const response = await axios.delete('/api/v1/ads/delete', {
-      data: { publicId } 
-    });
-
-    if (response.status === true) {
-      message.success("Image deleted successfully.");
-    } else {
-      message.error("Failed to delete the image.");
+       if (response.data.success === true) {
+        message.success(response.data.message || "Images uploaded successfully.");
+        setPreviewImages([]);
+        setImageBase64List([]);
+        fetchAds();
+      } else {
+        message.error("Failed to upload images.");
+      }
+    } catch (error) {
+      message.error(error.response.data.message ||"An error occurred while uploading images.");
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    message.error("An error occurred while deleting the image.");
-  }
-};
+  };
 
+  const handleDelete = async (publicId) => {
+    if (!publicId) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.delete("/api/v1/homehighlights/delete", {
+        data: { publicId },
+      });
+
+      if (response.data.success === true) {
+        message.success(response.data.message || "Image deleted successfully.");
+        fetchAds();
+      } else {
+        message.error("Failed to delete the image.");
+      }
+    } catch (error) {
+      message.error(error.response.data.message || "An error occurred while deleting the image.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -139,6 +158,7 @@ const handleDelete = async (publicId) => {
         url="/admin/institute/about"
         keywords="about highlights images, about us section banners, Shree Manglam highlights, school activity photos, admin about images management"
       />
+
       <Typography
         variant="h5"
         align="center"
@@ -151,8 +171,9 @@ const handleDelete = async (publicId) => {
           lineHeight: 1.8,
         }}
       >
-        About Highlights Images
+        Home Highlights Images
       </Typography>
+
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
@@ -170,8 +191,9 @@ const handleDelete = async (publicId) => {
         >
           Dashboard
         </MUILink>
-        <Typography sx={{ color: "primary.main" }}>About Highlights</Typography>
+        <Typography sx={{ color: "primary.main" }}>Home Highlights</Typography>
       </Breadcrumbs>
+
       <Box component="form" onSubmit={handleSubmit}>
         <VisuallyHiddenInput
           accept="image/*"
@@ -193,16 +215,17 @@ const handleDelete = async (publicId) => {
               fontWeight: 500,
             }}
           >
-            Upload About Images
+            Upload Home Highlights Images
           </Button>
         </label>
-        {images?.length > 0 && (
-          <Grid container spacing={2}>
-            {images?.map((image, index) => (
+
+        {previewImages.length > 0 && (
+          <Grid container spacing={2} mb={3}>
+            {previewImages.map((img, index) => (
               <Grid item key={index}>
                 <img
-                  src={image}
-                  alt={`banner-preview-${index}`}
+                  src={img}
+                  alt={`preview-${index}`}
                   style={{
                     height: "100px",
                     width: "100px",
@@ -214,6 +237,7 @@ const handleDelete = async (publicId) => {
             ))}
           </Grid>
         )}
+
         <Box>
           <Button
             variant="contained"
@@ -230,79 +254,79 @@ const handleDelete = async (publicId) => {
             {loading ? <CircularProgress size={24} /> : "Add Image"}
           </Button>
         </Box>
+
         <hr />
+
         <Typography
           variant="h6"
           sx={{
-            // pb: 2,
-            // pt: 3,
             fontFamily: "Poppins, sans-serif",
             color: "#555",
             letterSpacing: "2.5px",
           }}
         >
-          All About Highlights
+          All Home Highlights
         </Typography>
+
         <Grid container spacing={2} mt={3} mb={5}>
-          {images &&
-            images?.map((image, index) => (
-              <Grid
-                container
-                item
-                key={index}
-                alignItems="center"
-                sx={{ mr: { md: 2, xs: 2 }, ml: { md: 0, xs: 2 } }}
-              >
-                <Grid item md={1.8} sm={12} xs={12}>
-                  <Button
-                    variant="outlined"
-                    className="courses_desc"
-                    color="error"
-                    sx={{
-                      mt: 1,
-                      mb: 3,
-                      // ml: 2,
-                      borderRadius: "50px",
-                      textTransform: "none",
-                      fontFamily: "Poppins, sans-serif",
-                      letterSpacing: ".1rem",
-                    }}
-                    onClick={() => handleDelete(image.publicId)}
-                  >
-                    {loading ? <CircularProgress size={24} /> : "Delete "}
-                  </Button>
-                </Grid>
-                <Grid
-                  item
-                  md={10.2}
-                  sm={12}
-                  xs={12}
+          {uploadedImages.map((image, index) => (
+            <Grid
+              container
+              item
+              key={index}
+              alignItems="center"
+              sx={{ mr: { md: 2, xs: 2 }, ml: { md: 0, xs: 2 } }}
+            >
+              <Grid item md={1.8} sm={12} xs={12}>
+                <Button
+                  variant="outlined"
+                  color="error"
                   sx={{
-                    transition: "transform 0.3s ease-in-out",
-                    "&:hover": {
-                      transform: "scale(1.02)",
-                    },
-                    borderRadius: "8px",
-                    overflow: "hidden",
-                    boxShadow: 3,
+                    mt: 1,
+                    mb: 3,
+                    borderRadius: "50px",
+                    textTransform: "none",
+                    fontFamily: "Poppins, sans-serif",
+                    letterSpacing: ".1rem",
                   }}
+                  onClick={() => handleDelete(image.publicId)}
                 >
-                  <img
-                    src={image.imageUrl}
-                    alt={`uploaded-banner-${index}`}
-                    style={{
-                      height: "300px",
-                      width: "100%",
-                      borderRadius: "8px",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Grid>
+                  {loading ? <CircularProgress size={24} /> : "Delete"}
+                </Button>
               </Grid>
-            ))}
+
+              <Grid
+                item
+                md={10.2}
+                sm={12}
+                xs={12}
+                sx={{
+                  transition: "transform 0.3s ease-in-out",
+                  "&:hover": {
+                    transform: "scale(1.02)",
+                  },
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  boxShadow: 3,
+                }}
+              >
+                <img
+                  src={image.imageUrl}
+                  alt={`uploaded-${index}`}
+                  style={{
+                    height: "300px",
+                    width: "100%",
+                    borderRadius: "8px",
+                    objectFit: "cover",
+                  }}
+                />
+              </Grid>
+            </Grid>
+          ))}
         </Grid>
       </Box>
     </>
   );
 };
-export default ADS;
+
+export default HomeHighlights;

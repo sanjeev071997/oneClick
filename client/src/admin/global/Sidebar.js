@@ -89,12 +89,20 @@ const SidebarAdm = () => {
                 Dashboard{" "}
               </MenuItem>
 
-              <MenuItem
-                component={<Link to="/admin/ads" />}
+               <MenuItem
+                component={<Link to="/admin/home/banner" />}
                 icon={<DashboardIcon sx={{color:'#275559'}} />}
               >
                 {" "}
-                ADs{" "}
+                Home Banners{" "}
+              </MenuItem>
+
+              <MenuItem
+                component={<Link to="/admin/home/highlights" />}
+                icon={<DashboardIcon sx={{color:'#275559'}} />}
+              >
+                {" "}
+               Home Highlights{" "}
               </MenuItem>
               
               <MenuItem

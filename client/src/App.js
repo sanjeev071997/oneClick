@@ -11,7 +11,8 @@ import ListYourBusiness from "./pages/ListYourBusiness.js";
 import CategoryBusinesseView from "./pages/CategoryBusinesseView.js";
 import Layout from "./admin/global/Layout";
 import AdminDashboard from "./admin/Dashboard";
-import AdminADS from "./admin/ADS"
+import AdminHomeBanner from "./admin/HomeBanner";
+import AdminHomeHighlights from "./admin/HomeHighlights";
 import AdminProfile from "./admin/Profile";
 import AdminCategories from "./admin/Categories/Categories.js";
 import AdminBusiness from "./admin/Business/Business.js";
@@ -43,8 +44,11 @@ function App() {
       store.dispatch(reloadUser());
     }
   }, []);
+
+  // Layouts for Admin Pages
+  const AdminHomeBannerHDC = Layout(AdminHomeBanner);
   const AdminDashboardHDC = Layout(AdminDashboard);
-  const AdminADSHDC = Layout(AdminADS);
+  const AdminHomeHighlightsHDC = Layout(AdminHomeHighlights);
   const AdminProfileHDC = Layout(AdminProfile);
   const AdminCategoriesHDC = Layout(AdminCategories);
   const AdminBusinessHDC = Layout(AdminBusiness);
@@ -103,7 +107,11 @@ function App() {
             {/* Admin Routes */}
             {user?.role >= 1 ? (
               <>
-              <Route path="/admin/ads" element={<AdminADSHDC />} />
+               <Route path="/admin/home/banner" element={<AdminHomeBannerHDC />} />
+                <Route
+                  path="/admin/home/highlights"
+                  element={<AdminHomeHighlightsHDC />}
+                />
                 <Route path="/admin/profile" element={<AdminProfileHDC />} />
                 <Route
                   path="/admin/categories"

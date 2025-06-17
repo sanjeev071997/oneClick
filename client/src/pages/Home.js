@@ -6,16 +6,13 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Categories from "../Components/Categories";
-import CategorySection from '../Components/CategorySection'
-import  TravelBookings from '../Components/TravelBookings'
-import Footer from '../Components/Footer';
-import CategoriesBanner from '../Components/CategoriesBanner'
-import Gatik from '../Images/gatik.jpg'
-
-
+import CategorySection from "../Components/CategorySection";
+import TravelBookings from "../Components/TravelBookings";
+import Footer from "../Components/Footer";
+import CategoriesBanner from "../Components/CategoriesBanner";
+import axios from "../axiosInstance";
 
 const BannerContainer = styled(Box)({
-
   position: "relative",
   overflow: "hidden",
   width: "100%",
@@ -30,28 +27,11 @@ const BannerImage = styled(Box)({
 });
 
 const Home = () => {
-  console.log(Gatik, "Gatik")
-  const images = [
-  
-    {
-      imageUrl:Gatik
-    },
-    {
-      imageUrl: "https://3.imimg.com/data3/SQ/DN/MY-16602737/banner-design-services.png",
-    },
-    {
-      imageUrl: "https://img.freepik.com/free-vector/cleaning-service-horizontal-banner-template-design_23-2150808848.jpg",
-    },
-    {
-      imageUrl: "https://png.pngtree.com/template/20220519/ourmid/pngtree-home-cleaning-service-banner-editable-of-square-background-suitable-for-social-image_1550879.jpg",
-    },
-  ];
-
-  
+  const [images, setImages] = useState([]);
 
   const settings = {
     dots: false,
-    infinite: images?.length > 1, 
+    infinite: images?.length > 1, // infinite only if there are multiple images
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -59,10 +39,23 @@ const Home = () => {
     autoplaySpeed: 3000,
   };
 
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const res = await axios.get("/api/v1/homebanner/get");
+        setImages(res.data.newHomeBanner || []);
+      } catch (error) {
+        console.error("Failed to fetch banners", error);
+      }
+    };
+
+    fetchBanners();
+  }, []);
+
   return (
     <>
       <Navbar />
-      <BannerContainer>
+      {/* <BannerContainer>
         <Slider {...settings}>
           {images?.map((url, index) => (
             <BannerImage
@@ -79,17 +72,51 @@ const Home = () => {
               <img
                 src={url?.imageUrl}
                 alt={`Slide ${index + 1}`}
-                style={{ height: "100%", width: "100%", }}
+                style={{ height: "100%", width: "100%" }}
+              />
+            </BannerImage>
+          ))}
+        </Slider>
+      </BannerContainer> */}
+
+      <BannerContainer>
+        <Slider {...settings}>
+          {images?.map((url, index) => (
+            <BannerImage
+              key={index}
+              sx={{
+                height: {
+                  xs: "200px",
+                  sm: "200px",
+                  md: "400px",
+                  lg: "500px",
+                },
+                width: "100%",
+              }}
+            >
+              <img
+                src={url?.imageUrl}
+                alt={`Slide ${index + 1}`}
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               />
             </BannerImage>
           ))}
         </Slider>
       </BannerContainer>
 
-     <Categories /> 
-     <CategorySection/>
-     <TravelBookings />
-     <CategoriesBanner />
+      <Categories />
+      <CategorySection />
+      <TravelBookings />
+      <CategoriesBanner />
       <Footer />
     </>
   );
