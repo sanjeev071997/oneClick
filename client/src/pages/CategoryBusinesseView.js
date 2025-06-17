@@ -629,7 +629,7 @@ const CategoryBusinessView = () => {
                                   }}
                                 />
                                 <Chip
-                                  label={`${rev.rating} stars`}
+                                  label={`${rev.rating}`}
                                   size="small"
                                   sx={{
                                     ml: 1,

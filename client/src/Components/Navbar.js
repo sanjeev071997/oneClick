@@ -302,7 +302,7 @@ const Navbar = () => {
                       </ListItemIcon>
                       <ListItemText primary="Reviews"  sx={{ color:Colors.WHITE}}/>
                     </MenuItem>
-                    <MenuItem component={Link} to="/plansview" onClick={handleProfileClose}>
+                    <MenuItem component={Link} to="/plans/view" onClick={handleProfileClose}>
                       <ListItemIcon>
                       <CurrencyRupeeIcon sx={{ color:Colors.WHITE }} />
                       </ListItemIcon>

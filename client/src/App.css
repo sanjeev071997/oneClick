@@ -110,10 +110,6 @@ html {
   line-height: 1.43 !important;
   letter-spacing: 1px !important;
 }
-body {
-  cursor: pointer;
-}
-
 
 .slick-dots li button:before {
   color: #1976d2; 

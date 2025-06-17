@@ -72,7 +72,7 @@ const ContactUs = () => {
           backgroundColor: Colors.primaryLight,
         }}
       >
-        <Container maxWidth="md">
+        <Container >
           {/* Hero Section */}
           <Box textAlign="center" mb={{ xs: 4, md: 6 }}>
             <Chip 

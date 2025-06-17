@@ -90,7 +90,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/Added/business" element={<Addedbusiness/>} />
             <Route path="/plans" element={<Plans/>} />
-            <Route path="/plansview" element={<PlansView/>} />
+            <Route path="/plans/view" element={<PlansView/>} />
             <Route path="/reviews" element={<Reviews/>} />
             <Route path="/quries" element={<Quries/>} />
             <Route path="/settings" element={<Settings/>} />

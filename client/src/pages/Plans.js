@@ -143,7 +143,7 @@ const PricingPlans = () => {
           </Box>
 
           <Grid container spacing={3} justifyContent="center">
-            {plans.map((plan, index) => (
+            {plans?.map((plan, index) => (
               <Grid item xs={12} md={3} key={index}>
                 <Card
                   sx={{
@@ -238,7 +238,7 @@ const PricingPlans = () => {
                          
                           }}
                         >
-                          {plan.price === "0" ? "Free" : plan.price === "Custom" ? plan.price : `$${plan.price}`}
+                          {plan.price === "0" ? "Free" : plan.price === "Custom" ? plan.price : `${plan.price}`}
                         </Typography>
                         {plan.period && (
                           <Typography

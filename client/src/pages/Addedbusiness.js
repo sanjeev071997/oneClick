@@ -35,16 +35,17 @@ import {
   AddBusiness,
   Image,
 } from "@mui/icons-material";
-import axios from "../axiosInstance";
+import {useNavigate} from "react-router-dom";
 import { useSelector } from "react-redux";
 import { message } from "antd";
+import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors } from "../Comman";
-import { useLocation } from "react-router-dom";
 
 const AddedBusiness = () => {
   const { user } = useSelector((state) => state.user);
+  const navigate= useNavigate();
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -242,7 +243,7 @@ const AddedBusiness = () => {
                 mb: 3,
               }}
             >
-              <AddBusiness sx={{ fontSize: 60, color: "primary.main" }} />
+              <AddBusiness sx={{ fontSize: 60,  color: "#ffffff" }} />
             </Box>
             <Typography variant="h5" gutterBottom>
               No Businesses Listed Yet
@@ -251,9 +252,11 @@ const AddedBusiness = () => {
               Get started by adding your first business to showcase your services
             </Typography>
             <Button
+             onClick={() => navigate('/plans')}
               variant="contained"
               size="large"
-              sx={{ px: 5, borderRadius: 2 }}
+              sx={{ px: 5, borderRadius: 2 , color: "#ffffff", backgroundColor: Colors.LOGOlight, "&:hover": { backgroundColor: Colors.LOGOlight } }}
+              startIcon={<AddBusiness />}
             >
               Create Your First Listing
             </Button>

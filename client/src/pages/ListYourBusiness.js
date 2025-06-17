@@ -200,7 +200,7 @@ const ListYourBusiness = () => {
         data.append(key, value);
       }
     });
-    data.append("userId", user._id);
+    data.append("userId", user?._id);
     data.append("planName", planName || "Growth");
     data.append("planPrice", planPrice || "299");
 

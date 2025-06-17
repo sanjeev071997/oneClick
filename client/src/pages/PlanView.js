@@ -189,7 +189,7 @@ const PlanView = ({ plan }) => {
 
           <Stack direction="row" spacing={2}>
             <Button
-               onClick={() => navigate('/contact')}
+               onClick={() => navigate('/plans')}
               variant="contained"
               fullWidth
               sx={{
@@ -205,7 +205,7 @@ const PlanView = ({ plan }) => {
               Upgrade Plan
             </Button>
             <Button
-        
+         onClick={() => navigate('/contact')}
               variant="outlined"
               fullWidth
               sx={{
