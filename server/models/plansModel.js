@@ -15,16 +15,13 @@ const plansSchema = new mongoose.Schema(
     },
 
     planPrice: {
-      type: Number,
+      type: String,
       required: [true, "Plan price is required"],
-      min: [0, "Plan price must be a positive number"],
     },
 
     planDuration: {
       type: String,
       required: [true, "Plan duration is required"],
-      enum: ["monthly", "yearly", "lifetime"],
-      default: "monthly",
     },
 
     planFeatures: {

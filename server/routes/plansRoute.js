@@ -19,7 +19,7 @@ router.get("/get", isAuthenticatedUser, getPlanById); // Get a single plan by Us
 
 router.put("/update", isAuthenticatedUser, isAdmin, updatePlanById); // Update a plan by ID
 
-router.put("/status", isAuthenticatedUser, isAdmin, statusPlanById); // Status a plan by ID  // TODO 
+router.put("/status", isAuthenticatedUser, isAdmin, statusPlanById); // Status a plan by ID  
 
 router.delete("/delete", isAuthenticatedUser, isAdmin, deletePlanById); // Delete a plan by ID
 

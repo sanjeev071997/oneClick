@@ -7,16 +7,6 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
   const { planName, planDescription, planPrice, planDuration, planFeatures } =
     req.body;
 
-  if (
-    !planName ||
-    !planDescription ||
-    !planPrice ||
-    !planDuration ||
-    !planFeatures
-  ) {
-    return next(new Errorhandler("All fields are required", 400));
-  }
-
   const newPlan = await Plans.create({
     planName,
     planDescription,
@@ -102,7 +92,7 @@ export const updatePlanById = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Delete a plan by ID
+// Upddate Status a plan by ID
 export const statusPlanById = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.body;
 
@@ -110,26 +100,31 @@ export const statusPlanById = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("Plan ID is required", 400));
   }
 
-  const deletedPlan = await Plans.findByIdAndUpdate(
+  // Find the plan first
+  const plan = await Plans.findById(id);
+
+  if (!plan) {
+    return next(new Errorhandler("Plan not found", 404));
+  }
+
+  // Toggle isActive
+  const updatedPlan = await Plans.findByIdAndUpdate(
     id,
-    { isActive: false, updatedAt: Date.now() },
+    {
+      isActive: !plan.isActive,
+      updatedAt: Date.now(),
+    },
     { new: true }
   );
 
-  if (!deletedPlan) {
-    return next(
-      new Errorhandler("Plan not found or could not be deleted", 404)
-    );
-  }
-
   res.status(200).json({
     success: true,
-    message: "Plan status updated successfully",
-    data: deletedPlan,
+    message: `Plan status updated successfully to ${updatedPlan.isActive ? "Active" : "Inactive"}`,
+    data: updatedPlan,
   });
 });
 
-
+// Delete a plan by ID
 export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
   const { id } = req.body;
 
@@ -154,21 +149,3 @@ export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
     data: deletedPlan,
   });
 });
-
-
-// export const deleteEnquiry = catchAsyncErrors(async (req, res, next) => {
-//   try {
-//     const { id } = req.body;
-//     const enquiry = await Enquiry.findById(id);
-//     if (!enquiry) {
-//       return next(new Errorhandler("Enquiry not found", 404));
-//     }
-//     await Enquiry.findByIdAndDelete(id);
-//     res.status(200).json({
-//       success: true,
-//       message: "Enquiry deleted successfully",
-//     });
-//   } catch (error) {
-//     return next(new Errorhandler(error.message, 500));
-//   }
-// });
