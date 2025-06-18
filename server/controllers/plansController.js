@@ -24,7 +24,7 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
 
 // Get all plans
 export const getAllPlans = catchAsyncErrors(async (req, res, next) => {
-  const plans = await Plans.find().sort({ createdAt: -1 });
+  const plans = await Plans.find({isActive:"true"}).sort({ createdAt: -1 });
 
   // Check if there are no plans
   if (!plans || plans.length === 0) {
