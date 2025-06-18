@@ -2,23 +2,23 @@ import mongoose from 'mongoose';
 
 const plansSchema = new mongoose.Schema(
   {
-    businessId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Business",
-      required: true,
-    },
+    // businessId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Business",
+    //   required: true,
+    // },
 
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "categories",
-      required: [true, "Category is required"],
-    },
+    // category: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "categories",
+    //   required: [true, "Category is required"],
+    // },
 
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: [true, "User ID is required"],
-    },
+    // userId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "users",
+    //   required: [true, "User ID is required"],
+    // },
 
     planName: {
       type: String,
