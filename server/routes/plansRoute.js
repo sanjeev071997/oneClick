@@ -4,6 +4,7 @@ import {
     getAllPlans,
     getPlanById,
     updatePlanById,
+    statusPlanById,
     deletePlanById,
 } from "../controllers/plansController.js";
 import { isAuthenticatedUser, isAdmin} from "../middlewares/authMiddleware.js";
@@ -17,6 +18,8 @@ router.get("/all", getAllPlans); // Get all plans
 router.get("/get", isAuthenticatedUser, getPlanById); // Get a single plan by UserID
 
 router.put("/update", isAuthenticatedUser, isAdmin, updatePlanById); // Update a plan by ID
+
+router.put("/status", isAuthenticatedUser, isAdmin, statusPlanById); // Status a plan by ID  // TODO 
 
 router.delete("/delete", isAuthenticatedUser, isAdmin, deletePlanById); // Delete a plan by ID
 

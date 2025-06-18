@@ -103,8 +103,8 @@ export const updatePlanById = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Delete a plan by ID
-export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
-  const id = req.body.id;
+export const statusPlanById = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.body;
 
   if (!id) {
     return next(new Errorhandler("Plan ID is required", 400));
@@ -115,14 +115,60 @@ export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
     { isActive: false, updatedAt: Date.now() },
     { new: true }
   );
+
   if (!deletedPlan) {
     return next(
       new Errorhandler("Plan not found or could not be deleted", 404)
     );
   }
+
+  res.status(200).json({
+    success: true,
+    message: "Plan status updated successfully",
+    data: deletedPlan,
+  });
+});
+
+
+export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return next(new Errorhandler("Plan ID is required", 400));
+  }
+
+  const deletedPlan = await Plans.findByIdAndDelete(
+    id,
+    { new: true }
+  );
+
+  if (!deletedPlan) {
+    return next(
+      new Errorhandler("Plan not found or could not be deleted", 404)
+    );
+  }
+
   res.status(200).json({
     success: true,
     message: "Plan deleted successfully",
     data: deletedPlan,
   });
 });
+
+
+// export const deleteEnquiry = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const { id } = req.body;
+//     const enquiry = await Enquiry.findById(id);
+//     if (!enquiry) {
+//       return next(new Errorhandler("Enquiry not found", 404));
+//     }
+//     await Enquiry.findByIdAndDelete(id);
+//     res.status(200).json({
+//       success: true,
+//       message: "Enquiry deleted successfully",
+//     });
+//   } catch (error) {
+//     return next(new Errorhandler(error.message, 500));
+//   }
+// });

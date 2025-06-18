@@ -2,24 +2,6 @@ import mongoose from 'mongoose';
 
 const plansSchema = new mongoose.Schema(
   {
-    // businessId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Business",
-    //   required: true,
-    // },
-
-    // category: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "categories",
-    //   required: [true, "Category is required"],
-    // },
-
-    // userId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "users",
-    //   required: [true, "User ID is required"],
-    // },
-
     planName: {
       type: String,
       required: [true, "Plan name is required"],
