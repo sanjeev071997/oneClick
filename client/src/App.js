@@ -19,6 +19,7 @@ import AdminBusiness from "./admin/Business/Business.js";
 import AdminReviews from "./admin/Reviews/Reviews.js";
 import AdminUsers from "./admin/Users/User.js"
 import AdminContact from './admin/Contact/AdminContact.js'
+import AdminPlans from './admin/Plans/Plans.js'
 import NotFound from "./pages/Error";
 import ConnectionStatus from "./Components/ConnectionStatus.js";
 import { useSelector } from "react-redux";
@@ -55,6 +56,7 @@ function App() {
   const AdminReviewsHDC = Layout(AdminReviews);
   const AdminUsersHDC = Layout(AdminUsers)
   const AdminContactHDC = Layout(AdminContact )
+  const AdminPlansHDC = Layout(AdminPlans )
 
   return (
     <>
@@ -121,6 +123,7 @@ function App() {
                 <Route path="/admin/reviews" element={<AdminReviewsHDC />} />
                 <Route path="/admin/users" element={<AdminUsersHDC />} />
                 <Route path="/admin/contact" element={<AdminContactHDC/>} />
+                <Route path="/admin/plans" element={<AdminPlansHDC/>} />
               </>
             ) : null}
             {/* Page not found Route */}

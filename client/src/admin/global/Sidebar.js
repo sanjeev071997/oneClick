@@ -138,6 +138,13 @@ const SidebarAdm = () => {
                 Users{" "}
               </MenuItem> 
               <MenuItem
+                component={<Link to="/admin/plans" />}
+                icon={<PeopleIcon sx={{color:'#275559'}} />}
+              >
+                {" "}
+              Plans{" "}
+              </MenuItem>
+              <MenuItem
                 component={<Link to="/admin/contact" />}
                 icon={<ContactsIcon  sx={{color:'#275559'}} />}
               >
