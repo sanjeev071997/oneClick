@@ -22,9 +22,24 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get all plans
+// Get all plans Users 
 export const getAllPlans = catchAsyncErrors(async (req, res, next) => {
   const plans = await Plans.find({isActive:"true"}).sort({ createdAt: -1 });
+
+  // Check if there are no plans
+  if (!plans || plans.length === 0) {
+    return next(new Errorhandler("No plans found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    data: plans,
+  });
+});
+
+// Get all plans by Admin
+export const getAllPlansByAdmin = catchAsyncErrors(async (req, res, next) => {
+  const plans = await Plans.find().sort({ createdAt: -1 });
 
   // Check if there are no plans
   if (!plans || plans.length === 0) {
