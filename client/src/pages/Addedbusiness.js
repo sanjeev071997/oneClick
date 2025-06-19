@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -22,6 +21,7 @@ import {
   ImageListItemBar,
   Tabs,
   Tab,
+  InputAdornment,
 } from "@mui/material";
 import {
   Edit,
@@ -34,6 +34,7 @@ import {
   Star,
   AddBusiness,
   Image,
+  Search,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -47,6 +48,7 @@ const AddedBusiness = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [businesses, setBusinesses] = useState([]);
+  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
@@ -62,12 +64,14 @@ const AddedBusiness = () => {
   const [newImages, setNewImages] = useState([]);
   const [deletedImages, setDeletedImages] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch businesses
   const fetchBusinesses = async () => {
     try {
       const res = await axios.get("/api/v1/business/get", { userId: user._id });
       setBusinesses(res.data.data);
+      setFilteredBusinesses(res.data.data);
     } catch (error) {
       message.error("Failed to fetch businesses");
     } finally {
@@ -78,6 +82,18 @@ const AddedBusiness = () => {
   useEffect(() => {
     if (user?._id) fetchBusinesses();
   }, [user]);
+
+  // Filter businesses based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setFilteredBusinesses(businesses);
+    } else {
+      const filtered = businesses.filter(business =>
+        business.businessName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredBusinesses(filtered);
+    }
+  }, [searchTerm, businesses]);
 
   // Handle dialog operations
   const handleOpenDialog = (type, business = null) => {
@@ -108,6 +124,11 @@ const AddedBusiness = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   // Handle image upload
@@ -179,7 +200,6 @@ const AddedBusiness = () => {
   };
 
   // Handle business deletion
-
   const handleDelete = async () => {
     setLoading(true);
     try {
@@ -201,7 +221,6 @@ const AddedBusiness = () => {
     }
   };
 
-
   if (loading && !businesses.length) {
     return (
       <Box
@@ -220,16 +239,28 @@ const AddedBusiness = () => {
       <Navbar />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Box sx={{ textAlign: 'center', my: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 4,
+            flexDirection: { xs: "column", sm: "row" }, 
+            gap: { xs: 2, sm: 0 },
+          }}
+        >
+          {/* Business Heading */}
           <Typography
             variant="h5"
             sx={{
-           fontSize:FontSize.fourty,
+              fontFamily: "'Poppins', sans-serif" ,
+              fontSize: "2rem",
               color: Colors.LOGOColor,
-              fontWeight: 'bold',
-              display: 'inline-block',
-              position: 'relative',
-              pb: 1
+              fontWeight: 700,
+              display: "inline-block",
+              position: "relative",
+              pb: 1,
+              alignSelf: { xs: "center", sm: "flex-start" },
             }}
           >
             Business
@@ -239,59 +270,123 @@ const AddedBusiness = () => {
                 width: 60,
                 height: 3,
                 bgcolor: Colors.LOGOColor,
-                margin: '8px auto 0',
-                borderRadius: 2
+                margin: "8px auto 0",
+                borderRadius: 2,
               }}
             />
           </Typography>
+
+          {/* Search Bar */}
+          <TextField
+            placeholder="Search by business name..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search  sx={{ color:Colors.LOGOColor}}/>
+                </InputAdornment>
+              ),
+              sx: {
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+                boxShadow: 1,
+                "& fieldset": { border: "none" }, 
+              },
+            }}
+            sx={{
+              width: { xs: "100%", sm: "450px" }, 
+              maxWidth: "100%",
+            }}
+            variant="outlined"
+          />
         </Box>
 
-
-        {businesses.length === 0 ? (
+        {filteredBusinesses.length === 0 ? (
           <Paper
-            elevation={0}
+            elevation={3} 
             sx={{
               p: 6,
               textAlign: "center",
               borderRadius: 3,
-              background: "rgba(245, 245, 245, 0.7)",
-              backdropFilter: "blur(10px)",
+              background: "linear-gradient(145deg, #f0f0f0, #e0e0e0)",
+              boxShadow: "5px 5px 15px rgba(0,0,0,0.1), -5px -5px 15px rgba(255,255,255,0.7)", 
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "400px",
             }}
           >
-            <Box
-              sx={{
-                width: 120,
-                height: 120,
-                borderRadius: "50%",
-                bgcolor: "primary.light",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mx: "auto",
-                mb: 3,
-              }}
-            >
-              <AddBusiness sx={{ fontSize: 60, color: "#ffffff" }} />
-            </Box>
-            <Typography variant="h5" gutterBottom>
-              No Businesses Listed Yet
-            </Typography>
-            <Typography color="text.secondary" mb={4}>
-              Get started by adding your first business to showcase your services
-            </Typography>
-            <Button
-              onClick={() => navigate('/plans')}
-              variant="contained"
-              size="large"
-              sx={{ px: 5, borderRadius: 2, color: "#ffffff", backgroundColor: Colors.LOGOlight, "&:hover": { backgroundColor: Colors.LOGOlight } }}
-              startIcon={<AddBusiness />}
-            >
-              Create Your First Listing
-            </Button>
+            {searchTerm ? (
+              <>
+                <Search sx={{ fontSize: 80, color: Colors.LOGOColor, mb: 2 }} />
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  No businesses found
+                </Typography>
+                <Typography color="text.secondary" mb={4} sx={{ maxWidth: '400px' }}>
+                  It looks like there are no businesses matching your search for " **{searchTerm}** ". Try a different name or clear the search.
+                </Typography>
+                <Button
+                  onClick={() => setSearchTerm("")}
+                  variant="contained" 
+                  size="large"
+                  sx={{
+                    px: 5,
+                    borderRadius: 2,
+                    bgcolor: Colors.LOGOColor,
+                    "&:hover": { bgcolor: Colors.LOGOlight },
+                    color: '#fff'
+                  }}
+                >
+                  Clear search
+                </Button>
+              </>
+            ) : (
+              <>
+                <Box
+                  sx={{
+                    width: 120,
+                    height: 120,
+                    borderRadius: "50%",
+                    bgcolor: Colors.LOGOColor, 
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    mx: "auto",
+                    mb: 3,
+                    boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8)", 
+                  }}
+                >
+                  <AddBusiness sx={{ fontSize: 60, color: "#ffffff" }} />
+                </Box>
+                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  No Businesses Listed Yet
+                </Typography>
+                <Typography color="text.secondary" mb={4} sx={{ maxWidth: '500px' }}>
+                  It's quiet in here! Get started by adding your first business to showcase your services and attract new customers.
+                </Typography>
+                <Button
+                  onClick={() => navigate("/plans")}
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    px: 5,
+                    borderRadius: 2,
+                    color: "#ffffff",
+                    backgroundColor: Colors.LOGOColor, // Changed to LOGOColor
+                    "&:hover": { backgroundColor: Colors.LOGOlight }, // Darker on hover
+                  }}
+                  startIcon={<AddBusiness />}
+                >
+                  Create Your First Listing
+                </Button>
+              </>
+            )}
           </Paper>
         ) : (
           <Grid container spacing={3}>
-            {businesses.map((business) => (
+            {filteredBusinesses.map((business) => (
               <Grid item xs={12} sm={6} lg={4} key={business._id}>
                 <Card
                   sx={{
@@ -304,6 +399,8 @@ const AddedBusiness = () => {
                       transform: "translateY(-5px)",
                       boxShadow: 3,
                     },
+                    borderRadius: 2, 
+                    overflow: 'hidden', 
                   }}
                 >
                   <Box sx={{ position: "relative" }}>
@@ -321,16 +418,18 @@ const AddedBusiness = () => {
                         position: "absolute",
                         top: 10,
                         right: 10,
-                        color: Colors.LOGOlight,
+                        bgcolor: Colors.LOGOColor, 
+                        color: "white",
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 2,
                         display: "flex",
                         alignItems: "center",
+                        fontSize: '0.85rem',
                       }}
                     >
                       <Star fontSize="small" sx={{ mr: 0.5 }} />
-                      <Typography variant="caption">
+                      <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
                         {Number(business?.rating || 0).toFixed(1)} (
                         {business?.ratingCount || 0})
                       </Typography>
@@ -400,6 +499,7 @@ const AddedBusiness = () => {
                       p: 2,
                       display: "flex",
                       justifyContent: "space-between",
+                      alignItems: "center", 
                       borderTop: "1px solid rgba(0,0,0,0.1)",
                     }}
                   >
@@ -407,13 +507,14 @@ const AddedBusiness = () => {
                       size="small"
                       startIcon={<Image />}
                       onClick={() => handleOpenDialog("edit", business)}
+                      sx={{ color: Colors.LOGOColor, fontWeight: 'medium' }} 
                     >
                       {business.images?.length || 0} Photos
                     </Button>
                     <Box>
                       <IconButton
                         onClick={() => handleOpenDialog("edit", business)}
-                        sx={{ color: "primary.main" }}
+                        sx={{ color: Colors.LOGOColor }}
                       >
                         <Edit />
                       </IconButton>
@@ -441,7 +542,7 @@ const AddedBusiness = () => {
         >
           <DialogTitle
             sx={{
-              bgcolor: "primary.main",
+              bgcolor: Colors.LOGOColor, 
               color: "white",
               display: "flex",
               justifyContent: "space-between",
@@ -588,7 +689,7 @@ const AddedBusiness = () => {
                     component="label"
                     startIcon={<AddPhotoAlternate />}
                     fullWidth
-                    sx={{ py: 2 }}
+                    sx={{ py: 2, borderColor: Colors.LOGOColor, color: Colors.LOGOColor, '&:hover': { borderColor: Colors.LOGOlight } }}
                   >
                     Upload Images
                     <input
@@ -627,10 +728,10 @@ const AddedBusiness = () => {
               disabled={loading}
               sx={{
                 px: 4,
-                backgroundColor: Colors.LOGOlight,
+                backgroundColor: Colors.LOGOColor, 
                 color: "#ffffff",
                 "&:hover": {
-                  backgroundColor: Colors.LOGOlight,
+                  backgroundColor: Colors.LOGOlight, 
                 },
               }}
             >
@@ -678,16 +779,16 @@ const AddedBusiness = () => {
                 justifyContent: "center",
                 mx: "auto",
                 mb: 3,
+                boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8)", // Inner shadow for depth
               }}
             >
               <Delete sx={{ fontSize: 50, color: "error.main" }} />
             </Box>
-            <Typography variant="h6" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
               Delete {selectedBusiness?.businessName}?
             </Typography>
-            <Typography color="text.secondary">
-              This will permanently remove all business data including images and
-              reviews.
+            <Typography color="text.secondary" sx={{ maxWidth: '400px', mx: 'auto' }}>
+              This will **permanently** remove all business data including images and reviews. This action cannot be undone.
             </Typography>
           </DialogContent>
 

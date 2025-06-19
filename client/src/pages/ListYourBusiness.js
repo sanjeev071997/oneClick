@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -17,11 +16,6 @@ import {
   Autocomplete,
   Avatar,
   Chip,
-  Dialog,
-  DialogActions, 
-  DialogContent, 
-  DialogContentText, 
-  DialogTitle, 
 } from "@mui/material";
 import {
   PhotoCamera,
@@ -62,7 +56,8 @@ const ListYourBusiness = () => {
     images: [],
   });
   const location = useLocation();
-  const { planName, planPrice } = location.state || {};
+  const { planName, planPrice, planId } = location.state || {};
+  console.log(planId, "planId")
   const [statesList, setStatesList] = useState([]);
   const [citiesList, setCitiesList] = useState([]);
   const states = State.getStatesOfCountry("IN");
@@ -71,9 +66,11 @@ const ListYourBusiness = () => {
   const [categoryInput, setCategoryInput] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [success, setSuccess] = useState(false);
-  const [openPaymentConfirmDialog, setOpenPaymentConfirmDialog] = useState(false); 
 
-  const steps = ["Business Information", "Contact Details", "Media & Description", "Review & Submit", "Payment"];
+  // const steps = ["Business Information", "Contact Details", "Media & Description", "Review & Submit", "Payment"];
+
+  const steps = ["Business Information", "Contact Details", "Images", "Social Media", "Review & Submit",];
+
 
   const fetchCategories = async () => {
     try {
@@ -148,7 +145,7 @@ const ListYourBusiness = () => {
     const filesToAdd = files.slice(0, 5 - currentImagesCount);
 
     if (files.length > filesToAdd.length) {
-        message.warn(`You can only upload a maximum of 5 images. ${files.length - filesToAdd.length} image(s) were not added.`);
+      message.warn(`You can only upload a maximum of 5 images. ${files.length - filesToAdd.length} image(s) were not added.`);
     }
     setFormData(prev => ({ ...prev, images: [...prev.images, ...filesToAdd] }));
   };
@@ -181,16 +178,7 @@ const ListYourBusiness = () => {
     setCategoryInput(value || "");
   };
 
-  const handleOpenPaymentConfirmDialog = () => {
-    setOpenPaymentConfirmDialog(true);
-  };
-
-  const handleClosePaymentConfirmDialog = () => {
-    setOpenPaymentConfirmDialog(false);
-  };
-
-  const handleConfirmPaymentAndSubmit = async () => {
-    handleClosePaymentConfirmDialog(); 
+  const handleSubmit = async () => {
     setLoading(true);
 
     const data = new FormData();
@@ -202,8 +190,9 @@ const ListYourBusiness = () => {
       }
     });
     data.append("userId", user?._id);
-    data.append("planName", planName || "Growth");
-    data.append("planPrice", planPrice || "299");
+    data.append("planName", planName);
+    data.append("planPrice", planPrice);
+    data.append("planId", planId);
 
     try {
       const res = await axios.post("/api/v1/business/add", data, {
@@ -547,14 +536,38 @@ const ListYourBusiness = () => {
             </Grid>
           </Grid>
         );
+
       case 3:
+        return (
+          <Box>
+            <h1>Sanjeev</h1>
+          </Box>
+        )
+      case 4:
         return (
           <Box sx={{ p: 3, border: '1px solid rgba(0,0,0,0.12)', borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
               <CheckCircle sx={{ color: Colors.LOGOColor, mr: 1 }} /> Review Your Business Information
             </Typography>
 
-            <Grid container spacing={3}>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              <Typography variant="subtitle2" color="text.secondary" sx={{fontWeight:900}}>
+                Plan Name:
+              </Typography>
+              <Typography variant="body1" sx={{ color: Colors.LOGOColor, mr: 2,  fontWeight:700 }}>
+                {planName}
+              </Typography>
+
+              <Typography variant="subtitle2" color="text.secondary" sx={{fontWeight:900}}>
+                Plan Price:
+              </Typography>
+              <Typography variant="body1" sx={{ color: Colors.LOGOColor, fontWeight:700,  }}>
+                {planPrice}
+              </Typography>
+            </Box>
+
+
+            <Grid container spacing={3} mt={1}>
               <Grid item xs={12} sm={6}>
                 <Typography variant="subtitle2" color="text.secondary">Business Name</Typography>
                 <Typography variant="body1" sx={{ mb: 2, color: Colors.LOGOColor }}>{formData.businessName}</Typography>
@@ -610,58 +623,59 @@ const ListYourBusiness = () => {
             </Grid>
           </Box>
         );
-      case 4:
-        return (
-          <Box sx={{
-            p: 3,
-            border: '1px solid rgba(0,0,0,0.12)',
-            borderRadius: 2,
-            textAlign: 'center'
-          }}>
-            <Typography variant="h5" gutterBottom sx={{ mb: 3, color: Colors.LOGOColor }}>
-              Complete Your Payment
-            </Typography>
 
-            <Box sx={{
-              backgroundColor: '#f5f5f5',
-              p: 3,
-              borderRadius: 2,
-              mb: 3,
-              display: 'inline-block'
-            }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Plan: <strong>{planName || "Growth"}</strong>
-              </Typography>
-              <Typography variant="h4" sx={{ mb: 3, color: Colors.LOGOColor }}>
-                Price: <strong>${planPrice || "299"}</strong>
-              </Typography>
+      // case 5:
+      //   return (
+      //     <Box sx={{
+      //       p: 3,
+      //       border: '1px solid rgba(0,0,0,0.12)',
+      //       borderRadius: 2,
+      //       textAlign: 'center'
+      //     }}>
+      //       <Typography variant="h5" gutterBottom sx={{ mb: 3, color: Colors.LOGOColor }}>
+      //         Complete Your Payment
+      //       </Typography>
 
-              <Box sx={{
-                p: 2,
-                backgroundColor: 'white',
-                borderRadius: 1,
-                display: 'inline-block',
-                mb: 3
-              }}>
-                <QRCode
-                  value={`Payment for ${planName || "Growth"} plan - $${planPrice || "299"}`}
-                  size={128}
-                  bgColor="#ffffff"
-                  fgColor="#000000"
-                  level="L"
-                />
-              </Box>
+      //       <Box sx={{
+      //         backgroundColor: '#f5f5f5',
+      //         p: 3,
+      //         borderRadius: 2,
+      //         mb: 3,
+      //         display: 'inline-block'
+      //       }}>
+      //         <Typography variant="h6" sx={{ mb: 2 }}>
+      //           Plan: <strong>{planName || "Growth"}</strong>
+      //         </Typography>
+      //         <Typography variant="h4" sx={{ mb: 3, color: Colors.LOGOColor }}>
+      //           Price: <strong>${planPrice || "299"}</strong>
+      //         </Typography>
 
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Scan the QR code to complete payment
-              </Typography>
-            </Box>
+      //         <Box sx={{
+      //           p: 2,
+      //           backgroundColor: 'white',
+      //           borderRadius: 1,
+      //           display: 'inline-block',
+      //           mb: 3
+      //         }}>
+      //           <QRCode
+      //             value={`Payment for ${planName || "Growth"} plan - $${planPrice || "299"}`}
+      //             size={128}
+      //             bgColor="#ffffff"
+      //             fgColor="#000000"
+      //             level="L"
+      //           />
+      //         </Box>
 
-            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
-              Your business listing will be activated once payment is confirmed.
-            </Typography>
-          </Box>
-        );
+      //         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+      //           Scan the QR code to complete payment
+      //         </Typography>
+      //       </Box>
+
+      //       <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
+      //         Your business listing will be activated once payment is confirmed.
+      //       </Typography>
+      //     </Box>
+      //   );
       default:
         return 'Unknown step';
     }
@@ -688,9 +702,7 @@ const ListYourBusiness = () => {
               variant="contained"
               size="large"
               onClick={() => {
-                // setSuccess(false);
-                // setActiveStep(0);
-                 navigate("/plans");
+                navigate("/plans");
               }}
               sx={{
                 px: 6,
@@ -807,7 +819,7 @@ const ListYourBusiness = () => {
                 textTransform: 'none',
                 fontSize: '1rem',
                 backgroundColor: Colors.LOGOlight,
-                color:'white'
+                color: 'white'
               }}
             >
               Back
@@ -816,7 +828,7 @@ const ListYourBusiness = () => {
             {activeStep === steps.length - 1 ? (
               <Button
                 variant="contained"
-                onClick={handleOpenPaymentConfirmDialog} // Open dialog here
+                onClick={handleSubmit}
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
                 sx={{
@@ -852,46 +864,6 @@ const ListYourBusiness = () => {
         </Paper>
       </Container>
       <Footer />
-
-      {/* Payment Confirmation Dialog */}
-      <Dialog
-        open={openPaymentConfirmDialog}
-        onClose={handleClosePaymentConfirmDialog}
-        aria-labelledby="payment-confirmation-dialog-title"
-        aria-describedby="payment-confirmation-dialog-description"
-      >
-        <DialogTitle id="payment-confirmation-dialog-title" sx={{ color: Colors.LOGOColor, fontWeight: 'bold' }}>
-          Confirm Your Business Listing
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="payment-confirmation-dialog-description" sx={{ color: 'text.secondary' }}>
-            Your business listing will be **activated within 24 hours** after successful payment confirmation.
-            Do you want to proceed and submit your business now?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClosePaymentConfirmDialog}
-            sx={{ color: Colors.LOGOlight }}
-          >
-            No
-          </Button>
-          <Button
-            onClick={handleConfirmPaymentAndSubmit}
-            variant="contained"
-            disableElevation
-            sx={{
-              backgroundColor: Colors.LOGOlight,
-              '&:hover': {
-                backgroundColor: Colors.LOGOColor,
-              },
-            }}
-            autoFocus
-          >
-            Yes, Submit My Business
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 };

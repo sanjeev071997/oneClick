@@ -16,7 +16,7 @@ import {
   Popconfirm,
   Divider,
   Empty,
-  Button as AntButton, 
+  Button as AntButton,
 } from "antd";
 import {
   UserOutlined,
@@ -46,9 +46,6 @@ const Queries = () => {
   const [currentQuery, setCurrentQuery] = useState(null);
   const [form] = Form.useForm();
   const [searchTerm, setSearchTerm] = useState("");
-  const [focused, setFocused] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const isActive = focused || hovered;
 
   //get quries
   const fetchQueries = async () => {
@@ -56,7 +53,8 @@ const Queries = () => {
     try {
       const response = await axios.get("/api/v1/enquiry/get");
       setQueries(response.data.data);
-    } catch {
+    } catch (error) {
+      console.error("Failed to fetch enquiries:", error);
       message.error("Failed to fetch enquiries");
     } finally {
       setLoading(false);
@@ -71,8 +69,13 @@ const Queries = () => {
   const filteredQueries = queries.filter((q) => {
     const userName = q.userId?.name?.toLowerCase() || "";
     const businessName = q.businessId?.businessName?.toLowerCase() || "";
+    const messageContent = q.message?.toLowerCase() || "";
     const term = searchTerm.toLowerCase();
-    return userName.includes(term) || businessName.includes(term);
+    return (
+      userName.includes(term) ||
+      businessName.includes(term) ||
+      messageContent.includes(term)
+    );
   });
 
   const openEditDrawer = (query) => {
@@ -105,13 +108,13 @@ const Queries = () => {
   };
 
   //handle delete quries
-
   const handleDelete = async (id) => {
     try {
       await axios.delete("/api/v1/enquiry/delete", { data: { id } });
       message.success("Enquiry deleted successfully");
       fetchQueries();
-    } catch {
+    } catch (error) {
+      console.error("Failed to delete enquiry:", error);
       message.error("Failed to delete enquiry");
     }
   };
@@ -128,7 +131,8 @@ const Queries = () => {
       message.success("Enquiry updated successfully");
       closeEditDrawer();
       fetchQueries();
-    } catch {
+    } catch (error) {
+      console.error("Failed to update enquiry:", error);
       message.error("Failed to update enquiry");
     }
   };
@@ -151,63 +155,57 @@ const Queries = () => {
           justify="space-between"
           align="middle"
           gutter={[16, 16]}
-          style={{ marginBottom: 20, flexWrap: "wrap" }}
+          style={{ marginBottom: 30, flexWrap: "wrap" }}
         >
-          <Col xs={24} sm={12} md={8}>
-            <div style={{ textAlign: "center", marginBottom: 24 }}>
+          {/* Customer Enquiries Title */}
+          <Col xs={24} sm={12} md={12} lg={8}>
+            <div style={{ textAlign: "left", fontFamily: "'Poppins', sans-serif" }}>
               <Title
                 level={2}
                 style={{
                   color: Colors.LOGOColor,
-                  fontWeight: "bold",
+                  fontWeight: 700,
+                  marginBottom: 0,
+                  fontSize: "2rem",
+                  lineHeight: "1.2",
                 }}
               >
-                Customer Enquiries
+                Enquiries
               </Title>
-              <div
-                style={{
-                  height: 3,
-                  width: 60,
-                  backgroundColor: Colors.LOGOlight,
-                  margin: "0 auto",
-                  borderRadius: 2,
-                }}
-              />
+
+              <div style={{ display: "flex", justifyContent: "flex-start", marginTop: 8 }}>
+                <div
+                  style={{
+                    marginLeft:20,
+                    height: 3,
+                    width: 80,
+                    backgroundColor: Colors.LOGOColor,
+                    borderRadius: 2,
+                  }}
+                />
+              </div>
             </div>
           </Col>
 
-          <Col xs={24} sm={12} md={8}>
-            <div
-              onMouseEnter={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
-            >
-              <Input
-                allowClear
-                placeholder="Search by user or business..."
-                prefix={
-                  <SearchOutlined
-                    style={{
-                      color: isActive ? Colors.LOGOlight : Colors.LOGOColor,
-                    }}
-                  />
-                }
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                style={{
-                  borderRadius: 8,
-                  boxShadow: `0 2px 8px ${
-                    isActive ? Colors.LOGOlight : Colors.LOGOColor
-                  }15`,
-                  maxWidth: "100%",
-                  border: `1px solid ${
-                    isActive ? Colors.LOGOlight : "#d9d9d9"
-                  }`,
-                  transition: "all 0.3s",
-                }}
-              />
-            </div>
+
+          {/* Search Bar (Ant Design) */}
+          <Col xs={24} sm={12} md={12} lg={8} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Input
+              placeholder="Search by name, business, or message..."
+              allowClear
+              size="large"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              prefix={<SearchOutlined style={{ color: Colors.LOGOColor }} />}
+              style={{
+                width: "100%",
+                maxWidth: 500,
+                height: 50,
+                borderRadius: 8,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                border: "1px solid rgba(0,0,0,0.05)",
+              }}
+            />
           </Col>
         </Row>
 
@@ -276,7 +274,7 @@ const Queries = () => {
                 </Space>
               }
             >
-              <MuiButton 
+              <MuiButton
                 variant="contained"
                 size="large"
                 sx={{
@@ -327,7 +325,6 @@ const Queries = () => {
                         >
                           {q.userId?.name || "N/A"}
                         </Title>
-
                         <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
                           <PhoneOutlined
                             style={{ color: Colors.LOGOlight, marginRight: 4 }}
@@ -335,7 +332,6 @@ const Queries = () => {
                           {q.userId?.phone || "N/A"}
                         </Text>
                         <br />
-
                         <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
                           <MailOutlined
                             style={{ color: Colors.LOGOlight, marginRight: 4 }}
@@ -373,7 +369,6 @@ const Queries = () => {
                         >
                           {q.businessId?.businessName || "N/A"}
                         </Title>
-
                         <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
                           <PhoneOutlined
                             style={{ color: Colors.LOGOlight, marginRight: 4 }}
@@ -432,7 +427,7 @@ const Queries = () => {
                         </Tooltip>
 
                         <Tooltip title="Edit Enquiry">
-                          <AntButton 
+                          <AntButton
                             shape="circle"
                             style={{
                               backgroundColor: Colors.LOGOColor,
@@ -474,7 +469,7 @@ const Queries = () => {
           bodyStyle={{ paddingBottom: 40 }}
           footer={
             <div style={{ textAlign: "right" }}>
-              <MuiButton 
+              <MuiButton
                 onClick={closeEditDrawer}
                 sx={{
                   marginRight: 1,
@@ -487,7 +482,7 @@ const Queries = () => {
                 Cancel
               </MuiButton>
 
-              <MuiButton 
+              <MuiButton
                 onClick={handleUpdate}
                 variant="contained"
                 sx={{
@@ -659,7 +654,7 @@ const Queries = () => {
           open={viewModalVisible}
           onCancel={closeViewModal}
           footer={[
-            <MuiButton 
+            <MuiButton
               key="close"
               onClick={closeViewModal}
               sx={{

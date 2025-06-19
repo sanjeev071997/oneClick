@@ -11,7 +11,7 @@ import { message, Modal } from "antd";
 import axios from '../axiosInstance';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/Footer';
-import { Colors, FontSize } from "../Comman";
+import { Colors, FontFamily, FontSize } from "../Comman";
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -122,19 +122,21 @@ const ReviewsPage = () => {
     <>
       <Navbar />
       <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ textAlign: 'center', my: 2 }}>
+        <Box sx={{ textAlign: 'center', my: 2 }}>
           <Typography
             variant="h5"
             sx={{
-           fontSize:FontSize.fourty,
+              fontFamily:FontFamily.poppins,
               color: Colors.LOGOColor,
-              fontWeight: 'bold',
+              fontWeight: 700,
+              marginBottom: 0,
+              fontSize: "2rem",
               display: 'inline-block',
               position: 'relative',
               pb: 1
             }}
           >
-           Customer Reviews
+            Customer Reviews
             <Box
               sx={{
                 content: '""',
@@ -146,7 +148,7 @@ const ReviewsPage = () => {
               }}
             />
           </Typography>
-          <Typography variant="subtitle1" color={Colors.LOGOlight}>
+          <Typography variant="subtitle1" color={Colors.LOGOColor} sx={{ fontFamily:FontFamily.poppins,}}>
             See what our customers are saying about businesses
           </Typography>
         </Box>
@@ -244,7 +246,7 @@ const ReviewsPage = () => {
 
                       <Chip
                         icon={<Star fontSize="small" htmlColor={Colors.LOGOlight} />}
-                        label={`${review.rating} stars`}
+                        label={`${review.rating} `}
                         sx={{
                           backgroundColor: Colors.WHITE,
                           color: Colors.LOGOlight,
@@ -278,14 +280,14 @@ const ReviewsPage = () => {
                 sx={{
                   '& .MuiPaginationItem-root': {
                     color: Colors.LOGOlight,
-                    borderColor: Colors.LOGOlight,
+                    borderColor: Colors.LOGOColor,
                   },
                   '& .MuiPaginationItem-root.Mui-selected': {
-                    backgroundColor: Colors.LOGOlight,
+                    backgroundColor: Colors.LOGOColor,
                     color: '#fff',
                   },
                   '& .MuiPaginationItem-previousNext, & .MuiPaginationItem-firstLast': {
-                    color: Colors.LOGOlight,
+                    color: Colors.LOGOColor,
                   },
                 }}
               />

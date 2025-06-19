@@ -3,14 +3,15 @@ import axios from '../../axiosInstance';
 import {
   Container, TextField, Typography, Button, Box, MenuItem, IconButton,
   Stack, Paper, Modal, Tab, Tabs, Card, CardContent,
-   LinearProgress, Tooltip, Breadcrumbs, Link as MUILink,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, CircularProgress
+  LinearProgress, Tooltip, Breadcrumbs, Link as MUILink,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  CircularProgress, Chip, Divider, Avatar, Select
 } from '@mui/material';
-import { AddCircle, RemoveCircle, Edit, Delete, Add } from '@mui/icons-material';
+import { AddCircle, RemoveCircle, Edit, Delete, Add, CheckCircle } from '@mui/icons-material';
 import { message, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 
-const durations = ['monthly', 'quarterly', 'yearly'];
+
 
 const initialForm = {
   planName: '',
@@ -110,15 +111,12 @@ const AdminPlans = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-       await axios.put('/api/v1/plans/status', {
-        id,
-      });
+      await axios.put('/api/v1/plans/status', { id, status: newStatus });
       setPlans(prev =>
         prev.map(plan =>
-          plan._id === id ? { ...plan, status: newStatus } : plan
+          plan._id === id ? { ...plan, isActive: newStatus } : plan
         )
       );
-      getPlans()
       message.success('Plan status updated!');
     } catch (err) {
       console.error(err);
@@ -141,7 +139,7 @@ const AdminPlans = () => {
   const renderForm = (isModal = false) => (
     <Stack spacing={3}>
       {isModal && (
-        <Typography variant="h6" component="h2">
+        <Typography variant="h6" component="h2" sx={{ fontWeight: 600, color: '#275559' }}>
           {editId ? 'Edit Plan' : 'Create New Plan'}
         </Typography>
       )}
@@ -153,6 +151,11 @@ const AdminPlans = () => {
         fullWidth
         variant="outlined"
         size="small"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+          }
+        }}
       />
 
       <TextField
@@ -164,6 +167,11 @@ const AdminPlans = () => {
         rows={3}
         variant="outlined"
         size="small"
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+          }
+        }}
       />
 
       <Box display="flex" gap={2}>
@@ -175,27 +183,32 @@ const AdminPlans = () => {
           fullWidth
           variant="outlined"
           size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
         />
 
         <TextField
-          select
           label="Duration"
+          placeholder="Enter duration (e.g., monthly, yearly)"
           value={form.planDuration}
           onChange={e => handleChange('planDuration', e.target.value)}
           fullWidth
           variant="outlined"
           size="small"
-        >
-          {durations.map(duration => (
-            <MenuItem key={duration} value={duration}>
-              {duration.charAt(0).toUpperCase() + duration.slice(1)}
-            </MenuItem>
-          ))}
-        </TextField>
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
+        />
+
       </Box>
 
       <Box>
-        <Typography variant="subtitle2" gutterBottom>Features</Typography>
+        <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 500 }}>Features</Typography>
         <Stack spacing={1}>
           {form.planFeatures.map((feature, index) => (
             <Box key={index} display="flex" alignItems="center" gap={1}>
@@ -206,6 +219,11 @@ const AdminPlans = () => {
                 onChange={e => handleFeatureChange(index, e.target.value)}
                 variant="outlined"
                 size="small"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '8px',
+                  }
+                }}
               />
               <Tooltip title="Remove feature">
                 <IconButton
@@ -213,6 +231,12 @@ const AdminPlans = () => {
                   disabled={form.planFeatures.length === 1}
                   color="error"
                   size="small"
+                  sx={{
+                    backgroundColor: 'rgba(255, 0, 0, 0.08)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 0, 0, 0.12)'
+                    }
+                  }}
                 >
                   <RemoveCircle fontSize="small" />
                 </IconButton>
@@ -223,7 +247,13 @@ const AdminPlans = () => {
             onClick={addFeature}
             startIcon={<AddCircle fontSize="small" />}
             size="small"
-            sx={{ alignSelf: 'flex-start' }}
+            sx={{
+              alignSelf: 'flex-start',
+              color: '#275559',
+              '&:hover': {
+                backgroundColor: 'rgba(39, 85, 89, 0.08)'
+              }
+            }}
           >
             Add Feature
           </Button>
@@ -236,6 +266,14 @@ const AdminPlans = () => {
             variant="outlined"
             onClick={() => setModalOpen(false)}
             disabled={loading}
+            sx={{
+              borderRadius: '8px',
+              borderColor: '#275559',
+              color: '#275559',
+              '&:hover': {
+                borderColor: '#1d4246'
+              }
+            }}
           >
             Cancel
           </Button>
@@ -245,6 +283,13 @@ const AdminPlans = () => {
           onClick={handleSubmit}
           disabled={loading}
           startIcon={loading ? null : <Add />}
+          sx={{
+            borderRadius: '8px',
+            backgroundColor: '#275559',
+            '&:hover': {
+              backgroundColor: '#1d4246'
+            }
+          }}
         >
           {loading ? (
             <>
@@ -260,35 +305,79 @@ const AdminPlans = () => {
   );
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h5" align="center" gutterBottom sx={{ mb: 3 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Typography
+        variant="h5"
+        align="center"
+        gutterBottom
+        sx={{
+          mb: 3,
+          fontFamily: "Poppins, sans-serif",
+          color: "#2C3E50",
+          letterSpacing: "2.5px",
+          lineHeight: 1.8,
+        }}
+      >
         Plans
       </Typography>
 
-      <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 5 }}>
-        <MUILink component={Link} to="/dashboard" sx={{ color: 'inherit' }}>
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        sx={{
+          mb: 5,
+          backgroundColor: "#fff",
+          padding: "20px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+        }}
+      >
+        <MUILink
+          component={Link}
+          to="/dashboard"
+          sx={{ color: "inherit", textDecoration: "none" }}
+        >
           Dashboard
         </MUILink>
-        <Typography color="primary">Plans</Typography>
+        <Typography sx={{ color: "primary.main" }}>Plans</Typography>
       </Breadcrumbs>
 
-      <Tabs
-        value={activeTab}
-        onChange={(e, newValue) => setActiveTab(newValue)}
-        indicatorColor="primary"
-        textColor="primary"
-        variant="fullWidth"
-        sx={{ mb: 3 }}
-      >
-        <Tab label="Create Plan" />
-        <Tab label="Manage Plans" />
-      </Tabs>
+
+      <Card sx={{ mb: 4, borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        <Tabs
+          value={activeTab}
+          onChange={(e, newValue) => setActiveTab(newValue)}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="fullWidth"
+          sx={{
+            '& .MuiTabs-indicator': {
+              height: 4,
+              borderRadius: '4px 4px 0 0'
+            }
+          }}
+        >
+          <Tab label="Create Plan" sx={{ fontWeight: 600, py: 2 }} />
+          <Tab label="Manage Plans" sx={{ fontWeight: 600, py: 2 }} />
+        </Tabs>
+      </Card>
 
       {activeTab === 0 && (
-        <Card elevation={3}>
+        <Card elevation={0} sx={{
+          borderRadius: '12px',
+          border: '1px solid #e0e0e0',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+          mb: 4
+        }}>
           <CardContent sx={{ p: 4 }}>
-            <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-              Create New Subscription Plan
+            <Typography variant="h6" gutterBottom sx={{
+              mb: 3,
+              fontWeight: 600,
+              color: '#275559',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              <AddCircle color="primary" /> Create New Subscription Plan
             </Typography>
             {renderForm()}
           </CardContent>
@@ -298,87 +387,181 @@ const AdminPlans = () => {
       {activeTab === 1 && (
         <Box>
           {fetching ? (
-            <LinearProgress />
+            <LinearProgress color="primary" sx={{ height: 4, borderRadius: 2 }} />
           ) : plans.length === 0 ? (
-            <Paper sx={{ p: 4, textAlign: 'center' }}>
-              <Typography color="textSecondary">
+            <Paper sx={{
+              p: 4,
+              textAlign: 'center',
+              borderRadius: '12px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+            }}>
+              <Typography color="textSecondary" variant="h6">
                 No plans found. Create your first plan!
               </Typography>
+              <Button
+                variant="contained"
+                onClick={() => setActiveTab(0)}
+                sx={{
+                  mt: 2,
+                  borderRadius: '8px',
+                  backgroundColor: '#275559',
+                  '&:hover': {
+                    backgroundColor: '#1d4246'
+                  }
+                }}
+              >
+                Create Plan
+              </Button>
             </Paper>
           ) : (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead sx={{ bgcolor: '#275559' }}>
-                  <TableRow>
-                    <TableCell sx={{ color: 'white' }}>Name</TableCell>
-                    <TableCell sx={{ color: 'white' }}>Description</TableCell>
-                    <TableCell sx={{ color: 'white' }}>Price</TableCell>
-                    <TableCell sx={{ color: 'white' }}>Duration</TableCell>
-                    <TableCell sx={{ color: 'white' }}>Features</TableCell>
-                    <TableCell sx={{ color: 'white' }}>Status</TableCell>
-                    <TableCell align="right" sx={{ color: 'white' }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {plans.map((plan) => (
-                    <TableRow key={plan._id}>
-                      <TableCell>{plan.planName}</TableCell>
-                      <TableCell>{plan.planDescription}</TableCell>
-                      <TableCell>₹{plan.planPrice}</TableCell>
-                      <TableCell>{plan.planDuration}</TableCell>
-                      <TableCell>
-                        <Box component="ul" sx={{ pl: 2 }}>
-                          {plan.planFeatures.map((f, idx) => (
-                            <li key={idx}>
-                              <Typography variant="body2">{f}</Typography>
-                            </li>
-                          ))}
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          select
-                          value={plan.isActive ? 'true' : 'false'}
-                          onChange={(e) =>
-                            handleStatusChange(plan._id, e.target.value === 'true')
+            <Card sx={{
+              borderRadius: '12px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+              overflow: 'hidden'
+            }}>
+              <TableContainer>
+                <Table>
+                  <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Description</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Price</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Duration</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Features</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Status</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 600, color: '#275559' }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {plans.map((plan) => (
+                      <TableRow
+                        key={plan._id}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: 'rgba(39, 85, 89, 0.03)'
                           }
-                          size="small"
-                        >
-                          <MenuItem value="true">True</MenuItem>
-                          <MenuItem value="false">False</MenuItem>
-                        </TextField>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Stack direction="row" spacing={1} justifyContent="flex-end">
-                          <Tooltip title="Edit Plan">
-                            <IconButton color="primary" onClick={() => openEditModal(plan)} size="small">
-                              <Edit fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                          <Popconfirm
-                            title="Delete this plan?"
-                            description="This action cannot be undone."
-                            onConfirm={() => handleDelete(plan._id)}
-                            okText="Delete"
-                            cancelText="Cancel"
+                        }}
+                      >
+                        <TableCell sx={{ fontWeight: 500 }}>{plan.planName}</TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {plan.planDescription}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={`₹${plan.planPrice}`}
+                            color="primary"
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              backgroundColor: 'rgba(39, 85, 89, 0.1)',
+                              color: '#275559'
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={plan.planDuration}
+                            size="small"
+                            sx={{
+                              textTransform: 'capitalize',
+                              backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Stack spacing={0.5}>
+                            {plan.planFeatures.slice(0, 3).map((f, idx) => (
+                              <Box key={idx} display="flex" alignItems="center">
+                                <Avatar sx={{
+                                  width: 20,
+                                  height: 20,
+                                  mr: 1,
+                                  backgroundColor: 'rgba(39, 85, 89, 0.1)',
+                                  color: '#275559'
+                                }}>
+                                  <CheckCircle sx={{ fontSize: '0.8rem' }} />
+                                </Avatar>
+                                <Typography variant="body2">{f}</Typography>
+                              </Box>
+                            ))}
+                            {plan.planFeatures.length > 3 && (
+                              <Typography variant="caption" color="text.secondary">
+                                +{plan.planFeatures.length - 3} more
+                              </Typography>
+                            )}
+                          </Stack>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={plan.isActive}
+                            onChange={(e) => handleStatusChange(plan._id, e.target.value)}
+                            size="small"
+                            sx={{
+                              minWidth: 100,
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                border: 'none'
+                              },
+                              '& .MuiSelect-select': {
+                                padding: '6px 32px 6px 12px'
+                              }
+                            }}
                           >
-                            <Tooltip title="Delete Plan">
-                              <IconButton color="error" size="small">
-                                <Delete fontSize="small" />
+                            <MenuItem value={true}>True</MenuItem>
+                            <MenuItem value={false}>False</MenuItem>
+                          </Select>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Stack direction="row" spacing={1} justifyContent="flex-end">
+                            <Tooltip title="Edit Plan">
+                              <IconButton
+                                onClick={() => openEditModal(plan)}
+                                size="small"
+                                sx={{
+                                  backgroundColor: 'rgba(39, 85, 89, 0.1)',
+                                  color: '#275559',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(39, 85, 89, 0.2)'
+                                  }
+                                }}
+                              >
+                                <Edit fontSize="small" />
                               </IconButton>
                             </Tooltip>
-                          </Popconfirm>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                            <Popconfirm
+                              title="Delete this plan?"
+                              description="This action cannot be undone."
+                              onConfirm={() => handleDelete(plan._id)}
+                              okText="Delete"
+                              cancelText="Cancel"
+                            >
+                              <Tooltip title="Delete Plan">
+                                <IconButton
+                                  size="small"
+                                  sx={{
+                                    backgroundColor: 'rgba(255, 0, 0, 0.08)',
+                                    color: '#ff4444',
+                                    '&:hover': {
+                                      backgroundColor: 'rgba(255, 0, 0, 0.12)'
+                                    }
+                                  }}
+                                >
+                                  <Delete fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </Popconfirm>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Card>
           )}
         </Box>
       )}
-
       <Modal
         open={modalOpen}
         onClose={() => !loading && setModalOpen(false)}
@@ -393,14 +576,18 @@ const AdminPlans = () => {
             width: { xs: '90%', sm: '80%', md: 600 },
             bgcolor: 'background.paper',
             boxShadow: 24,
-            borderRadius: 2,
+            borderRadius: 3,
             p: 4,
-            outline: 'none'
+            outline: 'none',
+            border: '1px solid rgba(0, 0, 0, 0.12)',
+            maxHeight: '90vh',
+            overflowY: 'auto'
           }}
         >
           {renderForm(true)}
         </Box>
       </Modal>
+
     </Container>
   );
 };

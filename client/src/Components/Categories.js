@@ -20,7 +20,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "../axiosInstance";
 import { useNavigate } from "react-router-dom";
-import { Colors, FontWeight,FontFamily } from "../Comman";
+import { Colors, FontWeight, FontFamily } from "../Comman";
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
@@ -125,7 +125,7 @@ const Categories = () => {
           display: "inline-block",
           px: 3,
           py: 1,
-          fontFamily:FontFamily.Georgia,
+          fontFamily: FontFamily.Georgia,
           borderLeft: "4px solid",
           borderColor: Colors.LOGOlight,
           bgcolor: "rgba(0, 0, 0, 0.02)",
@@ -137,10 +137,9 @@ const Categories = () => {
 
       <Grid container spacing={{ xs: 1, sm: 2, md: 3 }}>
         {categories?.slice(0, 19).map((category) => (
-          <Grid item xs={4} sm={2.4} md={1.7} lg={1.2} key={category._id}>
+          <Grid item xs={3} sm={2.4} md={1.7} lg={1.2} key={category._id}>
             <Box
               sx={{
-  
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -155,11 +154,10 @@ const Categories = () => {
             >
               <Box
                 sx={{
-                  width: { xs: 45, sm: 50, md: 60 },
-                  height: { xs: 45, sm: 50, md: 60 },
+                  width: { xs: 40, sm: 45, md: 60 },
+                  height: { xs: 40, sm: 45, md: 60 },
                   mb: 1,
                   border: "1px solid",
-                  
                   borderColor: Colors.LOGOColor,
                   borderRadius: "12px",
                   p: 1,
@@ -184,12 +182,12 @@ const Categories = () => {
                   style={{
                     width: "100%",
                     height: "100%",
-                    // objectFit: "contain",
                     borderRadius: "8px",
                   }}
                   loading="lazy"
                 />
               </Box>
+
               <Typography
                 variant="body2"
                 sx={{
@@ -206,8 +204,8 @@ const Categories = () => {
           </Grid>
         ))}
 
-        {/* View All Drawer Button */}
-        <Grid item xs={4} sm={2.4} md={1.7} lg={1.2}>
+        {/* View All Button */}
+        <Grid item xs={3} sm={2.4} md={1.7} lg={1.2}>
           <Box
             sx={{
               display: "flex",
@@ -218,13 +216,13 @@ const Categories = () => {
                 transform: "scale(1.05)",
               },
             }}
+
             onClick={toggleDrawer(true)}
           >
             <Box
               sx={{
                 width: { xs: 45, sm: 50, md: 60 },
                 height: { xs: 45, sm: 50, md: 60 },
-                mb: 1,
                 border: "1px solid",
                 borderColor: "divider",
                 borderRadius: "12px",
@@ -254,6 +252,7 @@ const Categories = () => {
             <Typography
               variant="body2"
               sx={{
+                mt:1,
                 color: Colors.LOGOColor,
                 fontWeight: 500,
                 textAlign: "center",
@@ -266,13 +265,14 @@ const Categories = () => {
         </Grid>
       </Grid>
 
+
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            width: { xs: "90%", sm: 700, md: 800 },
+            width: { xs: "90%", sm: 560, md: 800 },
             p: 3,
             boxShadow: theme.shadows[10],
           },
@@ -280,17 +280,17 @@ const Categories = () => {
       >
         {/* Header */}
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h5" fontWeight="bold" sx={{ color: Colors.LOGOColor}}>
+          <Typography variant="h5" fontWeight="bold" sx={{ color: Colors.LOGOColor }}>
             All Categories
           </Typography>
           <IconButton
             onClick={toggleDrawer(false)}
             sx={{
               color: Colors.BLACK,
-             
+
             }}
           >
-            <CloseIcon sx={{color:Colors.LOGOlight}} />
+            <CloseIcon sx={{ color: Colors.LOGOlight }} />
           </IconButton>
         </Box>
 
@@ -306,7 +306,7 @@ const Categories = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon sx={{ color: Colors.LOGOColor}} />
+                  <SearchIcon sx={{ color: Colors.LOGOColor }} />
                 </InputAdornment>
               ),
               sx: {
@@ -322,7 +322,7 @@ const Categories = () => {
                 "&:hover fieldset": {
                   borderColor: Colors.LOGOColor,
                 },
-                
+
               },
             }}
           />
@@ -331,7 +331,7 @@ const Categories = () => {
         {/* Categories List */}
         <List
           sx={{
-          
+
             display: "grid",
             gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1fr 1fr 1fr" },
             gap: 1,
@@ -355,7 +355,7 @@ const Categories = () => {
                 setDrawerOpen(false);
               }}
               sx={{
-                mt:1,
+                mt: 1,
                 p: 1.5,
                 borderRadius: 2,
                 cursor: "pointer",

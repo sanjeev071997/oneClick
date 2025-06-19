@@ -1,13 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Card,
-  Typography,
-  Divider,
-  Chip,
-  Button,
-  Stack,
-  Avatar,
+  Box, Card, Typography, Divider, Chip, Button, Stack, Avatar, CircularProgress, Grid
 } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import EventIcon from "@mui/icons-material/Event";
@@ -15,217 +8,243 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import StarIcon from "@mui/icons-material/Star";
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "../axiosInstance";
+import { message } from "antd";
 
-const PlanView = ({ plan }) => {
-  const navigate= useNavigate();
+const PlanView = () => {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
+  const [loading, setLoading] = useState(true);
+  const [businessPlans, setBusinessPlans] = useState([]);
 
-  const currentPlan = plan || {
-    name: "Premium Plan",
-    price: 999,
-    expiryDate: "2025-12-31",
-    features: [
-      "Unlimited Access",
-      "Priority Support",
-      "Free Upgrades",
-      "Exclusive Content",
-      "Advanced Analytics"
-    ],
-    isActive: true,
+  const fetchBusinesses = async () => {
+    try {
+      const res = await axios.get("/api/v1/business/get", {
+        data: { userId: user._id }
+      });
+
+      const businesses = res.data?.data || [];
+      const plans = businesses
+        .filter(business => business.planId)
+        .map(business => ({
+          businessName: business.businessName,
+          plan: {
+            name: business.planId.planName,
+            price: business.planId.planPrice,
+            features: business.planId.planFeatures || [],
+            isActive: business.planId.isActive,
+            createdAt: business.planId.createdAt
+          }
+        }));
+
+      if (plans.length > 0) {
+        setBusinessPlans(plans);
+      } else {
+        message.warning("No plans associated with your businesses.");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to fetch businesses.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    if (user?._id) fetchBusinesses();
+  }, [user]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <Box height="60vh" display="flex" justifyContent="center" alignItems="center">
+          <CircularProgress />
+        </Box>
+        <Footer />
+      </>
+    );
+  }
+
+  if (businessPlans.length === 0) {
+    return (
+      <>
+        <Navbar />
+        <Box textAlign="center" mt={10}>
+          <Typography variant="h6" color="text.secondary">
+            No plan details available.
+          </Typography>
+        </Box>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
-    <Navbar />
-    <Box
-      maxWidth={800}
-      mx="auto"
-      mt={5}
-      px={2}
-    >
-      <Card 
-        elevation={0}
-        sx={{ 
-          borderRadius: 4, 
-          p: 0,
-          border: '1px solid rgba(0,0,0,0.1)',
-          background: 'linear-gradient(to bottom, #ffffff, #f5faf6)',
-          overflow: 'hidden',
-          position: 'relative',
-          '&:before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: 8,
-            background: 'linear-gradient(to right, #275559, #9EDC29)',
-          }
-        }}
-      >
-        <Box p={4}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-            <Typography
-              variant="h5"
-              fontWeight="bold"
-              sx={{ 
-                fontFamily: "Poppins, sans-serif",
-                color: '#275559'
-              }}
-            >
-              Your Current Plan
-            </Typography>
-            
-            {currentPlan.isActive && (
-              <Chip
-                label="Active"
-                color="success"
-                size="small"
-                sx={{ 
-                  fontWeight: 'bold',
-                  backgroundColor: '#e8f5e9',
-                  color: '#2e7d32'
-                }}
-              />
-            )}
-          </Stack>
+      <Navbar />
+      <Box maxWidth={1200} mx="auto" mt={5} px={2} mb={5}>
 
-          <Divider sx={{ 
-            my: 2, 
-            borderColor: 'rgba(0,0,0,0.08)',
-            borderBottomWidth: 2 
-          }} />
-
-          <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-            <Avatar sx={{ 
-              bgcolor: '#275559', 
-              width: 56, 
-              height: 56,
-              fontSize: 24,
-              fontWeight: 'bold'
-            }}>
-              {currentPlan.name.charAt(0)}
-            </Avatar>
-            <Box>
-              <Typography variant="h4" fontWeight="bold" color="#275559">
-                {currentPlan.name}
-              </Typography>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <CurrencyRupeeIcon fontSize="small" sx={{ color: '#9EDC29' }} />
-                <Typography variant="h6" fontWeight={700} color="#275559">
-                  {currentPlan.price}/mo
-                </Typography>
-              </Stack>
-            </Box>
-          </Stack>
-
-          <Box 
-            sx={{
-              backgroundColor: '#f0f7e8',
-              borderRadius: 2,
-              p: 2,
-              mb: 3,
-              borderLeft: '4px solid #9EDC29'
-            }}
-          >
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <EventIcon fontSize="small" sx={{ color: '#275559' }} />
-              <Typography variant="body2" color="#275559" fontWeight={500}>
-                Expires on: {new Date(currentPlan.expiryDate).toLocaleDateString()}
-              </Typography>
-            </Stack>
-          </Box>
-
-          <Divider sx={{ 
-            my: 2, 
-            borderColor: 'rgba(0,0,0,0.08)',
-            borderBottomWidth: 2 
-          }} />
-
-          <Typography 
-            variant="subtitle1" 
-            gutterBottom 
-            fontWeight={600}
-            sx={{ color: '#275559' }}
-          >
-            Plan Benefits:
-          </Typography>
-          
-          <Stack spacing={1} mb={3}>
-            {currentPlan.features.map((feature, index) => (
-              <Stack 
-                key={index} 
-                direction="row" 
-                alignItems="center" 
-                spacing={1}
+        <Grid container spacing={4}>
+          {businessPlans.map(({ businessName, plan }, index) => (
+            <Grid item key={index} xs={12} sm={12} md={6} lg={4}>
+              <Card
+                elevation={0}
                 sx={{
-                  p: 1,
-                  borderRadius: 1,
-                  '&:hover': {
-                    backgroundColor: '#f5faf6'
+                  borderRadius: 4,
+                  p: 0,
+                  border: '1px solid rgba(0,0,0,0.1)',
+                  background: 'linear-gradient(to bottom, #ffffff, #f5faf6)',
+                  overflow: 'hidden',
+                  position: 'relative',
+                  height: '100%',
+                  '&:before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: 8,
+                    background: 'linear-gradient(to right, #275559, #9EDC29)',
                   }
                 }}
               >
-                <CheckCircleIcon sx={{ color: '#9EDC29' }} />
-                <Typography variant="body1" sx={{ color: '#275559' }}>
-                  {feature}
-                </Typography>
-                {index < 2 && (
-                  <Chip 
-                    icon={<StarIcon sx={{ color: '#ffc107', fontSize: 16 }} />} 
-                    label="Popular" 
-                    size="small" 
-                    sx={{ 
-                      ml: 'auto!important',
-                      backgroundColor: '#fff8e1',
-                      color: '#ff8f00',
-                      fontSize: 12
-                    }} 
-                  />
-                )}
-              </Stack>
-            ))}
-          </Stack>
+                <Box p={4}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+                    <Typography variant="h6" fontWeight="bold" sx={{ fontFamily: "Poppins, sans-serif", color: '#275559' }}>
+                      {businessName}
+                    </Typography>
+                    {plan.isActive && (
+                      <Chip label="Active" color="success" size="small"
+                        sx={{ fontWeight: 'bold', backgroundColor: '#e8f5e9', color: '#2e7d32' }} />
+                    )}
+                  </Stack>
 
-          <Stack direction="row" spacing={2}>
-            <Button
-               onClick={() => navigate('/plans')}
-              variant="contained"
-              fullWidth
-              sx={{
-                backgroundColor: '#275559',
-                '&:hover': {
-                  backgroundColor: '#1a3a3d'
-                },
-                py: 1.5,
-                borderRadius: 2,
-                fontWeight: 'bold'
-              }}
-            >
-              Upgrade Plan
-            </Button>
-            <Button
-         onClick={() => navigate('/contact')}
-              variant="outlined"
-              fullWidth
-              sx={{
-                color: '#275559',
-                borderColor: '#275559',
-                '&:hover': {
-                  borderColor: '#1a3a3d'
-                },
-                py: 1.5,
-                borderRadius: 2,
-                fontWeight: 'bold'
-              }}
-            >
-              Manage Subscription
-            </Button>
-          </Stack>
-        </Box>
-      </Card>
-    </Box>
-    <Footer />
+                  <Divider sx={{ my: 2, borderColor: 'rgba(0,0,0,0.08)', borderBottomWidth: 2 }} />
+
+                  <Stack direction="row" alignItems="center" spacing={1} mb={2}>
+                    <Avatar sx={{
+                      bgcolor: '#275559',
+                      width: 56,
+                      height: 56,
+                      fontSize: 24,
+                      fontWeight: 'bold'
+                    }}>
+                      {plan.name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="h5" fontWeight="bold" color="#275559">
+                        {plan.name}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" spacing={1}>
+                        <CurrencyRupeeIcon fontSize="small" sx={{ color: '#9EDC29' }} />
+                        <Typography variant="h6" fontWeight={700} color="#275559">
+                          {plan.price}/mo
+                        </Typography>
+                      </Stack>
+                    </Box>
+                  </Stack>
+
+                  <Box sx={{
+                    backgroundColor: '#f0f7e8',
+                    borderRadius: 2,
+                    p: 2,
+                    mb: 3,
+                    borderLeft: '4px solid #9EDC29'
+                  }}>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <EventIcon fontSize="small" sx={{ color: '#275559' }} />
+                      <Typography variant="body2" color="#275559" fontWeight={500}>
+                        Started on: {new Date(plan.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </Typography>
+                    </Stack>
+                  </Box>
+
+                  <Divider sx={{ my: 2, borderColor: 'rgba(0,0,0,0.08)', borderBottomWidth: 2 }} />
+
+                  <Typography variant="subtitle1" gutterBottom fontWeight={600} sx={{ color: '#275559' }}>
+                    Plan Benefits:
+                  </Typography>
+
+                  <Stack spacing={1} mb={3}>
+                    {plan.features.map((feature, index) => (
+                      <Stack key={index} direction="row" alignItems="center" spacing={1}
+                        sx={{ p: 1, borderRadius: 1, '&:hover': { backgroundColor: '#f5faf6' } }}>
+                        <CheckCircleIcon sx={{ color: '#9EDC29' }} />
+                        <Typography variant="body1" sx={{ color: '#275559' }}>
+                          {feature}
+                        </Typography>
+                        {index < 2 && (
+                          <Chip icon={<StarIcon sx={{ color: '#ffc107', fontSize: 16 }} />}
+                            label="Popular" size="small"
+                            sx={{
+                              ml: 'auto!important',
+                              backgroundColor: '#fff8e1',
+                              color: '#ff8f00',
+                              fontSize: 12
+                            }}
+                          />
+                        )}
+                      </Stack>
+                    ))}
+                  </Stack>
+
+                  <Stack
+                    direction={{ xs: 'row', sm: 'row', md: 'row' }}
+                    spacing={2}
+                    width="100%"
+                  >
+                    <Button
+                      onClick={() => navigate('/plans')}
+                      variant="contained"
+                      fullWidth
+                      sx={{
+                        backgroundColor: '#275559',
+                        '&:hover': { backgroundColor: '#1a3a3d' },
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Upgrade Plan
+                    </Button>
+                    <Button
+                      onClick={() => navigate('/contact')}
+                      variant="outlined"
+                      fullWidth
+                      sx={{
+                        color: '#275559',
+                        borderColor: '#275559',
+                        '&:hover': { borderColor: '#1a3a3d', backgroundColor: '#f9f9f9' },
+                        py: 1.5,
+                        px: { xs: 2, sm: 3, md: 4 },
+
+                       
+                        borderRadius: 2,
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Manage Subscription
+                    </Button>
+                  </Stack>
+
+                </Box>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+      <Footer />
     </>
   );
 };
