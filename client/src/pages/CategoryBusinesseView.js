@@ -31,11 +31,19 @@ import {
   Person,
   CalendarToday,
   ChatBubble,
+  Facebook,
+  Instagram,
+  Twitter,
+  LinkedIn,
+  Language,
+  YouTube,
+  WhatsApp,
 } from "@mui/icons-material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { message } from "antd";
 import { Colors } from "../Comman";
+import Footer from "../Components/Footer";
 
 
 const FontWeight = {
@@ -441,6 +449,98 @@ const CategoryBusinessView = () => {
                       </CardContent>
                     </Card>
                   </Grid>
+
+                  <Grid item xs={12}>
+  <Card
+    variant="outlined"
+    sx={{
+      borderRadius: 2,
+      borderColor: Colors.LOGOColor,
+    }}
+  >
+    <CardContent>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        gutterBottom
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          color: Colors.LOGOColor,
+        }}
+      >
+        <Language sx={{ mr: 1, color: Colors.LOGOColor }} /> Social Media Links
+      </Typography>
+
+      <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 2 }}>
+        {business?.socialLinks?.facebook && (
+          <a
+            href={business.socialLinks.facebook}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Facebook sx={{ fontSize: 30, color: "#1877F2" }} />
+          </a>
+        )}
+        {business?.socialLinks?.instagram && (
+          <a
+            href={business.socialLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Instagram sx={{ fontSize: 30, color: "#E4405F" }} />
+          </a>
+        )}
+        {business?.socialLinks?.twitter && (
+          <a
+            href={business.socialLinks.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Twitter sx={{ fontSize: 30, color: "#1DA1F2" }} />
+          </a>
+        )}
+        {business?.socialLinks?.linkedin && (
+          <a
+            href={business.socialLinks.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <LinkedIn sx={{ fontSize: 30, color: "#0A66C2" }} />
+          </a>
+        )}
+        {business?.socialLinks?.website && (
+          <a
+            href={business.socialLinks.website}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Language sx={{ fontSize: 30, color: Colors.LOGOColor }} />
+          </a>
+        )}
+        {business?.socialLinks?.youtube && (
+          <a
+            href={business.socialLinks.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <YouTube sx={{ fontSize: 30, color: "#FF0000" }} />
+          </a>
+        )}
+        {business?.socialLinks?.whatsapp && (
+          <a
+            href={business.socialLinks.whatsapp}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <WhatsApp sx={{ fontSize: 30, color: "#25D366" }} />
+          </a>
+        )}
+      </Box>
+    </CardContent>
+  </Card>
+</Grid>
+
                 </Grid>
               </CardContent>
             </Card>
@@ -686,6 +786,7 @@ const CategoryBusinessView = () => {
           )}
         </Box>
       </Box>
+      <Footer />
     </>
   );
 };

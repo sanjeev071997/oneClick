@@ -518,12 +518,13 @@ const AddedBusiness = () => {
                       >
                         <Edit />
                       </IconButton>
-                      <IconButton
+                      {/* TODO */}
+                      {/* <IconButton
                         onClick={() => handleOpenDialog("delete", business)}
                         sx={{ color: "error.main", ml: 1 }}
                       >
                         <Delete />
-                      </IconButton>
+                      </IconButton> */}
                     </Box>
                   </Box>
                 </Card>

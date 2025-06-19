@@ -16,7 +16,8 @@ import {
   Spin,
   Tag,
   Typography,
-  Alert
+  Alert,
+ Space 
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -26,7 +27,14 @@ import {
   EnvironmentOutlined,
   StarFilled,
   SendOutlined,
-  ShopOutlined
+  ShopOutlined,
+  FacebookOutlined,
+  InstagramOutlined,
+  TwitterOutlined,
+  LinkedinOutlined,
+  GlobalOutlined,
+  YoutubeOutlined,
+  WhatsAppOutlined,
 } from "@ant-design/icons";
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
@@ -154,6 +162,12 @@ const CategoryDetail = () => {
     );
   }
 
+  const iconStyle = {
+  fontSize: 24,
+  margin: "0 8px",
+  cursor: "pointer",
+};
+
   if (loading) {
     return (
       <div style={{
@@ -176,9 +190,9 @@ const CategoryDetail = () => {
         padding: '20px 24px',
       }}>
         {/* Breadcrumb Navigation */}
-        <Breadcrumb style={{ marginBottom: 24 }}>
-          <Breadcrumb.Item onClick={() => navigate("/")} style={{ cursor: 'pointer' }}>
-            <HomeOutlined /> Home
+        <Breadcrumb style={{ marginBottom: 24}}>
+          <Breadcrumb.Item onClick={() => navigate("/")} sx={{ cursor: 'pointer' }}>
+            <HomeOutlined  sx={{cursor: 'pointer'}}/> <span style={{cursor: 'pointer'}}>Home</span>
           </Breadcrumb.Item>
           <Breadcrumb.Item style={{ color: Colors.BLACK }}>{category.name}</Breadcrumb.Item>
         </Breadcrumb>
@@ -648,6 +662,79 @@ const CategoryDetail = () => {
               </Text>
             )}
             <Text type="secondary">{selectedBusiness?.address}</Text>
+
+
+{selectedBusiness?.socialLinks && (
+  <div style={{ marginTop: 16, textAlign: "center" }}>
+    <Space>
+      {selectedBusiness.socialLinks.facebook && (
+        <a
+          href={selectedBusiness.socialLinks.facebook}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FacebookOutlined style={{ ...iconStyle, color: "#1877F2" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.instagram && (
+        <a
+          href={selectedBusiness.socialLinks.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <InstagramOutlined style={{ ...iconStyle, color: "#E4405F" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.twitter && (
+        <a
+          href={selectedBusiness.socialLinks.twitter}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <TwitterOutlined style={{ ...iconStyle, color: "#1DA1F2" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.linkedin && (
+        <a
+          href={selectedBusiness.socialLinks.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <LinkedinOutlined style={{ ...iconStyle, color: "#0A66C2" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.website && (
+        <a
+          href={selectedBusiness.socialLinks.website}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <GlobalOutlined style={{ ...iconStyle, color: "#1976D2" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.youtube && (
+        <a
+          href={selectedBusiness.socialLinks.youtube}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <YoutubeOutlined style={{ ...iconStyle, color: "#FF0000" }} />
+        </a>
+      )}
+      {selectedBusiness.socialLinks.whatsapp && (
+        <a
+          href={selectedBusiness.socialLinks.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <WhatsAppOutlined style={{ ...iconStyle, color: "#25D366" }} />
+        </a>
+      )}
+    </Space>
+  </div>
+
+  )}
+
 
             {!token && (
               <Alert

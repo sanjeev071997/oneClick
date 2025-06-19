@@ -49,7 +49,7 @@ const PricingPlans = () => {
         period: plan.planDuration,  
         description: plan.planDescription,
         features: plan.planFeatures,
-        popular: plan.planName.toLowerCase() === "premium" || plan.planName.toLowerCase() === "growth",
+        popular: plan.planName.toLowerCase() === "Verified badge" || plan.planName.toLowerCase() === "premium plan",
         isActive: plan.isActive
       }));
 
@@ -83,7 +83,7 @@ const PricingPlans = () => {
   }, []);
 
   const handlePlanSelect = (plan) => {
-    if (plan.name.toLowerCase() === "free") {
+    if (plan.name.toLowerCase() === "basic plan") {
       navigate("/add/business", {
         state: {
           planName: plan.name,
@@ -390,7 +390,7 @@ const PricingPlans = () => {
                         fullWidth
                         size="large"
                         onClick={() => handlePlanSelect(plan)}
-                        disabled={plan.name.toLowerCase() !== "free"}
+                        disabled={plan.name.toLowerCase() !== "basic plan"}
                         sx={{
                           fontWeight: FontWeight.heading1,
                           py: 1.5,
