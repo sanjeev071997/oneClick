@@ -44,7 +44,7 @@ export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
     const businesses = await Business.find()
       .sort({ createdAt: -1 })
       .populate("category")
-      v .populate("planId")
+      .populate("planId")
     res.status(200).json({
       success: true,
       data: businesses,

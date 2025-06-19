@@ -72,6 +72,16 @@ const businessSchema = new mongoose.Schema({
     },
   ],
 
+  socialLinks: {
+    facebook: { type: String },
+    instagram: { type: String },
+    twitter: { type: String },
+    linkedin: { type: String },
+    website: { type: String },
+    youtube: { type: String },
+    whatsapp: { type: String },
+  },
+
   createdAt: {
     type: Date,
     default: () => new Date(),
