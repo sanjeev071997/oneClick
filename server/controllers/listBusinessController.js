@@ -44,7 +44,7 @@ export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
     const businesses = await Business.find()
       .sort({ createdAt: -1 })
       .populate("category")
-      .populate("plans", "planName planPrice");
+      v .populate("planId")
     res.status(200).json({
       success: true,
       data: businesses,
@@ -63,7 +63,8 @@ export const getBusinessByCategory = catchAsyncErrors(
         .sort({
           createdAt: -1,
         })
-        .populate("category").populate("plans", "planName planPrice");
+        .populate("category")
+        .populate("planId");
       res.status(201).json({
         success: true,
         data: getBusiness,
@@ -82,7 +83,7 @@ export const getUserBusiness = catchAsyncErrors(async (req, res, next) => {
       .sort({ createdAt: -1 })
       .populate("category", "name")
       .populate("userId", "name")
-      .populate("plans", "planName planPrice");;
+      .populate("planId");
     res.status(200).json({
       success: true,
       data: businesses,

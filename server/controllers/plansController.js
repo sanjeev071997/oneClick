@@ -52,25 +52,6 @@ export const getAllPlansByAdmin = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get a single plan by UserID
-export const getPlanById = catchAsyncErrors(async (req, res, next) => {
-  const userId = req.user.id;
-
-  if (!userId) {
-    return next(new Errorhandler("Plan ID is required", 400));
-  }
-
-  const plan = await Plans.findById(userId);
-  // Check if the plan exists and is active
-  if (!plan) {
-    return next(new Errorhandler("Plan not found or inactive", 404));
-  }
-  res.status(200).json({
-    success: true,
-    data: plan,
-  });
-});
-
 // Update a plan by ID
 export const updatePlanById = catchAsyncErrors(async (req, res, next) => {
   const id = req.body.id;

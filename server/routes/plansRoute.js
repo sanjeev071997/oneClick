@@ -2,7 +2,6 @@ import express from "express";
 import {
     createPlan,
     getAllPlans,
-    getPlanById,
     updatePlanById,
     statusPlanById,
     getAllPlansByAdmin,
@@ -17,8 +16,6 @@ router.post("/create", isAuthenticatedUser, isAdmin, createPlan); // Create a ne
 router.get("/all", getAllPlans); // Get all plans
 
 router.get("/all/admin", isAuthenticatedUser, isAdmin, getAllPlansByAdmin); // Get all plans by Admin
-
-router.get("/get", isAuthenticatedUser, getPlanById); // Get a single plan by UserID
 
 router.put("/update", isAuthenticatedUser, isAdmin, updatePlanById); // Update a plan by ID
 
