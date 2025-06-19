@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.272eb970.css",
-    "main.js": "/static/js/main.17d1e3ff.js",
+    "main.js": "/static/js/main.528abff0.js",
     "static/media/weddingguide1_cover.jpg": "/static/media/weddingguide1_cover.31b8e5e6367355fe2c75.jpg",
     "static/media/bike.jpg": "/static/media/bike.bd2a2eb0ce29244a440d.jpg",
     "static/media/grocery.jpg": "/static/media/grocery.b980b1378e42c48d3694.jpg",
@@ -25,10 +25,10 @@
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
     "main.272eb970.css.map": "/static/css/main.272eb970.css.map",
-    "main.17d1e3ff.js.map": "/static/js/main.17d1e3ff.js.map"
+    "main.528abff0.js.map": "/static/js/main.528abff0.js.map"
   },
   "entrypoints": [
     "static/css/main.272eb970.css",
-    "static/js/main.17d1e3ff.js"
+    "static/js/main.528abff0.js"
   ]
 }
