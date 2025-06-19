@@ -60,9 +60,9 @@ export const getPlanById = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("Plan ID is required", 400));
   }
 
-  const plan = await Plans.findById(userId).where({ isActive: true });
+  const plan = await Plans.findById(userId);
   // Check if the plan exists and is active
-  if (!plan || !plan.isActive) {
+  if (!plan) {
     return next(new Errorhandler("Plan not found or inactive", 404));
   }
   res.status(200).json({
