@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const plansSchema = new mongoose.Schema(
   {
@@ -13,15 +13,25 @@ const plansSchema = new mongoose.Schema(
       required: [true, "Plan description is required"],
       trim: true,
     },
-
-    planPrice: {
-      type: String,
-      required: [true, "Plan price is required"],
-    },
-
+   
     planDuration: {
       type: String,
       required: [true, "Plan duration is required"],
+    },
+
+    monthlyPlanPrice: {
+      type: String,
+      required: [true, "Monthly plan price is required"],
+    },
+
+    yearlyPlanPrice: {
+      type: String,
+      required: [true, "Yearly plan price is required"],
+    },
+
+    planStatus: {
+      type: String,
+      required: [true, "Plan status is required"],
     },
 
     planFeatures: {
