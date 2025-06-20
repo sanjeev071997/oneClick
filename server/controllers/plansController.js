@@ -66,8 +66,16 @@ export const getAllPlansByAdmin = catchAsyncErrors(async (req, res, next) => {
 // Update a plan by ID
 export const updatePlanById = catchAsyncErrors(async (req, res, next) => {
   const id = req.body.id;
-  const { planName, planDescription, planPrice, planDuration, planFeatures } =
-    req.body;
+  const {
+    planName,
+    planDescription,
+    monthlyPlanPrice,
+    annuallyPlanPrice,
+    monthlyDuration,
+    annuallyDuration,
+    planFeatures,
+    planStatus,
+  } = req.body;
 
   if (!id) {
     return next(new Errorhandler("Plan ID is required", 400));
@@ -78,9 +86,12 @@ export const updatePlanById = catchAsyncErrors(async (req, res, next) => {
     {
       planName,
       planDescription,
-      planPrice,
-      planDuration,
+      monthlyPlanPrice,
+      annuallyPlanPrice,
+      monthlyDuration,
+      annuallyDuration,
       planFeatures,
+      planStatus,
       updatedAt: Date.now(),
     },
     { new: true }
