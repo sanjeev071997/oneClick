@@ -14,9 +14,14 @@ const plansSchema = new mongoose.Schema(
       trim: true,
     },
    
-    planDuration: {
+    annuallyDuration: {
       type: String,
-      required: [true, "Plan duration is required"],
+      required: [true, "Plan annually is required"],
+    },
+
+    monthlyDuration: {
+      type: String,
+      required: [true, "Plan monthly is required"],
     },
 
     monthlyPlanPrice: {
@@ -24,9 +29,9 @@ const plansSchema = new mongoose.Schema(
       required: [true, "Monthly plan price is required"],
     },
 
-    yearlyPlanPrice: {
+    annuallyPlanPrice: {
       type: String,
-      required: [true, "Yearly plan price is required"],
+      required: [true, "Annually plan price is required"],
     },
 
     planStatus: {
