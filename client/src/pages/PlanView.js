@@ -9,9 +9,9 @@ import StarIcon from "@mui/icons-material/Star";
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import axios from "../axiosInstance";
-import { message } from "antd";
+import { useSelector }  from  "react-redux";
+import axios from  "../axiosInstance";
+import { message }from "antd";
 
 const PlanView = () => {
   const navigate = useNavigate();
@@ -32,7 +32,13 @@ const PlanView = () => {
           businessName: business.businessName,
           plan: {
             name: business.planId.planName,
-            price: business.planId.planPrice,
+            // Determine price and duration based on availability
+            price: business.planId.monthlyPlanPrice !== "0" && business.planId.monthlyPlanPrice !== null
+                   ? business.planId.monthlyPlanPrice
+                   : business.planId.annuallyPlanPrice,
+            duration: business.planId.monthlyDuration !== null
+                      ? business.planId.monthlyDuration
+                      : business.planId.annuallyDuration,
             features: business.planId.planFeatures || [],
             isActive: business.planId.isActive,
             createdAt: business.planId.createdAt
@@ -141,7 +147,7 @@ const PlanView = () => {
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <CurrencyRupeeIcon fontSize="small" sx={{ color: '#9EDC29' }} />
                         <Typography variant="h6" fontWeight={700} color="#275559">
-                          {plan.price}/mo
+                          {plan.price}/{plan.duration}
                         </Typography>
                       </Stack>
                     </Box>
@@ -226,8 +232,6 @@ const PlanView = () => {
                         '&:hover': { borderColor: '#1a3a3d', backgroundColor: '#f9f9f9' },
                         py: 1.5,
                         px: { xs: 2, sm: 3, md: 4 },
-
-                       
                         borderRadius: 2,
                         fontWeight: 'bold',
                         textTransform: 'none',

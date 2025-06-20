@@ -17,7 +17,7 @@ import {
   Tag,
   Typography,
   Alert,
- Space 
+  Space
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -62,6 +62,8 @@ const CategoryDetail = () => {
   const [openEnquiry, setOpenEnquiry] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [enquiryLoading, setEnquiryLoading] = useState(false);
+
+
 
   const fetchBusinessesByCategory = async () => {
     try {
@@ -163,10 +165,10 @@ const CategoryDetail = () => {
   }
 
   const iconStyle = {
-  fontSize: 24,
-  margin: "0 8px",
-  cursor: "pointer",
-};
+    fontSize: 24,
+    margin: "0 8px",
+    cursor: "pointer",
+  };
 
   if (loading) {
     return (
@@ -190,9 +192,9 @@ const CategoryDetail = () => {
         padding: '20px 24px',
       }}>
         {/* Breadcrumb Navigation */}
-        <Breadcrumb style={{ marginBottom: 24}}>
+        <Breadcrumb style={{ marginBottom: 24 }}>
           <Breadcrumb.Item onClick={() => navigate("/")} sx={{ cursor: 'pointer' }}>
-            <HomeOutlined  sx={{cursor: 'pointer'}}/> <span style={{cursor: 'pointer'}}>Home</span>
+            <HomeOutlined sx={{ cursor: 'pointer' }} /> <span style={{ cursor: 'pointer' }}>Home</span>
           </Breadcrumb.Item>
           <Breadcrumb.Item style={{ color: Colors.BLACK }}>{category.name}</Breadcrumb.Item>
         </Breadcrumb>
@@ -451,161 +453,241 @@ const CategoryDetail = () => {
         width={800}
         centered
         destroyOnClose
-        style={{ borderRadius: 12 }}
-        bodyStyle={{ padding: 0 }}
+        style={{
+          borderRadius: 12,
+          top: 70,
+          paddingBottom: 20,
+          maxWidth: 'calc(100vw - 32px)',
+        }}
+        bodyStyle={{
+          padding: 0,
+          maxHeight: 'calc(100vh - 100px)',
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
       >
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: window.innerWidth < 768 ? 'column' : 'row',
+          flex: 1,
+          minHeight: 'min-content'
+        }}>
+          {/* Business Info Section */}
+          <div style={{
+            flex: 1,
+            padding: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            backgroundColor: Colors.lightBg,
+            order: window.innerWidth < 768 ? 1 : 2
+          }}>
+            <Avatar
+              src={selectedBusiness?.images?.[0]?.url || "https://via.placeholder.com/400x400?text=No+Image"}
+              alt={selectedBusiness?.businessName}
+              size={window.innerWidth < 768 ? 100 : 160}
+              style={{
+                marginBottom: 16,
+                border: `4px solid ${Colors.LOGOColor}`
+              }}
+            />
+            <Title level={window.innerWidth < 768 ? 4 : 3} style={{
+              marginBottom: 8,
+              color: Colors.LOGOColor,
+              textAlign: 'center'
+            }}>
+              {selectedBusiness?.businessName}
+            </Title>
+            {selectedBusiness?.city && selectedBusiness?.state && (
+              <Text type="secondary" style={{ marginBottom: 4, textAlign: 'center', fontSize: window.innerWidth < 768 ? 12 : 14 }}>
+                {`${selectedBusiness.city}, ${selectedBusiness.state}`}
+              </Text>
+            )}
+            <Text type="secondary" style={{ textAlign: 'center', fontSize: window.innerWidth < 768 ? 12 : 14 }}>
+              {selectedBusiness?.address}
+            </Text>
+
+            {selectedBusiness?.socialLinks && (
+              <div style={{ marginTop: 16, textAlign: "center" }}>
+                <Space size={window.innerWidth < 768 ? 8 : 16}>
+                  {selectedBusiness.socialLinks.facebook && (
+                    <a href={selectedBusiness.socialLinks.facebook} target="_blank" rel="noopener noreferrer">
+                      <FacebookOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#1877F2" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.instagram && (
+                    <a href={selectedBusiness.socialLinks.instagram} target="_blank" rel="noopener noreferrer">
+                      <InstagramOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#E4405F" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.twitter && (
+                    <a href={selectedBusiness.socialLinks.twitter} target="_blank" rel="noopener noreferrer">
+                      <TwitterOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#1DA1F2" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.linkedin && (
+                    <a href={selectedBusiness.socialLinks.linkedin} target="_blank" rel="noopener noreferrer">
+                      <LinkedinOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#0A66C2" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.website && (
+                    <a href={selectedBusiness.socialLinks.website} target="_blank" rel="noopener noreferrer">
+                      <GlobalOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#1976D2" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.youtube && (
+                    <a href={selectedBusiness.socialLinks.youtube} target="_blank" rel="noopener noreferrer">
+                      <YoutubeOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#FF0000" }} />
+                    </a>
+                  )}
+                  {selectedBusiness.socialLinks.whatsapp && (
+                    <a href={selectedBusiness.socialLinks.whatsapp} target="_blank" rel="noopener noreferrer">
+                      <WhatsAppOutlined style={{ fontSize: window.innerWidth < 768 ? 18 : 24, color: "#25D366" }} />
+                    </a>
+                  )}
+                </Space>
+              </div>
+            )}
+
+            {!token && (
+              <Alert
+                message="Login Required"
+                description="You need to be logged in to send an enquiry"
+                type="warning"
+                showIcon
+                style={{
+                  marginTop: 16,
+                  width: '100%',
+                  fontSize: window.innerWidth < 768 ? 12 : 14
+                }}
+              />
+            )}
+          </div>
+
+          {/* Divider - Only show on desktop */}
+          {window.innerWidth >= 768 && (
+            <Divider type="vertical" style={{ height: 'auto', margin: '24px 0' }} />
+          )}
+
           {/* Form Section */}
-          <div style={{ flex: 1, padding: 24 }}>
+          <div style={{
+            flex: 1,
+            padding: window.innerWidth < 768 ? '16px 24px 24px' : '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            order: window.innerWidth < 768 ? 2 : 1
+          }}>
             <Form
               form={form}
               layout="vertical"
               onFinish={handleEnquirySubmit}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
             >
-              {/* Name Field */}
-              <Form.Item
-                name="name"
-                label="Your Name"
-                rules={[{ required: true, message: 'Please input your name!' }]}
-              >
-                <Input
-                  style={{
-                    borderColor: '#d9d9d9',
-                    '&:hover': { borderColor: Colors.LOGOlight },
-                    '&:focus': {
-                      borderColor: Colors.LOGOColor,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
-                    },
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.borderColor = Colors.LOGOlight;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = Colors.LOGOColor;
-                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </Form.Item>
+              <div style={{ flex: 1 }}>
+                {/* Name Field */}
+                <Form.Item
+                  name="name"
+                  label={
+                    <span style={{ fontSize: window.innerWidth < 768 ? 14 : 'inherit' }}>
+                      Your Name
+                    </span>
+                  }
+                  rules={[{ required: true, message: 'Please input your name!' }]}
+                >
+                  <Input
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
+                    style={{
+                      height: 30,
+                      padding: '8px 12px',
+                      fontSize: 16,
+                      borderRadius: 8,
+                      borderColor: '#d9d9d9',
+                    }}
+                  />
+                </Form.Item>
 
-              {/* Email Field */}
-              <Form.Item
-                name="email"
-                label="Email Address"
-                rules={[
-                  { required: true, message: 'Please input your email!' },
-                  { type: 'email', message: 'Please enter a valid email!' },
-                ]}
-              >
-                <Input
-                  style={{
-                    borderColor: '#d9d9d9',
-                    '&:hover': { borderColor: Colors.LOGOlight },
-                    '&:focus': {
-                      borderColor: Colors.LOGOColor,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
-                    },
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.borderColor = Colors.LOGOlight;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = Colors.LOGOColor;
-                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </Form.Item>
 
-              {/* Phone Field */}
-              <Form.Item
-                name="phone"
-                label="Phone Number"
-                rules={[{ required: true, message: 'Please input your phone number!' }]}
-              >
-                <Input
-                  style={{
-                    borderColor: '#d9d9d9',
-                    '&:hover': { borderColor: Colors.LOGOlight },
-                    '&:focus': {
-                      borderColor: Colors.LOGOColor,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
-                    },
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.borderColor = Colors.LOGOlight;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = Colors.LOGOColor;
-                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </Form.Item>
+                {/* Email Field */}
+                <Form.Item
+                  name="email"
+                  label={<span style={{ fontSize: window.innerWidth < 768 ? 14 : 'inherit' }}>Email Address</span>}
+                  rules={[
+                    { required: true, message: 'Please input your email!' },
+                    { type: 'email', message: 'Please enter a valid email!' },
+                  ]}
+                >
+                  <Input
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
+                    style={{
+                      height: 30,
+                      borderColor: '#d9d9d9',
+                      '&:hover': { borderColor: Colors.LOGOlight },
+                      '&:focus': {
+                        borderColor: Colors.LOGOColor,
+                        boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                      },
+                    }}
+                  />
+                </Form.Item>
 
-              {/* Message Field */}
-              <Form.Item
-                name="message"
-                label="Your Message"
-                rules={[{ required: true, message: 'Please input your message!' }]}
-              >
-                <TextArea
-                  rows={4}
-                  style={{
-                    borderColor: '#d9d9d9',
-                    '&:hover': { borderColor: Colors.LOGOlight },
-                    '&:focus': {
-                      borderColor: Colors.LOGOColor,
-                      boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
-                    },
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.borderColor = Colors.LOGOlight;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = Colors.LOGOColor;
-                    e.target.style.boxShadow = `0 0 0 2px ${Colors.LOGOColor}33`;
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#d9d9d9';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                />
-              </Form.Item>
-              <Form.Item style={{ marginBottom: 0 }}>
+                {/* Phone Field */}
+                <Form.Item
+                  name="phone"
+                  label={<span style={{ fontSize: window.innerWidth < 768 ? 14 : 'inherit' }}>Phone Number</span>}
+                  rules={[{ required: true, message: 'Please input your phone number!' }]}
+                >
+                  <Input
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
+                    style={{
+                      height: 30,
+                      borderColor: '#d9d9d9',
+                      '&:hover': { borderColor: Colors.LOGOlight },
+                      '&:focus': {
+                        borderColor: Colors.LOGOColor,
+                        boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                      },
+                    }}
+                  />
+                </Form.Item>
+
+                {/* Message Field */}
+                <Form.Item
+                  name="message"
+                  label={<span style={{ fontSize: window.innerWidth < 768 ? 14 : 'inherit' }}>Your Message</span>}
+                  rules={[{ required: true, message: 'Please input your message!' }]}
+                >
+                  <TextArea
+                    rows={window.innerWidth < 768 ? 3 : 4}
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
+                    style={{
+                      borderColor: '#d9d9d9',
+                      '&:hover': { borderColor: Colors.LOGOlight },
+                      '&:focus': {
+                        borderColor: Colors.LOGOColor,
+                        boxShadow: `0 0 0 2px ${Colors.LOGOColor}33`,
+                      },
+                    }}
+                  />
+                </Form.Item>
+              </div>
+
+              <Form.Item style={{ marginTop: 'auto', marginBottom: 0 }}>
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  gap: 12
+                  gap: 8,
+                  flexWrap: 'wrap',
+                  paddingTop: 16
                 }}>
                   <Button
                     onClick={handleEnquiryClose}
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
                     style={{
                       borderColor: Colors.LOGOColor,
                       color: Colors.LOGOColor,
                       '&:hover': {
-                        borderColor: Colors.LOGOlight,
+                        backgroundColor: Colors.LOGOlight,
                         color: Colors.LOGOlight
                       }
                     }}
@@ -619,132 +701,18 @@ const CategoryDetail = () => {
                     loading={enquiryLoading}
                     icon={<SendOutlined />}
                     disabled={!token}
+                    size={window.innerWidth < 768 ? 'small' : 'middle'}
                     style={{
                       backgroundColor: Colors.LOGOlight,
-                      borderColor: Colors.LOGOlight
+                      borderColor: Colors.LOGOlight,
+                      
                     }}
                   >
-                    Send Message
+                    {window.innerWidth < 768 ? 'Send' : 'Send Message'}
                   </Button>
                 </div>
               </Form.Item>
             </Form>
-          </div>
-
-          {/* Divider */}
-          <Divider type="vertical" style={{ height: '100%' }} />
-
-          {/* Business Info Section */}
-          <div style={{
-            flex: 1,
-            padding: 24,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: Colors.lightBg
-          }}>
-            <Avatar
-              src={selectedBusiness?.images?.[0]?.url || "https://via.placeholder.com/400x400?text=No+Image"}
-              alt={selectedBusiness?.businessName}
-              size={160}
-              style={{
-                marginBottom: 24,
-                border: `4px solid ${Colors.LOGOColor}`
-              }}
-            />
-            <Title level={4} style={{ marginBottom: 8, color: Colors.LOGOColor }}>
-              {selectedBusiness?.businessName}
-            </Title>
-            {selectedBusiness?.city && selectedBusiness?.state && (
-              <Text type="secondary" style={{ marginBottom: 4 }}>
-                {`${selectedBusiness.city}, ${selectedBusiness.state}`}
-              </Text>
-            )}
-            <Text type="secondary">{selectedBusiness?.address}</Text>
-
-
-{selectedBusiness?.socialLinks && (
-  <div style={{ marginTop: 16, textAlign: "center" }}>
-    <Space>
-      {selectedBusiness.socialLinks.facebook && (
-        <a
-          href={selectedBusiness.socialLinks.facebook}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <FacebookOutlined style={{ ...iconStyle, color: "#1877F2" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.instagram && (
-        <a
-          href={selectedBusiness.socialLinks.instagram}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <InstagramOutlined style={{ ...iconStyle, color: "#E4405F" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.twitter && (
-        <a
-          href={selectedBusiness.socialLinks.twitter}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <TwitterOutlined style={{ ...iconStyle, color: "#1DA1F2" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.linkedin && (
-        <a
-          href={selectedBusiness.socialLinks.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <LinkedinOutlined style={{ ...iconStyle, color: "#0A66C2" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.website && (
-        <a
-          href={selectedBusiness.socialLinks.website}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <GlobalOutlined style={{ ...iconStyle, color: "#1976D2" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.youtube && (
-        <a
-          href={selectedBusiness.socialLinks.youtube}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <YoutubeOutlined style={{ ...iconStyle, color: "#FF0000" }} />
-        </a>
-      )}
-      {selectedBusiness.socialLinks.whatsapp && (
-        <a
-          href={selectedBusiness.socialLinks.whatsapp}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <WhatsAppOutlined style={{ ...iconStyle, color: "#25D366" }} />
-        </a>
-      )}
-    </Space>
-  </div>
-
-  )}
-
-
-            {!token && (
-              <Alert
-                message="Login Required"
-                description="You need to be logged in to send an enquiry"
-                type="warning"
-                showIcon
-                style={{ marginTop: 24, width: '100%' }}
-              />
-            )}
           </div>
         </div>
       </Modal>

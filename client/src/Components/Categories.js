@@ -114,7 +114,8 @@ const Categories = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1500, margin: "0 auto" }}>
+    // margin: "0 auto" => mr:2, ml:2,
+    <Box sx={{ p: { xs: 2, sm: 3 },  margin: "0 auto" }}> 
       <Typography
         variant="h5"
         sx={{

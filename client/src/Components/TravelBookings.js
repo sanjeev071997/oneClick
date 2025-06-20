@@ -133,7 +133,7 @@ const TravelBookings = () => {
 
   return (
     <Container maxWidth={false} sx={{ 
-      mt: 5,
+      mt: 7,
       px: { xs: 2, sm: 3, md: 4 } 
     }}>
       <TravelCard sx={{ 

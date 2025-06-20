@@ -15,7 +15,9 @@ import {
   Divider,
   CircularProgress,
   Tabs,
-  Tab
+  Tab,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import StarIcon from "@mui/icons-material/Star";
@@ -24,15 +26,19 @@ import Footer from '../Components/Footer';
 import Navbar from '../Components/Navbar';
 import { FontWeight, Colors } from "../Comman";
 import axios from "../axiosInstance";
+import { useSelector } from "react-redux";
 
 const PricingPlans = () => {
   const theme = useTheme();
+  const { user } = useSelector((state) => state.user);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0); // 0 for monthly, 1 for annually
   const [displayPlans, setDisplayPlans] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   const getPlans = async () => {
     try {
@@ -44,17 +50,19 @@ const PricingPlans = () => {
       const formattedPlans = plansArray.map((plan) => ({
         id: plan._id,
         name: plan.planName,
-        monthlyPrice: plan.planPrice === 0 ? "0" : plan.planPrice,
-        annualPrice: plan.planPrice === 0 ? "0" : Math.floor(plan.planPrice * 12 ), 
-        period: plan.planDuration,  
+        monthlyPrice: plan.monthlyPlanPrice,
+        annualPrice: plan.annuallyPlanPrice,
+        monthlyPeriod: plan.monthlyDuration,
+        annualPeriod: plan.annuallyDuration,
         description: plan.planDescription,
         features: plan.planFeatures,
-        popular: plan.planName.toLowerCase() === "Verified badge" || plan.planName.toLowerCase() === "premium plan",
-        isActive: plan.isActive
+        popular: plan.planName.toLowerCase() === "premium plan",
+        isActive: plan.isActive,
+        planStatus: plan.planStatus
       }));
 
       setPlans(formattedPlans);
-      setDisplayPlans(formatPlansForDisplay(formattedPlans, 0)); 
+      setDisplayPlans(formatPlansForDisplay(formattedPlans, 0));
     } catch (error) {
       console.error("Error fetching plans:", error);
       setPlans([]);
@@ -68,7 +76,7 @@ const PricingPlans = () => {
     return plansData.map(plan => ({
       ...plan,
       displayPrice: tabIndex === 0 ? plan.monthlyPrice : plan.annualPrice,
-      displayPeriod: tabIndex === 0 ? "per month" : "per year",
+      displayPeriod: tabIndex === 0 ? plan.monthlyPeriod : plan.annualPeriod,
       isAnnual: tabIndex === 1
     }));
   };
@@ -83,16 +91,25 @@ const PricingPlans = () => {
   }, []);
 
   const handlePlanSelect = (plan) => {
-    if (plan.name.toLowerCase() === "basic plan") {
-      navigate("/add/business", {
-        state: {
-          planName: plan.name,
-          planPrice: plan.displayPrice,
-          isAnnual: plan.isAnnual,
-          planId: plan.id
-        }
-      });
+    if (!user) {
+      setSnackbarMessage("Please login to select a plan");
+      setSnackbarOpen(true);
+      return;
     }
+
+    // Navigate for any plan (not just Basic Plan)
+    navigate("/add/business", {
+      state: {
+        planName: plan.name,
+        planPrice: plan.displayPrice,
+        isAnnual: plan.isAnnual,
+        planId: plan.id
+      }
+    });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   if (loading) {
@@ -148,19 +165,20 @@ const PricingPlans = () => {
           </Box>
 
           {/* Billing Toggle */}
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
             mb: 4,
             bgcolor: 'background.paper',
             borderRadius: 3,
             p: 1,
             maxWidth: 300,
             mx: 'auto',
-            boxShadow: 1
+            boxShadow: 1,
+            border: `1px solid ${Colors.LOGOlight}`
           }}>
-            <Tabs 
-              value={activeTab} 
+            <Tabs
+              value={activeTab}
               onChange={handleTabChange}
               variant="fullWidth"
               sx={{
@@ -173,29 +191,29 @@ const PricingPlans = () => {
                 }
               }}
             >
-              <Tab 
-                label="Monthly" 
+              <Tab
+                label="Monthly"
                 sx={{
                   minHeight: 'auto',
                   py: 1,
                   px: 2,
                   fontSize: '0.875rem',
                   fontWeight: activeTab === 0 ? FontWeight.heading2 : FontWeight.heading1,
-                  color: activeTab === 0 ? Colors.LOGOColor : Colors.lightText,
+                  color: activeTab === 0 ? Colors.LOGOColor : Colors.LOGOlight,
                   zIndex: 1
-                }} 
+                }}
               />
-              <Tab 
-                label="Annually" 
+              <Tab
+                label="Annually"
                 sx={{
                   minHeight: 'auto',
                   py: 1,
                   px: 2,
                   fontSize: '0.875rem',
                   fontWeight: activeTab === 1 ? FontWeight.heading2 : FontWeight.heading1,
-                  color: activeTab === 1 ? Colors.LOGOColor : Colors.lightText,
+                  color: activeTab === 1 ? Colors.LOGOColor : Colors.LOGOlight,
                   zIndex: 1
-                }} 
+                }}
               />
             </Tabs>
           </Box>
@@ -209,9 +227,10 @@ const PricingPlans = () => {
           ) : (
             <Grid container spacing={3} justifyContent="center">
               {displayPlans.map((plan, index) => (
-                <Grid item xs={12} md={3} key={index}>
+                <Grid item xs={12} md={4} key={index}>
                   <Card
                     sx={{
+                      width: "100%", 
                       height: "100%",
                       display: "flex",
                       flexDirection: "column",
@@ -231,6 +250,7 @@ const PricingPlans = () => {
                       }
                     }}
                   >
+
                     {plan.popular && (
                       <Box
                         sx={{
@@ -322,27 +342,25 @@ const PricingPlans = () => {
                               </Typography>
                             </>
                           )}
-                          {plan.displayPeriod && (
-                            <Typography
-                              variant="body1"
-                              sx={{
-                                color: Colors.lightText,
-                                ml: 1,
-                                mb: 0.5
-                              }}
-                            >
-                              {plan.displayPeriod}
-                              {plan.isAnnual && plan.displayPrice !== "0" && (
-                                <Box component="span" sx={{ 
-                                  fontSize: '0.75rem',
-                                  color: Colors.LOGOColor,
-                                  ml: 0.5
-                                }}>
-                                
-                                </Box>
-                              )}
-                            </Typography>
-                          )}
+                          <Typography
+                            variant="body1"
+                            sx={{
+                              color: Colors.lightText,
+                              ml: 1,
+                              mb: 0.5
+                            }}
+                          >
+                            /{plan.displayPeriod}
+                            {plan.isAnnual && plan.displayPrice !== "0" && (
+                              <Box component="span" sx={{
+                                fontSize: '0.75rem',
+                                color: Colors.LOGOColor,
+                                ml: 0.5
+                              }}>
+                                (Save 20%)
+                              </Box>
+                            )}
+                          </Typography>
                         </Box>
                       </Box>
 
@@ -390,7 +408,7 @@ const PricingPlans = () => {
                         fullWidth
                         size="large"
                         onClick={() => handlePlanSelect(plan)}
-                        disabled={plan.name.toLowerCase() !== "basic plan"}
+                        disabled={plan.planStatus === "Coming Soon" || !plan.isActive}
                         sx={{
                           fontWeight: FontWeight.heading1,
                           py: 1.5,
@@ -413,7 +431,7 @@ const PricingPlans = () => {
                             })
                         }}
                       >
-                        {plan.name.toLowerCase() === "enterprise" ? "Contact Us" : "Get Started"}
+                        {plan.planStatus}
                       </Button>
                     </Box>
                   </Card>
@@ -424,6 +442,17 @@ const PricingPlans = () => {
         </Container>
       </Box>
       <Footer />
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="warning" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

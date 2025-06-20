@@ -15,9 +15,9 @@ import {
   IconButton,
   Autocomplete,
   Avatar,
-  Chip,
   Link,
-  Stack,
+  Divider,
+  Alert as MuiAlert,
 } from "@mui/material";
 import {
   PhotoCamera,
@@ -38,6 +38,7 @@ import {
   Language,
   YouTube,
   WhatsApp,
+  Share,
 } from "@mui/icons-material";
 import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
@@ -45,7 +46,6 @@ import { useSelector } from "react-redux";
 import Footer from "../Components/Footer";
 import { State, City } from "country-state-city";
 import { message } from "antd";
-import QRCode from "react-qr-code";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Colors, FontWeight } from "../Comman";
 
@@ -83,12 +83,20 @@ const ListYourBusiness = () => {
     youtube: "",
     whatsapp: "",
   });
+  const [showLoginAlert, setShowLoginAlert] = useState(!user);
+
+  useEffect(() => {
+    if (!user) {
+      message.warning("You need to login to list your business");
+      navigate("/login", { state: { from: location.pathname } });
+    }
+    fetchCategories();
+    setStatesList(states);
+  }, [user, navigate, location.pathname]);
 
   const handleChangeLinks = (e) => {
     setLinks({ ...links, [e.target.name]: e.target.value });
   };
-
-  // const steps = ["Business Information", "Contact Details", "Media & Description", "Review & Submit", "Payment"];
 
   const steps = [
     "Business Information",
@@ -108,7 +116,6 @@ const ListYourBusiness = () => {
     { name: "whatsapp", icon: <WhatsApp />, color: "#25D366" },
   ];
 
-  // Fetch categories from the server
   const fetchCategories = async () => {
     try {
       const res = await axios.get("/api/v1/categories/get");
@@ -122,11 +129,6 @@ const ListYourBusiness = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchCategories();
-    setStatesList(states);
-  }, []);
 
   useEffect(() => {
     if (formData.state) {
@@ -145,11 +147,10 @@ const ListYourBusiness = () => {
   const handleNext = () => {
     if (activeStep === 0) {
       if (
-        !formData.businessName ||
-        !formData.state ||
-        !formData.city ||
-        !formData.category ||
-        !formData.description
+      !formData.businessName ||
+      !formData.state ||
+      !formData.city ||
+      !formData.category
       ) {
         message.error(
           "Please fill in all required fields for Business Information."
@@ -199,8 +200,7 @@ const ListYourBusiness = () => {
 
     if (files.length > filesToAdd.length) {
       message.warn(
-        `You can only upload a maximum of 5 images. ${
-          files.length - filesToAdd.length
+        `You can only upload a maximum of 5 images. ${files.length - filesToAdd.length
         } image(s) were not added.`
       );
     }
@@ -238,62 +238,10 @@ const ListYourBusiness = () => {
     setCategoryInput(value || "");
   };
 
-  // const handleSubmit = async () => {
-  //   setLoading(true);
-
-  //   const data = new FormData();
-  //   Object.entries(formData).forEach(([key, value]) => {
-  //     if (key === "images") {
-  //       value.forEach(image => data.append("images", image));
-  //     } else if (value !== undefined && value !== null) {
-  //       data.append(key, value);
-  //     }
-  //   });
-  //   data.append("userId", user?._id);
-  //   data.append("planName", planName);
-  //   data.append("planPrice", planPrice);
-  //   data.append("planId", planId);
-  //   data.append("socialLinks", JSON.stringify(links));
-
-  //   try {
-  //     const res = await axios.post("/api/v1/business/add", data, {
-  //       headers: { "Content-Type": "multipart/form-data" },
-  //     });
-
-  //     if (res.data.success) {
-  //       message.success("Your business has been successfully listed!");
-  //       setSuccess(true);
-  //       setFormData({
-  //         businessName: "",
-  //         ownerName: "",
-  //         phone: "",
-  //         email: "",
-  //         address: "",
-  //         state: "",
-  //         city: "",
-  //         category: "",
-  //         description: "",
-  //         images: []
-  //       });
-  //       setCategoryInput("");
-  //       setCitiesList([]);
-  //     } else {
-  //       message.error(res.data.message || "Submission failed.");
-  //     }
-
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //     message.error(error.response?.data?.message || "An error occurred during submission.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleSubmit = async () => {
     setLoading(true);
 
     const data = new FormData();
-
     Object.entries(formData).forEach(([key, value]) => {
       if (key === "images") {
         value.forEach((image) => data.append("images", image));
@@ -360,20 +308,21 @@ const ListYourBusiness = () => {
           borderColor: Colors.BLACK,
         },
         "&:hover fieldset": {
-          borderColor: Colors.BLACK,
+          borderColor: Colors.LOGOlight,
         },
         "&.Mui-focused fieldset": {
-          borderColor: Colors.LOGOlight,
+          borderColor: Colors.LOGOColor,
+
         },
       },
       "& .MuiInputLabel-root": {
         color: Colors.BLACK,
       },
       "& .MuiInputLabel-root.Mui-focused": {
-        color: Colors.LOGOlight,
+        color: Colors.LOGOColor,
       },
       "& .MuiInputBase-input": {
-        color: "#000000",
+        color: Colors.LOGOColor,
       },
     };
 
@@ -530,7 +479,7 @@ const ListYourBusiness = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Business Description"
+                label="Business Description (optional)"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -547,6 +496,7 @@ const ListYourBusiness = () => {
                 sx={textFieldSx}
               />
             </Grid>
+
           </Grid>
         );
       case 1:
@@ -610,8 +560,10 @@ const ListYourBusiness = () => {
                   textAlign: "center",
                   backgroundColor: `${Colors.LOGOColor}10`,
                   cursor: "pointer",
+                  transition: "all 0.3s ease",
                   "&:hover": {
                     backgroundColor: `${Colors.LOGOColor}20`,
+                    transform: "translateY(-2px)",
                   },
                 }}
               >
@@ -643,7 +595,7 @@ const ListYourBusiness = () => {
                         sx={{ fontSize: 30, color: Colors.LOGOColor }}
                       />
                     </Avatar>
-                    <Typography variant="h6" gutterBottom>
+                    <Typography variant="h6" gutterBottom sx={{ color: Colors.LOGOColor }}>
                       Upload Business Images
                     </Typography>
                     <Typography
@@ -654,14 +606,16 @@ const ListYourBusiness = () => {
                       Drag & drop images here or click to browse (Max 5 images)
                     </Typography>
                     <Button
-                      variant="outlined"
-                      sx={{
-                        color: Colors.WHITE,
-                        borderColor: Colors.LOGOlight,
-                      }}
+                      variant="contained"
                       startIcon={<Add />}
                       component="span"
                       disabled={formData.images.length >= 5}
+                      sx={{
+                        backgroundColor: Colors.LOGOlight,
+                        "&:hover": {
+                          backgroundColor: Colors.LOGOColor,
+                        },
+                      }}
                     >
                       Select Images
                     </Button>
@@ -671,13 +625,20 @@ const ListYourBusiness = () => {
 
               {formData.images.length > 0 && (
                 <Box mt={3}>
-                  <Typography variant="subtitle2" gutterBottom>
+                  <Typography variant="subtitle2" gutterBottom sx={{ color: Colors.LOGOColor }}>
                     Selected Images ({formData.images.length}/5)
                   </Typography>
                   <Grid container spacing={2}>
                     {formData.images.map((img, idx) => (
                       <Grid item xs={6} sm={4} md={3} key={idx}>
-                        <Card sx={{ position: "relative" }}>
+                        <Card sx={{
+                          position: "relative",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            transform: "scale(1.03)",
+                            boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
+                          },
+                        }}>
                           <CardMedia
                             component="img"
                             height="140"
@@ -714,45 +675,36 @@ const ListYourBusiness = () => {
       case 3:
         return (
           <Box sx={{ mx: "auto", mt: 4 }}>
-            <Typography variant="h5" gutterBottom>
+            <Typography variant="h5" gutterBottom sx={{ color: Colors.LOGOColor }}>
               Social Media Links
             </Typography>
 
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
-                {[
-                  {
-                    label: "Instagram",
-                    name: "instagram",
-                    icon: <Instagram />,
-                  },
-                  { label: "Facebook", name: "facebook", icon: <Facebook /> },
-                  { label: "WhatsApp", name: "whatsapp", icon: <WhatsApp /> },
-                  { label: "LinkedIn", name: "linkedin", icon: <LinkedIn /> },
-                  { label: "Twitter", name: "twitter", icon: <Twitter /> },
-                  { label: "YouTube", name: "youtube", icon: <YouTube /> },
-                  { label: "Website", name: "website", icon: <Language /> },
-                ].map((field, i) => (
+                {socialPlatforms.map(({ name, icon, color }, i) => (
                   <Grid item xs={12} sm={6} key={i}>
                     <TextField
                       fullWidth
-                      label={field.label}
-                      name={field.name}
+                      label={name.charAt(0).toUpperCase() + name.slice(1)}
+                      name={name}
                       type="url"
-                      value={formData[field.name]}
+                      value={links[name]}
                       onChange={handleChangeLinks}
                       variant="outlined"
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position="start">
-                            {React.cloneElement(field.icon, {
-                              sx: { color: Colors.LOGOColor },
-                            })}
+                            {React.cloneElement(icon, { sx: { color } })}
                           </InputAdornment>
                         ),
                       }}
-                      sx={textFieldSx}
-                      placeholder={`https://${field.name}.com/your-profile`}
+                      sx={{
+                        ...textFieldSx,
+                        "& .MuiInputBase-input": {
+                          color: Colors.LOGOColor,
+                        },
+                      }}
+                      placeholder={`https://${name}.com/your-profile`}
                     />
                   </Grid>
                 ))}
@@ -762,270 +714,246 @@ const ListYourBusiness = () => {
         );
       case 4:
         return (
-          <Box
-            sx={{ p: 3, border: "1px solid rgba(0,0,0,0.12)", borderRadius: 2 }}
-          >
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ mb: 3, display: "flex", alignItems: "center" }}
-            >
-              <CheckCircle sx={{ color: Colors.LOGOColor, mr: 1 }} /> Review
-              Your Business Information
-            </Typography>
+          <Box sx={{
+            p: 4,
+            border: `1px solid ${Colors.LOGOlight}`,
+            borderRadius: 3,
+            backgroundColor: '#f9f9f9',
+            boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}20`,
+          }}>
+            {/* Plan Information */}
+            <Box sx={{
+              mb: 4,
+              p: 3,
+              backgroundColor: `${Colors.LOGOColor}08`,
+              borderRadius: 2,
+              borderLeft: `4px solid ${Colors.LOGOColor}`,
+              boxShadow: `0 2px 10px 0 ${Colors.LOGOlight}10`,
+            }}>
+              <Typography variant="h6" sx={{
+                mb: 2,
+                color: Colors.LOGOColor,
+                fontWeight: FontWeight.bold,
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Selected Plan
+              </Typography>
 
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ fontWeight: 900 }}
-              >
-                Plan Name:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: Colors.LOGOColor, mr: 2, fontWeight: 700 }}
-              >
-                {planName}
-              </Typography>
-
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ fontWeight: 900 }}
-              >
-                Plan Price:
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{ color: Colors.LOGOColor, fontWeight: 700 }}
-              >
-                {planPrice}
-              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: FontWeight.medium, color: Colors.LOGOlight }}>
+                    Plan Name:
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: Colors.LOGOColor, fontWeight: FontWeight.bold }}>
+                    {planName || "Not selected"}
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: FontWeight.medium, color: Colors.LOGOlight }}>
+                    Plan Price:
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: Colors.LOGOColor, fontWeight: FontWeight.bold }}>
+                    {planPrice ? `₹${planPrice}` : "Not selected"}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Box>
 
-            <Grid container spacing={3} mt={1}>
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Business Name
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 2, color: Colors.LOGOColor }}
-                >
-                  {formData.businessName}
-                </Typography>
+            {/* Business Information Section */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{
+                mb: 2,
+                color: Colors.LOGOColor,
+                fontWeight: FontWeight.bold,
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Business Information
+              </Typography>
 
-                <Typography variant="subtitle2" color="text.secondary">
-                  Location
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 2, color: Colors.LOGOColor }}
-                >
-                  {formData.city ? `${formData.city}, ` : ""}
-                  {formData.state}
-                </Typography>
-
-                <Typography variant="subtitle2" color="text.secondary">
-                  Category
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 2, color: Colors.LOGOColor }}
-                >
-                  {categories.find((c) => c._id === formData.category)?.name ||
-                    categoryInput ||
-                    "N/A"}
-                </Typography>
-
-                <Typography variant="subtitle2" color="text.secondary">
-                  Description
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 2, color: Colors.LOGOColor }}
-                >
-                  {formData.description || "Not provided"}
-                </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <DetailItem
+                    label="Business Name"
+                    value={formData.businessName}
+                    icon={<Business sx={{ color: Colors.LOGOColor }} />}
+                  />
+                  <DetailItem
+                    label="Category"
+                    value={categories.find(c => c._id === formData.category)?.name || categoryInput}
+                    icon={<Search sx={{ color: Colors.LOGOColor }} />}
+                  />
+                  <DetailItem
+                    label="Description"
+                    value={formData.description || "Not provided"}
+                    icon={<Description sx={{ color: Colors.LOGOColor }} />}
+                    multiline
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <DetailItem
+                    label="Location"
+                    value={`${formData.city || ""}${formData.city && formData.state ? ", " : ""}${formData.state || ""}`}
+                    icon={<Home sx={{ color: Colors.LOGOColor }} />}
+                  />
+                </Grid>
               </Grid>
+            </Box>
 
-              <Grid item xs={12} sm={6}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Contact Information
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                  <Chip
+            <Divider sx={{ my: 3, borderColor: Colors.LOGOlight }} />
+
+            {/* Contact Information Section */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{
+                mb: 2,
+                color: Colors.LOGOColor,
+                fontWeight: FontWeight.bold,
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Person sx={{ mr: 1, color: Colors.LOGOColor }} /> Contact Information
+              </Typography>
+
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <DetailItem
+                    label="Owner Name"
+                    value={formData.ownerName}
                     icon={<Person sx={{ color: Colors.LOGOColor }} />}
-                    label={formData.ownerName}
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                      color: Colors.LOGOColor,
-                      borderColor: Colors.LOGOlight,
-                    }}
-                    variant="outlined"
                   />
-                  <Chip
+                  <DetailItem
+                    label="Phone"
+                    value={formData.phone}
                     icon={<Phone sx={{ color: Colors.LOGOColor }} />}
-                    label={formData.phone}
-                    sx={{
-                      mr: 1,
-                      mb: 1,
-                      color: Colors.LOGOColor,
-                      borderColor: Colors.LOGOlight,
-                    }}
-                    variant="outlined"
                   />
-                  {formData.email && (
-                    <Chip
-                      icon={<Email sx={{ color: Colors.LOGOColor }} />}
-                      label={formData.email}
-                      sx={{
-                        mb: 1,
-                        color: Colors.LOGOColor,
-                        borderColor: Colors.LOGOlight,
-                      }}
-                      variant="outlined"
-                    />
-                  )}
-                </Box>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <DetailItem
+                    label="Email"
+                    value={formData.email || "Not provided"}
+                    icon={<Email sx={{ color: Colors.LOGOColor }} />}
+                  />
+                  <DetailItem
+                    label="Address"
+                    value={formData.address}
+                    icon={<Home sx={{ color: Colors.LOGOColor }} />}
+                    multiline
+                  />
+                </Grid>
+              </Grid>
+            </Box>
 
-                <Typography variant="subtitle2" color="text.secondary">
-                  Address
+            <Divider sx={{ my: 3, borderColor: Colors.LOGOlight }} />
+
+            {/* Media Section */}
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h6" sx={{
+                mb: 2,
+                color: Colors.LOGOColor,
+                fontWeight: FontWeight.bold,
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <PhotoCamera sx={{ mr: 1, color: Colors.LOGOColor }} /> Media
+              </Typography>
+
+              <Typography variant="subtitle1" sx={{ mb: 1, color: Colors.LOGOlight }}>
+                Images ({formData.images.length}/5)
+              </Typography>
+
+              {formData.images.length > 0 ? (
+                <Grid container spacing={2}>
+                  {formData.images.map((img, index) => (
+                    <Grid item xs={6} sm={4} md={3} key={index}>
+                      <Card sx={{
+                        position: 'relative',
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          transform: "scale(1.03)",
+                          boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
+                        },
+                      }}>
+                        <CardMedia
+                          component="img"
+                          height="140"
+                          image={typeof img === 'string' ? img : URL.createObjectURL(img)}
+                          alt={`Business ${index}`}
+                          sx={{ objectFit: 'cover' }}
+                        />
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No images uploaded
                 </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ mb: 2, color: Colors.LOGOColor }}
-                >
-                  {formData.address}
-                </Typography>
+              )}
+            </Box>
 
-                <Box sx={{ mt: 3 }}>
-                  <Typography
-                    variant="subtitle2"
-                    color="text.secondary"
-                    gutterBottom
-                  >
-                    Social Media Links
-                  </Typography>
+            <Divider sx={{ my: 3, borderColor: Colors.LOGOlight }} />
 
-                  <Stack spacing={1}>
-                    {socialPlatforms.map(({ name, icon, color }) => {
-                      const url = links[name];
-                      if (!url) return null;
+            {/* Social Media Section */}
+            <Box>
+              <Typography variant="h6" sx={{
+                mb: 2,
+                color: Colors.LOGOColor,
+                fontWeight: FontWeight.bold,
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Share sx={{ mr: 1, color: Colors.LOGOColor }} /> Social Media Links
+              </Typography>
 
-                      return (
-                        <Box
-                          key={name}
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <Box sx={{ color }}>{icon}</Box>
+              {Object.entries(links).some(([_, value]) => value) ? (
+                <Grid container spacing={2}>
+                  {socialPlatforms.map(({ name, icon, color }) => {
+                    const url = links[name];
+                    if (!url) return null;
+
+                    return (
+                      <Grid item xs={12} sm={6} key={name}>
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          p: 1.5,
+                          backgroundColor: '#f5f5f5',
+                          borderRadius: 1,
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            transform: "translateY(-2px)",
+                            boxShadow: `0 2px 10px 0 ${color}20`,
+                          },
+                        }}>
+                          <Box sx={{ color, mr: 2 }}>{icon}</Box>
                           <Link
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            underline="hover"
-                            sx={{ color: "primary.main", fontSize: "16px" }}
+                            sx={{
+                              color: Colors.LOGOColor,
+                              wordBreak: 'break-all',
+                              "&:hover": {
+                                color: Colors.LOGOlight,
+                              },
+                            }}
                           >
                             {url}
                           </Link>
                         </Box>
-                      );
-                    })}
-                  </Stack>
-                </Box>
-
-                <Typography variant="subtitle2" color="text.secondary">
-                  Images
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No social media links provided
                 </Typography>
-
-                <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap", mt: 1 }}>
-                  {formData.images && formData.images.length > 0 ? (
-                    formData.images.map((img, index) => (
-                      <img
-                        key={index}
-                        src={
-                          typeof img === "string"
-                            ? img
-                            : URL.createObjectURL(img)
-                        }
-                        alt={`Uploaded ${index}`}
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                          border: `1px solid ${Colors.LOGOlight}`,
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      sx={{ color: Colors.LOGOlight }}
-                    >
-                      No images uploaded
-                    </Typography>
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
+              )}
+            </Box>
           </Box>
         );
-
-      // case 5:
-      //   return (
-      //     <Box sx={{
-      //       p: 3,
-      //       border: '1px solid rgba(0,0,0,0.12)',
-      //       borderRadius: 2,
-      //       textAlign: 'center'
-      //     }}>
-      //       <Typography variant="h5" gutterBottom sx={{ mb: 3, color: Colors.LOGOColor }}>
-      //         Complete Your Payment
-      //       </Typography>
-
-      //       <Box sx={{
-      //         backgroundColor: '#f5f5f5',
-      //         p: 3,
-      //         borderRadius: 2,
-      //         mb: 3,
-      //         display: 'inline-block'
-      //       }}>
-      //         <Typography variant="h6" sx={{ mb: 2 }}>
-      //           Plan: <strong>{planName || "Growth"}</strong>
-      //         </Typography>
-      //         <Typography variant="h4" sx={{ mb: 3, color: Colors.LOGOColor }}>
-      //           Price: <strong>${planPrice || "299"}</strong>
-      //         </Typography>
-
-      //         <Box sx={{
-      //           p: 2,
-      //           backgroundColor: 'white',
-      //           borderRadius: 1,
-      //           display: 'inline-block',
-      //           mb: 3
-      //         }}>
-      //           <QRCode
-      //             value={`Payment for ${planName || "Growth"} plan - $${planPrice || "299"}`}
-      //             size={128}
-      //             bgColor="#ffffff"
-      //             fgColor="#000000"
-      //             level="L"
-      //           />
-      //         </Box>
-
-      //         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-      //           Scan the QR code to complete payment
-      //         </Typography>
-      //       </Box>
-
-      //       <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
-      //         Your business listing will be activated once payment is confirmed.
-      //       </Typography>
-      //     </Box>
-      //   );
       default:
         return "Unknown step";
     }
@@ -1036,7 +964,11 @@ const ListYourBusiness = () => {
       <>
         <Navbar />
         <Container maxWidth="md" sx={{ py: 8, textAlign: "center" }}>
-          <Paper elevation={3} sx={{ p: 6, borderRadius: 4 }}>
+          <Paper elevation={3} sx={{
+            p: 6,
+            borderRadius: 4,
+            background: `linear-gradient(135deg, ${Colors.LOGOlight}10, ${Colors.LOGOColor}10)`,
+          }}>
             <Box sx={{ mb: 4 }}>
               <Avatar
                 sx={{
@@ -1052,7 +984,7 @@ const ListYourBusiness = () => {
             <Typography
               variant="h4"
               gutterBottom
-              sx={{ fontWeight: "bold", color: "#2d2d2d" }}
+              sx={{ fontWeight: "bold", color: Colors.LOGOColor }}
             >
               Congratulations!
             </Typography>
@@ -1073,6 +1005,9 @@ const ListYourBusiness = () => {
                 textTransform: "none",
                 fontSize: "1rem",
                 backgroundColor: Colors.LOGOlight,
+                "&:hover": {
+                  backgroundColor: Colors.LOGOColor,
+                }
               }}
             >
               List Another Business
@@ -1088,14 +1023,28 @@ const ListYourBusiness = () => {
     <>
       <Navbar />
       <Container maxWidth="lg" sx={{ py: 6 }}>
+        {showLoginAlert && (
+          <MuiAlert
+            severity="warning"
+            sx={{
+              mb: 3,
+              backgroundColor: `${Colors.LOGOlight}20`,
+              color: Colors.LOGOColor,
+              border: `1px solid ${Colors.LOGOlight}`,
+            }}
+            onClose={() => setShowLoginAlert(false)}
+          >
+            You need to login to list your business
+          </MuiAlert>
+        )}
         <Paper
           elevation={0}
           sx={{
             p: { xs: 3, md: 4 },
             borderRadius: 4,
             background: "#ffffff",
-            boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)",
-            border: "1px solid rgba(0, 0, 0, 0.05)",
+            boxShadow: `0px 10px 30px ${Colors.LOGOlight}10`,
+            border: `1px solid ${Colors.LOGOlight}20`,
           }}
         >
           <Box textAlign="center" mb={5}>
@@ -1109,6 +1058,7 @@ const ListYourBusiness = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 mb: 3,
+                boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}20`,
               }}
             >
               <Business sx={{ fontSize: 50, color: Colors.LOGOColor }} />
@@ -1117,7 +1067,7 @@ const ListYourBusiness = () => {
               variant="h4"
               fontWeight="bold"
               gutterBottom
-              sx={{ color: "#2d2d2d" }}
+              sx={{ color: Colors.LOGOColor }}
             >
               List Your Business
             </Typography>
@@ -1155,6 +1105,7 @@ const ListYourBusiness = () => {
                             ? Colors.WHITE
                             : "rgba(0, 0, 0, 0.5)",
                         fontWeight: "bold",
+                        boxShadow: `0 2px 10px 0 ${Colors.LOGOlight}20`,
                       }}
                     >
                       {index + 1}
@@ -1194,7 +1145,16 @@ const ListYourBusiness = () => {
 
           <Box sx={{ mb: 4 }}>{getStepContent(activeStep)}</Box>
 
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 2,
+              mt: 3,
+            }}
+          >
             <Button
               disabled={activeStep === 0}
               onClick={handleBack}
@@ -1207,6 +1167,13 @@ const ListYourBusiness = () => {
                 fontSize: "1rem",
                 backgroundColor: Colors.LOGOlight,
                 color: "white",
+                width: { xs: "100%", sm: "auto" },
+                "&:hover": {
+                  backgroundColor: Colors.LOGOColor,
+                },
+                "&:disabled": {
+                  backgroundColor: `${Colors.LOGOlight}50`,
+                }
               }}
             >
               Back
@@ -1230,6 +1197,13 @@ const ListYourBusiness = () => {
                   textTransform: "none",
                   fontSize: "1rem",
                   backgroundColor: Colors.LOGOlight,
+                  width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    backgroundColor: Colors.LOGOColor,
+                  },
+                  "&:disabled": {
+                    backgroundColor: `${Colors.LOGOlight}50`,
+                  }
                 }}
               >
                 {loading ? "Submitting..." : "Review & Submit"}
@@ -1246,17 +1220,55 @@ const ListYourBusiness = () => {
                   textTransform: "none",
                   fontSize: "1rem",
                   backgroundColor: Colors.LOGOlight,
+                  width: { xs: "100%", sm: "auto" },
+                  "&:hover": {
+                    backgroundColor: Colors.LOGOColor,
+                  }
                 }}
               >
                 Next
               </Button>
             )}
           </Box>
+
         </Paper>
       </Container>
       <Footer />
     </>
   );
 };
+
+// Helper component for consistent detail items
+const DetailItem = ({ label, value, icon, multiline = false }) => (
+  <Box sx={{ mb: 2 }}>
+    <Typography variant="subtitle2" sx={{
+      display: 'flex',
+      alignItems: 'center',
+      mb: 0.5,
+      color: Colors.LOGOlight,
+    }}>
+      {React.cloneElement(icon, { sx: { fontSize: 16, mr: 1 } })}
+      {label}
+    </Typography>
+    {multiline ? (
+      <Typography variant="body1" sx={{
+        color: Colors.LOGOColor,
+        whiteSpace: 'pre-line',
+        ml: 3,
+        lineHeight: 1.6,
+      }}>
+        {value}
+      </Typography>
+    ) : (
+      <Typography variant="body1" sx={{
+        color: Colors.LOGOColor,
+        fontWeight: FontWeight.medium,
+        ml: 3,
+      }}>
+        {value || "Not provided"}
+      </Typography>
+    )}
+  </Box>
+);
 
 export default ListYourBusiness;

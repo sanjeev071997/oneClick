@@ -3,7 +3,6 @@ import {
   Box,
   Grid,
   Typography,
-  Link,
   TextField,
   Button,
   IconButton,
@@ -27,6 +26,7 @@ import logo from '../Images/LOGO1.png';
 
 import { Colors, FontFamily, FontWeight } from "../Comman";
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import { Link as RouterLink } from 'react-router-dom';
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -57,8 +57,8 @@ const Footer = () => {
 
   return (
     <Box sx={{
-      ml:5,
-      mr:5,
+      ml: 5,
+      mr: 5,
       mt: 5,
       bgcolor: Colors.WHITE,
       pt: 5,
@@ -68,9 +68,8 @@ const Footer = () => {
       <Container maxWidth="xxl">
         <Grid container spacing={4}>
           {/* Logo and About Us */}
-          <Grid item xs={12} md={3}> 
+          <Grid item xs={12} md={3}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {/* Logo Box */}
               <Box>
                 <img
                   src={logo}
@@ -80,32 +79,40 @@ const Footer = () => {
               </Box>
             </Box>
             <Box>
-                <Typography
-                  variant="body2"
-                  color={Colors.LOGOColor}
-                  sx={{ lineHeight: 1.5, fontFamily: FontFamily.arial, fontWeight:FontWeight.heading2,mt:3,letterSpacing:1 }}
-                >
-                  Connecting customers with trusted local services across India. Find professionals for all your home service needs.
-                </Typography>
-              </Box>
+              <Typography
+                variant="body2"
+                color={Colors.LOGOColor}
+                sx={{
+                  lineHeight: 1.5,
+                  fontFamily: FontFamily.arial,
+                  fontWeight: FontWeight.heading2,
+                  mt: 3,
+                  letterSpacing: 1
+                }}
+              >
+                Connecting customers with trusted local services across India. Find professionals for all your home service needs.
+              </Typography>
+            </Box>
           </Grid>
 
           {/* Quick Links */}
-          <Grid item xs={12} sm={6} md={3} > 
+          <Grid item xs={12} sm={6} md={3}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 800, color: Colors.LOGOColor, fontFamily: FontFamily.arial }}>
               Quick Links
             </Typography>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               {quickLinks.map((link) => (
-                <Link
+                <Box
                   key={link.name}
-                  href={link.path}
-                  underline="none"
-                  color={Colors.LOGOColor}
+                  component={RouterLink}
+                  to={link.path}
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                   sx={{
                     fontFamily: FontFamily.arial,
                     display: "flex",
                     alignItems: "center",
+                    textDecoration: "none",
+                    color: Colors.LOGOColor,
                     "&:hover": {
                       color: Colors.LOGOlight,
                       fontWeight: FontWeight.heading2
@@ -115,14 +122,14 @@ const Footer = () => {
                 >
                   <Box sx={{ mr: 1 }}>{link.icon}</Box>
                   {link.name}
-                </Link>
+                </Box>
               ))}
             </Box>
           </Grid>
 
           {/* Contact & Social Icons */}
-          <Grid item xs={12} sm={6} md={3}> 
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 800, color: Colors.LOGOColor, fontFamily: FontFamily.arial, }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 800, color: Colors.LOGOColor, fontFamily: FontFamily.arial }}>
               Contact Us
             </Typography>
             <Box sx={{ mb: 2 }}>
@@ -231,7 +238,7 @@ const Footer = () => {
           </Typography>
         </Box>
       </Container>
-    </Box >
+    </Box>
   );
 };
 

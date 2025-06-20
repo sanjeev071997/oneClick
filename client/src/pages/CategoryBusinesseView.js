@@ -786,7 +786,7 @@ const CategoryBusinessView = () => {
           )}
         </Box>
       </Box>
-      <Footer />
+   <Footer />
     </>
   );
 };

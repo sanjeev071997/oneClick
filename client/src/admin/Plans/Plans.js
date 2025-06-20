@@ -11,15 +11,18 @@ import { AddCircle, RemoveCircle, Edit, Delete, Add, CheckCircle } from '@mui/ic
 import { message, Popconfirm } from 'antd';
 import { Link } from 'react-router-dom';
 
-
-
 const initialForm = {
   planName: '',
   planDescription: '',
-  planPrice: '',
-  planDuration: '',
+  monthlyPlanPrice: '',
+  annuallyPlanPrice: '',
+  monthlyDuration: '',
+  annuallyDuration: '',
+  planStatus: '', 
   planFeatures: [''],
 };
+
+const planStatusOptions = ['Get Started', 'Coming Soon'];
 
 const AdminPlans = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -76,7 +79,11 @@ const AdminPlans = () => {
 
   const handleSubmit = async () => {
     setLoading(true);
-    const payload = { ...form, planPrice: Number(form.planPrice) };
+    const payload = { 
+      ...form, 
+      monthlyPlanPrice: Number(form.monthlyPlanPrice),
+      annuallyPlanPrice: Number(form.annuallyPlanPrice)
+    };
 
     try {
       if (editId) {
@@ -111,7 +118,7 @@ const AdminPlans = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      await axios.put('/api/v1/plans/status', { id, status: newStatus });
+      await axios.put('/api/v1/plans/status', { id, isActive: newStatus });
       setPlans(prev =>
         prev.map(plan =>
           plan._id === id ? { ...plan, isActive: newStatus } : plan
@@ -128,8 +135,11 @@ const AdminPlans = () => {
     setForm({
       planName: plan.planName,
       planDescription: plan.planDescription,
-      planPrice: plan.planPrice,
-      planDuration: plan.planDuration,
+      monthlyPlanPrice: plan.monthlyPlanPrice,
+      annuallyPlanPrice: plan.annuallyPlanPrice,
+      monthlyDuration: plan.monthlyDuration || 'month',
+      annuallyDuration: plan.annuallyDuration || 'year',
+      planStatus: plan.planStatus || 'Get Started',
       planFeatures: plan.planFeatures,
     });
     setEditId(plan._id);
@@ -176,10 +186,10 @@ const AdminPlans = () => {
 
       <Box display="flex" gap={2}>
         <TextField
-          label="Price (₹)"
+          label="Monthly Price (₹)"
           type="number"
-          value={form.planPrice}
-          onChange={e => handleChange('planPrice', e.target.value)}
+          value={form.monthlyPlanPrice}
+          onChange={e => handleChange('monthlyPlanPrice', e.target.value)}
           fullWidth
           variant="outlined"
           size="small"
@@ -191,10 +201,26 @@ const AdminPlans = () => {
         />
 
         <TextField
-          label="Duration"
-          placeholder="Enter duration (e.g., monthly, yearly)"
-          value={form.planDuration}
-          onChange={e => handleChange('planDuration', e.target.value)}
+          label="Annually Price (₹)"
+          type="number"
+          value={form.annuallyPlanPrice}
+          onChange={e => handleChange('annuallyPlanPrice', e.target.value)}
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
+        />
+      </Box>
+
+      <Box display="flex" gap={2}>
+        <TextField
+          label="Monthly Duration"
+          value={form.monthlyDuration}
+          onChange={e => handleChange('monthlyDuration', e.target.value)}
           fullWidth
           variant="outlined"
           size="small"
@@ -205,6 +231,42 @@ const AdminPlans = () => {
           }}
         />
 
+        <TextField
+          label="Annually Duration"
+          value={form.annuallyDuration}
+          onChange={e => handleChange('annuallyDuration', e.target.value)}
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
+        />
+      </Box>
+
+      <Box>
+        <TextField
+          select
+          label="Plan Status"
+          value={form.planStatus}
+          onChange={e => handleChange('planStatus', e.target.value)}
+          fullWidth
+          variant="outlined"
+          size="small"
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
+        >
+          {planStatusOptions.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
       </Box>
 
       <Box>
@@ -341,7 +403,6 @@ const AdminPlans = () => {
         <Typography sx={{ color: "primary.main" }}>Plans</Typography>
       </Breadcrumbs>
 
-
       <Card sx={{ mb: 4, borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
         <Tabs
           value={activeTab}
@@ -425,10 +486,11 @@ const AdminPlans = () => {
                     <TableRow>
                       <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Name</TableCell>
                       <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Description</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Price</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Duration</TableCell>
-                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Features</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Monthly Price</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Annually Price</TableCell>
                       <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Status</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Plan Status</TableCell>
+                      <TableCell sx={{ fontWeight: 600, color: '#275559' }}>Features</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 600, color: '#275559' }}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
@@ -450,7 +512,7 @@ const AdminPlans = () => {
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={`₹${plan.planPrice}`}
+                            label={`₹${plan.monthlyPlanPrice}`}
                             color="primary"
                             size="small"
                             sx={{
@@ -459,14 +521,52 @@ const AdminPlans = () => {
                               color: '#275559'
                             }}
                           />
+                          <Typography variant="caption" display="block" color="text.secondary">
+                            {plan.monthlyDuration}
+                          </Typography>
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={plan.planDuration}
+                            label={`₹${plan.annuallyPlanPrice}`}
+                            color="primary"
                             size="small"
                             sx={{
+                              fontWeight: 600,
+                              backgroundColor: 'rgba(39, 85, 89, 0.1)',
+                              color: '#275559'
+                            }}
+                          />
+                          <Typography variant="caption" display="block" color="text.secondary">
+                            {plan.annuallyDuration}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                            value={plan.isActive}
+                            onChange={(e) => handleStatusChange(plan._id, e.target.value)}
+                            size="small"
+                            sx={{
+                              minWidth: 100,
+                              '& .MuiOutlinedInput-notchedOutline': {
+                                border: 'none'
+                              },
+                              '& .MuiSelect-select': {
+                                padding: '6px 32px 6px 12px'
+                              }
+                            }}
+                          >
+                            <MenuItem value={true}>True</MenuItem>
+                            <MenuItem value={false}>false</MenuItem>
+                          </Select>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={plan.planStatus || 'Get Started'}
+                            size="small"
+                            color={plan.planStatus === 'Coming Soon' ? 'warning' : 'success'}
+                            sx={{
                               textTransform: 'capitalize',
-                              backgroundColor: 'rgba(0, 0, 0, 0.08)'
+                              fontWeight: 500
                             }}
                           />
                         </TableCell>
@@ -492,25 +592,6 @@ const AdminPlans = () => {
                               </Typography>
                             )}
                           </Stack>
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={plan.isActive}
-                            onChange={(e) => handleStatusChange(plan._id, e.target.value)}
-                            size="small"
-                            sx={{
-                              minWidth: 100,
-                              '& .MuiOutlinedInput-notchedOutline': {
-                                border: 'none'
-                              },
-                              '& .MuiSelect-select': {
-                                padding: '6px 32px 6px 12px'
-                              }
-                            }}
-                          >
-                            <MenuItem value={true}>True</MenuItem>
-                            <MenuItem value={false}>False</MenuItem>
-                          </Select>
                         </TableCell>
                         <TableCell align="right">
                           <Stack direction="row" spacing={1} justifyContent="flex-end">
@@ -587,7 +668,6 @@ const AdminPlans = () => {
           {renderForm(true)}
         </Box>
       </Modal>
-
     </Container>
   );
 };

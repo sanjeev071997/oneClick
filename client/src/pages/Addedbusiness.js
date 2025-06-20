@@ -22,10 +22,13 @@ import {
   Tabs,
   Tab,
   InputAdornment,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import {
   Edit,
-  Delete,
   AddPhotoAlternate,
   Close,
   Phone,
@@ -35,6 +38,12 @@ import {
   AddBusiness,
   Image,
   Search,
+  Facebook,
+  Instagram,
+  Twitter,
+  WhatsApp,
+  Link as LinkIcon,
+  YouTube,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -43,6 +52,7 @@ import axios from "../axiosInstance";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors, FontSize } from "../Comman";
+import { State, City } from "country-state-city";
 
 const AddedBusiness = () => {
   const navigate = useNavigate();
@@ -58,18 +68,32 @@ const AddedBusiness = () => {
     phone: "",
     email: "",
     address: "",
+    city: "",
+    state: "",
     description: "",
     images: [],
+    socialLinks: {
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      whatsapp: "",
+      website: "",
+      youtube: "",
+    },
   });
   const [newImages, setNewImages] = useState([]);
   const [deletedImages, setDeletedImages] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
   // Fetch businesses
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.get("/api/v1/business/get", { userId: user._id });
+      const res = await axios.get("/api/v1/business/get", {
+        userId: user._id,
+      });
       setBusinesses(res.data.data);
       setFilteredBusinesses(res.data.data);
     } catch (error) {
@@ -81,14 +105,25 @@ const AddedBusiness = () => {
 
   useEffect(() => {
     if (user?._id) fetchBusinesses();
+    // Load Indian states (country code: IN)
+    setStates(State.getStatesOfCountry("IN"));
   }, [user]);
+
+  // When state changes, load cities for that state
+  useEffect(() => {
+    if (formData.state) {
+      setCities(City.getCitiesOfState("IN", formData.state));
+    } else {
+      setCities([]);
+    }
+  }, [formData.state]);
 
   // Filter businesses based on search term
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredBusinesses(businesses);
     } else {
-      const filtered = businesses.filter(business =>
+      const filtered = businesses.filter((business) =>
         business.businessName.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredBusinesses(filtered);
@@ -105,11 +140,40 @@ const AddedBusiness = () => {
         phone: business.phone,
         email: business.email,
         address: business.address,
+        city: business.city,
+        state: business.state,
         description: business.description,
         images: business.images || [],
+        socialLinks: {
+          facebook: business.socialLinks?.facebook || "",
+          instagram: business.socialLinks?.instagram || "",
+          twitter: business.socialLinks?.twitter || "",
+          whatsapp: business.socialLinks?.whatsapp || "",
+          website: business.socialLinks?.website || "",
+          youtube: business.socialLinks?.youtube || "",
+        },
       });
       setDeletedImages([]);
       setNewImages([]);
+    } else {
+      setFormData({
+        businessName: "",
+        phone: "",
+        email: "",
+        address: "",
+        city: "",
+        state: "",
+        description: "",
+        images: [],
+        socialLinks: {
+          facebook: "",
+          instagram: "",
+          twitter: "",
+          whatsapp: "",
+          website: "",
+          youtube: "",
+        },
+      });
     }
     setOpenDialog(true);
   };
@@ -120,10 +184,21 @@ const AddedBusiness = () => {
     setActiveTab(0);
   };
 
-  // Handle form changes
+  // Handle form changes, now handling nested socialLinks
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name.startsWith("socialLinks.")) {
+      const socialFieldName = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        socialLinks: {
+          ...prev.socialLinks,
+          [socialFieldName]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handle search input change
@@ -166,8 +241,17 @@ const AddedBusiness = () => {
       formDataToSend.append("phone", formData.phone);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("address", formData.address);
+      formDataToSend.append("city", formData.city);
+      formDataToSend.append("state", formData.state);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("id", selectedBusiness._id);
+      // Append social media links
+      formDataToSend.append("facebook", formData.socialLinks.facebook);
+      formDataToSend.append("instagram", formData.socialLinks.instagram);
+      formDataToSend.append("twitter", formData.socialLinks.twitter);
+      formDataToSend.append("whatsapp", formData.socialLinks.whatsapp);
+      formDataToSend.append("website", formData.socialLinks.website);
+      formDataToSend.append("youtube", formData.socialLinks.youtube);
 
       // Append new images
       newImages.forEach((img) => {
@@ -199,27 +283,7 @@ const AddedBusiness = () => {
     }
   };
 
-  // Handle business deletion
-  const handleDelete = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.delete("/api/v1/business/delete", {
-        data: { id: selectedBusiness._id },
-      });
-
-      if (res.data.success === true) {
-        message.success("Business deleted successfully");
-        fetchBusinesses();
-        handleCloseDialog();
-      } else {
-        message.error("Failed to delete business");
-      }
-    } catch (error) {
-      message.error(error.response?.data?.message || "Deletion failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+ 
 
   if (loading && !businesses.length) {
     return (
@@ -245,7 +309,7 @@ const AddedBusiness = () => {
             justifyContent: "space-between",
             alignItems: "center",
             mb: 4,
-            flexDirection: { xs: "column", sm: "row" }, 
+            flexDirection: { xs: "column", sm: "row" },
             gap: { xs: 2, sm: 0 },
           }}
         >
@@ -253,7 +317,7 @@ const AddedBusiness = () => {
           <Typography
             variant="h5"
             sx={{
-              fontFamily: "'Poppins', sans-serif" ,
+              fontFamily: "'Poppins', sans-serif",
               fontSize: "2rem",
               color: Colors.LOGOColor,
               fontWeight: 700,
@@ -284,18 +348,18 @@ const AddedBusiness = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search  sx={{ color:Colors.LOGOColor}}/>
+                  <Search sx={{ color: Colors.LOGOColor }} />
                 </InputAdornment>
               ),
               sx: {
                 borderRadius: 2,
                 backgroundColor: "background.paper",
                 boxShadow: 1,
-                "& fieldset": { border: "none" }, 
+                "& fieldset": { border: "none" },
               },
             }}
             sx={{
-              width: { xs: "100%", sm: "450px" }, 
+              width: { xs: "100%", sm: "450px" },
               maxWidth: "100%",
             }}
             variant="outlined"
@@ -304,13 +368,14 @@ const AddedBusiness = () => {
 
         {filteredBusinesses.length === 0 ? (
           <Paper
-            elevation={3} 
+            elevation={3}
             sx={{
               p: 6,
               textAlign: "center",
               borderRadius: 3,
               background: "linear-gradient(145deg, #f0f0f0, #e0e0e0)",
-              boxShadow: "5px 5px 15px rgba(0,0,0,0.1), -5px -5px 15px rgba(255,255,255,0.7)", 
+              boxShadow:
+                "5px 5px 15px rgba(0,0,0,0.1), -5px -5px 15px rgba(255,255,255,0.7)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -321,22 +386,32 @@ const AddedBusiness = () => {
             {searchTerm ? (
               <>
                 <Search sx={{ fontSize: 80, color: Colors.LOGOColor, mb: 2 }} />
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold" }}
+                >
                   No businesses found
                 </Typography>
-                <Typography color="text.secondary" mb={4} sx={{ maxWidth: '400px' }}>
-                  It looks like there are no businesses matching your search for " **{searchTerm}** ". Try a different name or clear the search.
+                <Typography
+                  color="text.secondary"
+                  mb={4}
+                  sx={{ maxWidth: "400px" }}
+                >
+                  It looks like there are no businesses matching your search for
+                  " **{searchTerm}** ". Try a different name or clear the
+                  search.
                 </Typography>
                 <Button
                   onClick={() => setSearchTerm("")}
-                  variant="contained" 
+                  variant="contained"
                   size="large"
                   sx={{
                     px: 5,
                     borderRadius: 2,
                     bgcolor: Colors.LOGOColor,
                     "&:hover": { bgcolor: Colors.LOGOlight },
-                    color: '#fff'
+                    color: "#fff",
                   }}
                 >
                   Clear search
@@ -349,22 +424,32 @@ const AddedBusiness = () => {
                     width: 120,
                     height: 120,
                     borderRadius: "50%",
-                    bgcolor: Colors.LOGOColor, 
+                    bgcolor: Colors.LOGOColor,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     mx: "auto",
                     mb: 3,
-                    boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8)", 
+                    boxShadow:
+                      "inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8)",
                   }}
                 >
                   <AddBusiness sx={{ fontSize: 60, color: "#ffffff" }} />
                 </Box>
-                <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold" }}
+                >
                   No Businesses Listed Yet
                 </Typography>
-                <Typography color="text.secondary" mb={4} sx={{ maxWidth: '500px' }}>
-                  It's quiet in here! Get started by adding your first business to showcase your services and attract new customers.
+                <Typography
+                  color="text.secondary"
+                  mb={4}
+                  sx={{ maxWidth: "500px" }}
+                >
+                  It's quiet in here! Get started by adding your first business
+                  to showcase your services and attract new customers.
                 </Typography>
                 <Button
                   onClick={() => navigate("/plans")}
@@ -374,8 +459,8 @@ const AddedBusiness = () => {
                     px: 5,
                     borderRadius: 2,
                     color: "#ffffff",
-                    backgroundColor: Colors.LOGOColor, // Changed to LOGOColor
-                    "&:hover": { backgroundColor: Colors.LOGOlight }, // Darker on hover
+                    backgroundColor: Colors.LOGOColor,
+                    "&:hover": { backgroundColor: Colors.LOGOlight },
                   }}
                   startIcon={<AddBusiness />}
                 >
@@ -399,8 +484,8 @@ const AddedBusiness = () => {
                       transform: "translateY(-5px)",
                       boxShadow: 3,
                     },
-                    borderRadius: 2, 
-                    overflow: 'hidden', 
+                    borderRadius: 2,
+                    overflow: "hidden",
                   }}
                 >
                   <Box sx={{ position: "relative" }}>
@@ -418,18 +503,18 @@ const AddedBusiness = () => {
                         position: "absolute",
                         top: 10,
                         right: 10,
-                        bgcolor: Colors.LOGOColor, 
+                        bgcolor: Colors.LOGOlight,
                         color: "white",
                         px: 1.5,
                         py: 0.5,
                         borderRadius: 2,
                         display: "flex",
                         alignItems: "center",
-                        fontSize: '0.85rem',
+                        fontSize: "0.85rem",
                       }}
                     >
                       <Star fontSize="small" sx={{ mr: 0.5 }} />
-                      <Typography variant="caption" sx={{ fontWeight: 'bold' }}>
+                      <Typography variant="caption" sx={{ fontWeight: "bold" }}>
                         {Number(business?.rating || 0).toFixed(1)} (
                         {business?.ratingCount || 0})
                       </Typography>
@@ -454,7 +539,7 @@ const AddedBusiness = () => {
                         sx={{ mr: 1 }}
                       />
                       <Typography variant="body2" color="text.secondary">
-                        {business.address}
+                        {business.address}, {business.city}, {business.state}
                       </Typography>
                     </Box>
 
@@ -480,6 +565,124 @@ const AddedBusiness = () => {
                       </Typography>
                     </Box>
 
+                    {/* Social Media Links - Adjusted to access socialLinks object */}
+                    <Box display="flex" mb={2} flexWrap="wrap" gap={1}>
+                      {business.socialLinks?.facebook && (
+                        <Button
+                          size="small"
+                          startIcon={<Facebook />}
+                          href={business.socialLinks.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          Facebook
+                        </Button>
+                      )}
+                      {business.socialLinks?.instagram && (
+                        <Button
+                          size="small"
+                          startIcon={<Instagram />}
+                          href={business.socialLinks.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          Instagram
+                        </Button>
+                      )}
+                      {business.socialLinks?.twitter && (
+                        <Button
+                          size="small"
+                          startIcon={<Twitter />}
+                          href={business.socialLinks.twitter}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          Twitter
+                        </Button>
+                      )}
+                      {business.socialLinks?.whatsapp && (
+                        <Button
+                          size="small"
+                          startIcon={<WhatsApp />}
+                          href={`https://wa.me/${business.socialLinks.whatsapp.replace(/\D/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          WhatsApp
+                        </Button>
+                      )}
+                      {business.socialLinks?.website && (
+                        <Button
+                          size="small"
+                          startIcon={<LinkIcon />}
+                          href={business.socialLinks.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          Website
+                        </Button>
+                      )}
+                      {business.socialLinks?.youtube && (
+                        <Button
+                          size="small"
+                          startIcon={<YouTube />}
+                          href={business.socialLinks.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: Colors.LOGOlight,
+                            borderColor: Colors.LOGOColor,
+                            "&:hover": {
+                              bgcolor: Colors.LOGOlight,
+                              color: "#fff",
+                            },
+                          }}
+                        >
+                          YouTube
+                        </Button>
+                      )}
+                    </Box>
+
                     <Typography
                       variant="body2"
                       sx={{
@@ -499,7 +702,7 @@ const AddedBusiness = () => {
                       p: 2,
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems: "center", 
+                      alignItems: "center",
                       borderTop: "1px solid rgba(0,0,0,0.1)",
                     }}
                   >
@@ -507,7 +710,7 @@ const AddedBusiness = () => {
                       size="small"
                       startIcon={<Image />}
                       onClick={() => handleOpenDialog("edit", business)}
-                      sx={{ color: Colors.LOGOColor, fontWeight: 'medium' }} 
+                      sx={{ color: Colors.LOGOColor, fontWeight: "medium" }}
                     >
                       {business.images?.length || 0} Photos
                     </Button>
@@ -518,13 +721,7 @@ const AddedBusiness = () => {
                       >
                         <Edit />
                       </IconButton>
-                      {/* TODO */}
-                      {/* <IconButton
-                        onClick={() => handleOpenDialog("delete", business)}
-                        sx={{ color: "error.main", ml: 1 }}
-                      >
-                        <Delete />
-                      </IconButton> */}
+                      {/* Removed Delete IconButton */}
                     </Box>
                   </Box>
                 </Card>
@@ -543,7 +740,7 @@ const AddedBusiness = () => {
         >
           <DialogTitle
             sx={{
-              bgcolor: Colors.LOGOColor, 
+              bgcolor: Colors.LOGOColor,
               color: "white",
               display: "flex",
               justifyContent: "space-between",
@@ -595,6 +792,96 @@ const AddedBusiness = () => {
                     onChange={handleChange}
                     margin="normal"
                   />
+                  <TextField
+                    fullWidth
+                    label="Facebook Profile URL"
+                    name="socialLinks.facebook"
+                    value={formData.socialLinks.facebook}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Facebook color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Instagram Profile URL"
+                    name="socialLinks.instagram"
+                    value={formData.socialLinks.instagram}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Instagram color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Twitter Profile URL"
+                    name="socialLinks.twitter"
+                    value={formData.socialLinks.twitter}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Twitter color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="WhatsApp Number (e.g., 919876543210)"
+                    name="socialLinks.whatsapp"
+                    value={formData.socialLinks.whatsapp}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <WhatsApp color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Website URL"
+                    name="socialLinks.website"
+                    value={formData.socialLinks.website}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LinkIcon color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="YouTube Channel/Video URL"
+                    name="socialLinks.youtube"
+                    value={formData.socialLinks.youtube}
+                    onChange={handleChange}
+                    margin="normal"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <YouTube color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </Grid>
 
                 <Grid item xs={12} md={6}>
@@ -608,6 +895,40 @@ const AddedBusiness = () => {
                     multiline
                     rows={3}
                   />
+
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>State</InputLabel>
+                    <Select
+                      name="state"
+                      value={formData.state}
+                      onChange={handleChange}
+                      label="State"
+                    >
+                      {states.map((state) => (
+                        <MenuItem key={state.isoCode} value={state.isoCode}>
+                          {state.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>City</InputLabel>
+                    <Select
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      label="City"
+                      disabled={!formData.state}
+                    >
+                      {cities.map((city) => (
+                        <MenuItem key={city.name} value={city.name}>
+                          {city.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
                   <TextField
                     fullWidth
                     label="Description"
@@ -625,7 +946,8 @@ const AddedBusiness = () => {
             {activeTab === 1 && (
               <Box>
                 <Typography variant="subtitle1" gutterBottom sx={{ mb: 2 }}>
-                  Business Images ({formData.images.length + newImages.length}/5)
+                  Business Images (
+                  {formData.images.length + newImages.length}/5)
                 </Typography>
 
                 <ImageList cols={3} gap={16} sx={{ mb: 3 }}>
@@ -690,7 +1012,12 @@ const AddedBusiness = () => {
                     component="label"
                     startIcon={<AddPhotoAlternate />}
                     fullWidth
-                    sx={{ py: 2, borderColor: Colors.LOGOColor, color: Colors.LOGOColor, '&:hover': { borderColor: Colors.LOGOlight } }}
+                    sx={{
+                      py: 2,
+                      borderColor: Colors.LOGOColor,
+                      color: Colors.LOGOColor,
+                      "&:hover": { borderColor: Colors.LOGOlight },
+                    }}
                   >
                     Upload Images
                     <input
@@ -729,11 +1056,8 @@ const AddedBusiness = () => {
               disabled={loading}
               sx={{
                 px: 4,
-                backgroundColor: Colors.LOGOColor, 
+                backgroundColor: Colors.LOGOlight,
                 color: "#ffffff",
-                "&:hover": {
-                  backgroundColor: Colors.LOGOlight, 
-                },
               }}
             >
               {loading ? (
@@ -745,73 +1069,7 @@ const AddedBusiness = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Delete Dialog */}
-        <Dialog
-          open={openDialog && dialogType === "delete"}
-          onClose={handleCloseDialog}
-          maxWidth="sm"
-          fullWidth
-          PaperProps={{ sx: { borderRadius: 3 } }}
-        >
-          <DialogTitle
-            sx={{
-              bgcolor: "error.main",
-              color: "white",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h6">Confirm Deletion</Typography>
-            <IconButton onClick={handleCloseDialog} sx={{ color: "white" }}>
-              <Close />
-            </IconButton>
-          </DialogTitle>
-
-          <DialogContent dividers sx={{ textAlign: "center", py: 4 }}>
-            <Box
-              sx={{
-                width: 100,
-                height: 100,
-                borderRadius: "50%",
-                bgcolor: "error.light",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                mx: "auto",
-                mb: 3,
-                boxShadow: "inset 4px 4px 8px rgba(0,0,0,0.2), inset -4px -4px 8px rgba(255,255,255,0.8)", // Inner shadow for depth
-              }}
-            >
-              <Delete sx={{ fontSize: 50, color: "error.main" }} />
-            </Box>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              Delete {selectedBusiness?.businessName}?
-            </Typography>
-            <Typography color="text.secondary" sx={{ maxWidth: '400px', mx: 'auto' }}>
-              This will **permanently** remove all business data including images and reviews. This action cannot be undone.
-            </Typography>
-          </DialogContent>
-
-          <DialogActions sx={{ p: 2, borderTop: 1, borderColor: "divider" }}>
-            <Button onClick={handleCloseDialog} sx={{ color: "text.secondary" }}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleDelete}
-              variant="contained"
-              color="error"
-              disabled={loading}
-              sx={{ px: 4 }}
-            >
-              {loading ? (
-                <CircularProgress size={24} color="inherit" />
-              ) : (
-                "Delete"
-              )}
-            </Button>
-          </DialogActions>
-        </Dialog>
+      
       </Container>
       <Footer />
     </>

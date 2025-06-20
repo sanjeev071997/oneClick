@@ -70,7 +70,7 @@ const CategorySection = () => {
   };
 
   return (
-    <Container maxWidth={false} sx={{ mt: 5, px: { xs: 2, sm: 3, md: 4 } }}>
+    <Container maxWidth={false} sx={{ mt: 8, px: { xs: 2, sm: 3, md: 4 } }}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3,  alignItems: 'stretch' }}>
         {/* Left Side - Categories */}
         <Box sx={{ flex: 1 }}>

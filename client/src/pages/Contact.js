@@ -22,8 +22,6 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SendIcon from "@mui/icons-material/Send";
 import { message } from "antd";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import { Colors } from "../Comman";
 
 const ContactUs = () => {
@@ -386,10 +384,8 @@ const ContactUs = () => {
                         fontSize: "1rem",
                         fontWeight: 600,
                         textTransform: "none",
-                        backgroundColor: Colors.LOGOColor,
-                        "&:hover": {
-                          backgroundColor: Colors.LOGOlight,
-                        },
+                        backgroundColor: Colors.LOGOlight,
+                       
                       }}
                       fullWidth
                       disabled={isSubmitting}
