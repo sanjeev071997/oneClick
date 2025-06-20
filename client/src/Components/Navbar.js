@@ -163,7 +163,7 @@ const Navbar = () => {
                   gap: 1,
                 }}
               >
-             Quickdails
+             Quickdials
               </Typography>
             </Box>
 

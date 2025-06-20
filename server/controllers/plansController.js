@@ -4,15 +4,26 @@ import Errorhandler from "../utils/Errorhandler.js";
 
 // Create a new plan
 export const createPlan = catchAsyncErrors(async (req, res, next) => {
-  const { planName, planDescription, planPrice, planDuration, planFeatures } =
-    req.body;
+  const {
+    planName,
+    planDescription,
+    monthlyPlanPrice,
+    annuallyPlanPrice,
+    monthlyDuration,
+    annuallyDuration,
+    planFeatures,
+    planStatus,
+  } = req.body;
 
   const newPlan = await Plans.create({
     planName,
     planDescription,
-    planPrice,
-    planDuration,
+    monthlyPlanPrice,
+    annuallyPlanPrice,
+    monthlyDuration,
+    annuallyDuration,
     planFeatures,
+    planStatus,
   });
 
   res.status(201).json({
@@ -22,9 +33,9 @@ export const createPlan = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// Get all plans Users 
+// Get all plans Users
 export const getAllPlans = catchAsyncErrors(async (req, res, next) => {
-  const plans = await Plans.find({isActive:"true"}).sort({ createdAt: -1 });
+  const plans = await Plans.find({ isActive: "true" }).sort({ createdAt: -1 });
 
   // Check if there are no plans
   if (!plans || plans.length === 0) {
@@ -115,7 +126,9 @@ export const statusPlanById = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    message: `Plan status updated successfully to ${updatedPlan.isActive ? "Active" : "Inactive"}`,
+    message: `Plan status updated successfully to ${
+      updatedPlan.isActive ? "Active" : "Inactive"
+    }`,
     data: updatedPlan,
   });
 });
@@ -128,10 +141,7 @@ export const deletePlanById = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("Plan ID is required", 400));
   }
 
-  const deletedPlan = await Plans.findByIdAndDelete(
-    id,
-    { new: true }
-  );
+  const deletedPlan = await Plans.findByIdAndDelete(id, { new: true });
 
   if (!deletedPlan) {
     return next(

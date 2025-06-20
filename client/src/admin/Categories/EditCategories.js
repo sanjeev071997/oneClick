@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  Container,
-  TextField,
-  IconButton,
-  Button,
-  Box
-} from "@mui/material";
+import { Container, TextField, IconButton, Button, Box } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { message, Modal } from "antd";
 import { styled } from "@mui/material/styles";
@@ -20,7 +14,7 @@ const EditCategories = ({ id, name, refreshData, url }) => {
   const [imageBase64, setImageBase64] = useState("");
 
   const handleClickOpen = () => {
-    setCategoryName(name); 
+    setCategoryName(name);
     setIsModalOpen(true);
   };
 
@@ -28,10 +22,10 @@ const EditCategories = ({ id, name, refreshData, url }) => {
     setIsModalOpen(false);
   };
 
-   // Upload button functionality
-    const VisuallyHiddenInput = styled("input")({
-      display: "none",
-    });
+  // Upload button functionality
+  const VisuallyHiddenInput = styled("input")({
+    display: "none",
+  });
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -60,40 +54,39 @@ const EditCategories = ({ id, name, refreshData, url }) => {
     }
   };
 
-  console.log(image, "url")
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
     formData.append("id", id);
     formData.append("name", name);
     if (imageBase64) {
       formData.append("categoryImage", imageBase64); // Attach file directly
     }
-  
+
     try {
       const { data } = await axios.put("/api/v1/categories/update", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       if (data?.success) {
         message.success(data?.message || "Category updated successfully");
         refreshData(); // Refresh category list
         handleClose();
       }
     } catch (err) {
-      message.error(err?.response?.data?.message || "Failed to update category");
+      message.error(
+        err?.response?.data?.message || "Failed to update category"
+      );
     }
   };
-  
 
   return (
     <>
       <IconButton onClick={handleClickOpen}>
-        <EditIcon sx={{ color: "#1976d2",ml:3 }} />
+        <EditIcon sx={{ color: "#1976d2", ml: 3 }} />
       </IconButton>
 
       <Modal
@@ -115,7 +108,7 @@ const EditCategories = ({ id, name, refreshData, url }) => {
             onChange={(e) => setCategoryName(e.target.value)}
           />
 
-<Box  sx={{mb:3}}>
+          <Box sx={{ mb: 3 }}>
             <VisuallyHiddenInput
               accept="image/*"
               id="contained-button-file"
@@ -148,7 +141,7 @@ const EditCategories = ({ id, name, refreshData, url }) => {
             )}
           </Box>
 
-          <Button type="submit"  variant="contained" fullWidth>
+          <Button type="submit" variant="contained" fullWidth>
             Update Category
           </Button>
         </Container>
