@@ -82,6 +82,16 @@ const businessSchema = new mongoose.Schema({
     whatsapp: { type: String },
   },
 
+
+  location: {
+  latitude: Number,
+  longitude: Number,
+  city: String,
+  state: String,
+  country: String,
+},
+
+
   createdAt: {
     type: Date,
     default: () => new Date(),
