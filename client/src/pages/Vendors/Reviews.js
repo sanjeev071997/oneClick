@@ -8,10 +8,10 @@ import {
   Edit, Delete, Star, StarBorder, Business
 } from '@mui/icons-material';
 import { message, Modal } from "antd";
-import axios from '../axiosInstance';
-import Navbar from '../Components/Navbar';
-import Footer from '../Components/Footer';
-import { Colors, FontFamily, FontSize } from "../Comman";
+import axios from '../../axiosInstance';
+import Navbar from '../../Components/Navbar';
+import Footer from '../../Components/Footer';
+import { Colors, FontFamily, FontSize } from "../../Comman";
 
 const ReviewsPage = () => {
   const [reviews, setReviews] = useState([]);

@@ -1,49 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from "../axiosInstance";
-import {
-  Input,
-  Row,
-  Col,
-  Card,
-  Avatar,
-  Typography,
-  Tooltip,
-  Space,
-  Modal,
-  Drawer,
-  Form,
-  message,
-  Popconfirm,
-  Divider,
-  Empty,
-  Button as AntButton,
-} from "antd";
-import {
-  UserOutlined,
-  ShopOutlined,
-  PhoneOutlined,
-  MailOutlined,
-  CalendarOutlined,
-  EyeOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-  CloseOutlined,
-  CommentOutlined,
-} from "@ant-design/icons";
+import {Input, Row, Col, Card, Avatar, Typography, Tooltip, Space, Drawer,Form, message,Popconfirm,Divider, Empty, Button as AntButton,} from "antd";
+import {UserOutlined,ShopOutlined,PhoneOutlined,MailOutlined,CalendarOutlined,EyeOutlined,DeleteOutlined,SearchOutlined,CloseOutlined,CommentOutlined,} from "@ant-design/icons";
 import { Button as MuiButton } from "@mui/material";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors, FontSize } from "../Comman";
+import { useSelector } from "react-redux";
+const { Title, Text,  } = Typography;
 
-const { Title, Text, Paragraph } = Typography;
-
-const Queries = () => {
+const Enquire = () => {
+  const { user } = useSelector((state) => state.user);
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editDrawerVisible, setEditDrawerVisible] = useState(false);
-  const [viewModalVisible, setViewModalVisible] = useState(false);
-  const [currentQuery, setCurrentQuery] = useState(null);
   const [form] = Form.useForm();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -51,11 +21,12 @@ const Queries = () => {
   const fetchQueries = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/v1/enquiry/get");
+      const response = await axios.post("/api/v1/enquiry/get", {
+        userId: user._id,
+      });
       setQueries(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch enquiries:", error);
-      message.error("Failed to fetch enquiries");
+      message.error("Failed to fetch enquiries" + error.message);
     } finally {
       setLoading(false);
     }
@@ -63,28 +34,24 @@ const Queries = () => {
 
   useEffect(() => {
     fetchQueries();
-  }, []);
+  }, [user._id]);
 
   //filter quries
-  const filteredQueries = queries.filter((q) => {
-    const userName = q.userId?.name?.toLowerCase() || "";
+  const filteredQueries = queries?.filter((q) => {
+    const userName = q?.name?.toLowerCase() || "";
     const businessName = q.businessId?.businessName?.toLowerCase() || "";
-    const messageContent = q.message?.toLowerCase() || "";
     const term = searchTerm.toLowerCase();
     return (
-      userName.includes(term) ||
-      businessName.includes(term) ||
-      messageContent.includes(term)
+      userName.includes(term) || businessName.includes(term)
     );
   });
 
   const openEditDrawer = (query) => {
-    setCurrentQuery(query);
     form.setFieldsValue({
-      name: query.userId?.name,
-      phone: query.userId?.phone,
-      email: query.userId?.email,
-      message: query.message,
+      name: query?.name,
+      phone: query?.phone,
+      email: query?.email,
+      message: query?.message,
       businessName: query.businessId?.businessName,
       businessPhone: query.businessId?.phone,
     });
@@ -93,18 +60,7 @@ const Queries = () => {
 
   const closeEditDrawer = () => {
     setEditDrawerVisible(false);
-    setCurrentQuery(null);
     form.resetFields();
-  };
-
-  const openViewModal = (query) => {
-    setCurrentQuery(query);
-    setViewModalVisible(true);
-  };
-
-  const closeViewModal = () => {
-    setViewModalVisible(false);
-    setCurrentQuery(null);
   };
 
   //handle delete quries
@@ -114,26 +70,7 @@ const Queries = () => {
       message.success("Enquiry deleted successfully");
       fetchQueries();
     } catch (error) {
-      console.error("Failed to delete enquiry:", error);
       message.error("Failed to delete enquiry");
-    }
-  };
-
-  // handle Update quries
-  const handleUpdate = async () => {
-    try {
-      const values = await form.validateFields();
-      const payload = {
-        ...values,
-        id: currentQuery._id,
-      };
-      await axios.put("/api/v1/enquiry/update", payload);
-      message.success("Enquiry updated successfully");
-      closeEditDrawer();
-      fetchQueries();
-    } catch (error) {
-      console.error("Failed to update enquiry:", error);
-      message.error("Failed to update enquiry");
     }
   };
 
@@ -159,7 +96,9 @@ const Queries = () => {
         >
           {/* Customer Enquiries Title */}
           <Col xs={24} sm={12} md={12} lg={8}>
-            <div style={{ textAlign: "left", fontFamily: "'Poppins', sans-serif" }}>
+            <div
+              style={{ textAlign: "left", fontFamily: "'Poppins', sans-serif" }}
+            >
               <Title
                 level={2}
                 style={{
@@ -173,10 +112,16 @@ const Queries = () => {
                 Enquiries
               </Title>
 
-              <div style={{ display: "flex", justifyContent: "flex-start", marginTop: 8 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  marginTop: 8,
+                }}
+              >
                 <div
                   style={{
-                    marginLeft:20,
+                    marginLeft: 20,
                     height: 3,
                     width: 80,
                     backgroundColor: Colors.LOGOColor,
@@ -187,11 +132,16 @@ const Queries = () => {
             </div>
           </Col>
 
-
           {/* Search Bar (Ant Design) */}
-          <Col xs={24} sm={12} md={12} lg={8} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Col
+            xs={24}
+            sm={12}
+            md={12}
+            lg={8}
+            style={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Input
-              placeholder="Search by name, business, or message..."
+              placeholder="Search by user name or business name..."
               allowClear
               size="large"
               value={searchTerm}
@@ -323,77 +273,25 @@ const Queries = () => {
                           level={5}
                           style={{ margin: 0, color: Colors.LOGOColor }}
                         >
-                          {q.userId?.name || "N/A"}
+                          {q?.name || "N/A"}
                         </Title>
                         <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
                           <PhoneOutlined
                             style={{ color: Colors.LOGOlight, marginRight: 4 }}
                           />
-                          {q.userId?.phone || "N/A"}
+                          {q?.phone || "N/A"}
                         </Text>
                         <br />
                         <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
                           <MailOutlined
                             style={{ color: Colors.LOGOlight, marginRight: 4 }}
                           />
-                          {q.userId?.email || "N/A"}
+                          {q?.email || "N/A"}
                         </Text>
                       </div>
                     </Space>
 
                     <Divider style={{ margin: "12px 0" }} />
-
-                    {/* Business Info */}
-                    <Space align="center" size="middle" wrap>
-                      {q.businessId?.images?.[0]?.url ? (
-                        <Avatar
-                          shape="square"
-                          size={56}
-                          src={q.businessId.images[0].url}
-                          style={{ borderRadius: 10 }}
-                        />
-                      ) : (
-                        <Avatar
-                          size={56}
-                          icon={<ShopOutlined />}
-                          style={{
-                            backgroundColor: Colors.LOGOlight,
-                            color: Colors.LOGOColor,
-                          }}
-                        />
-                      )}
-                      <div>
-                        <Title
-                          level={5}
-                          style={{ margin: 0, color: Colors.LOGOColor }}
-                        >
-                          {q.businessId?.businessName || "N/A"}
-                        </Title>
-                        <Text style={{ fontSize: 14, color: Colors.LOGOColor }}>
-                          <PhoneOutlined
-                            style={{ color: Colors.LOGOlight, marginRight: 4 }}
-                          />
-                          {q.businessId?.phone || "N/A"}
-                        </Text>
-                      </div>
-                    </Space>
-
-                    <Divider style={{ margin: "12px 0" }} />
-
-                    {/* Message preview */}
-                    <div
-                      style={{
-                        height: 60,
-                        overflow: "hidden",
-                        whiteSpace: "normal",
-                        textOverflow: "ellipsis",
-                        color: Colors.LOGOColor,
-                        fontSize: 14,
-                      }}
-                      title={q.message}
-                    >
-                      {q.message}
-                    </div>
 
                     {/* Footer controls */}
                     <Space
@@ -409,8 +307,8 @@ const Queries = () => {
                       </Text>
 
                       <Space size="middle">
-                        <Tooltip title="View Message">
-                          <AntButton // Use AntButton for icon buttons
+                        <Tooltip title="View Enquiry">
+                          <AntButton 
                             shape="circle"
                             type="default"
                             icon={
@@ -418,7 +316,7 @@ const Queries = () => {
                                 style={{ color: Colors.LOGOlight }}
                               />
                             }
-                            onClick={() => openViewModal(q)}
+                            onClick={() => openEditDrawer(q)}
                             style={{
                               borderColor: Colors.LOGOlight,
                               color: Colors.LOGOlight,
@@ -426,17 +324,6 @@ const Queries = () => {
                           />
                         </Tooltip>
 
-                        <Tooltip title="Edit Enquiry">
-                          <AntButton
-                            shape="circle"
-                            style={{
-                              backgroundColor: Colors.LOGOColor,
-                              color: "#fff",
-                            }}
-                            icon={<EditOutlined />}
-                            onClick={() => openEditDrawer(q)}
-                          />
-                        </Tooltip>
                         <Tooltip title="Delete Enquiry">
                           <Popconfirm
                             title="Are you sure to delete this enquiry?"
@@ -481,19 +368,6 @@ const Queries = () => {
               >
                 Cancel
               </MuiButton>
-
-              <MuiButton
-                onClick={handleUpdate}
-                variant="contained"
-                sx={{
-                  backgroundColor: Colors.LOGOlight,
-                  border: "none",
-                  color: Colors.WHITE,
-                  "&:hover": { backgroundColor: Colors.LOGOlight },
-                }}
-              >
-                Update
-              </MuiButton>
             </div>
           }
           maskClosable={false}
@@ -513,72 +387,7 @@ const Queries = () => {
             <Divider
               orientation="left"
               plain
-              style={{ color: Colors.LOGOColor }}
-            >
-              User Information
-            </Divider>
-            <Row gutter={16}>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label={<span style={{ color: Colors.LOGOColor }}>Name</span>}
-                  name="name"
-                  rules={[
-                    { required: true, message: "Please input the name!" },
-                  ]}
-                >
-                  <Input
-                    prefix={
-                      <UserOutlined style={{ color: Colors.LOGOColor }} />
-                    }
-                    placeholder="Name"
-                    style={{
-                      borderColor: Colors.textDark,
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} sm={12}>
-                <Form.Item
-                  label={<span style={{ color: Colors.LOGOColor }}>Phone</span>}
-                  name="phone"
-                  rules={[
-                    { required: true, message: "Please input the phone!" },
-                  ]}
-                >
-                  <Input
-                    prefix={
-                      <PhoneOutlined style={{ color: Colors.LOGOColor }} />
-                    }
-                    placeholder="Phone"
-                    style={{
-                      borderColor: Colors.textDark,
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Form.Item
-              label={<span style={{ color: Colors.LOGOColor }}>Email</span>}
-              name="email"
-              rules={[
-                { required: true, message: "Please input the email!" },
-                { type: "email", message: "Invalid email!" },
-              ]}
-            >
-              <Input
-                prefix={<MailOutlined style={{ color: Colors.LOGOColor }} />}
-                placeholder="Email"
-                style={{
-                  borderColor: Colors.textDark,
-                }}
-              />
-            </Form.Item>
-
-            <Divider
-              orientation="left"
-              plain
-              style={{ color: Colors.LOGOColor }}
+              style={{ color: Colors.LOGOColor, }}
             >
               Business Information
             </Divider>
@@ -624,7 +433,60 @@ const Queries = () => {
                 </Form.Item>
               </Col>
             </Row>
+            <Divider
+              orientation="left"
+              plain
+              style={{ color: Colors.LOGOColor }}
+            >
+              User Information
+            </Divider>
+            <Row gutter={16}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label={<span style={{ color: Colors.LOGOColor }}>Name</span>}
+                  name="name"
+                >
+                  <Input
+                    prefix={
+                      <UserOutlined style={{ color: Colors.LOGOColor }} />
+                    }
+                   readOnly
+                    style={{
+                      borderColor: Colors.textDark,
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  label={<span style={{ color: Colors.LOGOColor }}>Phone</span>}
+                  name="phone"
+                >
+                  <Input
+                    prefix={
+                      <PhoneOutlined style={{ color: Colors.LOGOColor }} />
+                    }
+                     readOnly
+                    style={{
+                      borderColor: Colors.textDark,
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
 
+            <Form.Item
+              label={<span style={{ color: Colors.LOGOColor }}>Email</span>}
+              name="email"
+            >
+              <Input
+                prefix={<MailOutlined style={{ color: Colors.LOGOColor }} />}
+                readOnly
+                style={{
+                  borderColor: Colors.textDark,
+                }}
+              />
+            </Form.Item>
             <Divider
               orientation="left"
               plain
@@ -635,11 +497,10 @@ const Queries = () => {
             <Form.Item
               label={<span style={{ color: Colors.LOGOColor }}>Message</span>}
               name="message"
-              rules={[{ required: true, message: "Please input the message!" }]}
             >
               <Input.TextArea
                 rows={4}
-                placeholder="Message"
+               readOnly
                 style={{
                   borderColor: Colors.textDark,
                 }}
@@ -647,35 +508,10 @@ const Queries = () => {
             </Form.Item>
           </Form>
         </Drawer>
-
-        {/* View Modal */}
-        <Modal
-          title="View Message"
-          open={viewModalVisible}
-          onCancel={closeViewModal}
-          footer={[
-            <MuiButton
-              key="close"
-              onClick={closeViewModal}
-              sx={{
-                backgroundColor: Colors.LOGOlight,
-                border: "none",
-                color: Colors.WHITE,
-                "&:hover": { backgroundColor: Colors.LOGOlight },
-              }}
-            >
-              Close
-            </MuiButton>,
-          ]}
-          width={Math.min(window.innerWidth * 0.85, 600)}
-          bodyStyle={{ fontSize: 16, color: Colors.LOGOColor }}
-        >
-          <Paragraph>{currentQuery?.message}</Paragraph>
-        </Modal>
       </div>
       <Footer />
     </>
   );
 };
 
-export default Queries;
+export default Enquire;

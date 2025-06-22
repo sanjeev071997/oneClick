@@ -28,16 +28,16 @@ import {
   updateProfile,
   updatePassword,
   reloadUser
-} from "../redux/actions/userAction";
+} from "../../redux/actions/userAction";
 import {
   UPDATE_PROFILE_RESET,
   UPDATE_PASSWORD_RESET
-} from "../redux/constants/userConstants";
+} from "../../redux/constants/userConstants";
 import { message } from "antd";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import PageTitle from "../Components/PageTitle";
-import { Colors, FontSize, FontWeight } from "../Comman";
+import Navbar from "../../Components/Navbar";
+import Footer from "../../Components/Footer";
+import PageTitle from "../../Components/PageTitle";
+import { Colors, FontSize, FontWeight } from "../../Comman";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

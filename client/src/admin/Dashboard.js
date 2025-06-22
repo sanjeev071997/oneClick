@@ -150,10 +150,6 @@ const Dashboard = () => {
 
   return (
     <Box p={3} sx={{mb:5}}>
-      <Typography variant="h4" mb={4} fontWeight="bold" color="text.primary">
-        Admin Dashboard
-      </Typography>
-
       {/* Stat Cards */}
       <Grid container spacing={3} mb={4}>
         {cardDetails.map((card, idx) => (

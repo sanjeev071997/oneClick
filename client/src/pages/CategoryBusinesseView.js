@@ -45,14 +45,13 @@ import { message } from "antd";
 import { Colors } from "../Comman";
 import Footer from "../Components/Footer";
 
-
 const FontWeight = {
   light: 300,
   regular: 400,
   medium: 500,
   bold: 700,
   heading1: 800,
-  heading2: 600
+  heading2: 600,
 };
 
 const CategoryBusinessView = () => {
@@ -64,7 +63,6 @@ const CategoryBusinessView = () => {
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
- 
 
   const totalReviews = reviews.length;
   const averageRating =
@@ -170,13 +168,10 @@ const CategoryBusinessView = () => {
                   display: "flex",
                   alignItems: "center",
                   cursor: "pointer",
-                 
                 }}
               >
-                <Home sx={{ mr: 0.5, }} fontSize="inherit" />
-                <Typography  fontWeight="500">
-                  Home
-                </Typography>
+                <Home sx={{ mr: 0.5 }} fontSize="inherit" />
+                <Typography fontWeight="500">Home</Typography>
               </Link>
               <Typography color={Colors.BLACK} fontWeight="500">
                 {business?.businessName}
@@ -200,7 +195,8 @@ const CategoryBusinessView = () => {
                 left: 0,
                 right: 0,
                 height: "100px",
-                background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+                background:
+                  "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
                 zIndex: 1,
               },
             }}
@@ -265,15 +261,19 @@ const CategoryBusinessView = () => {
                   readOnly
                   sx={{
                     mr: 1,
-                    '& .MuiRating-iconFilled': {
-                      color: Colors.LOGOlight, 
+                    "& .MuiRating-iconFilled": {
+                      color: Colors.LOGOlight,
                     },
-                    '& .MuiRating-iconEmpty': {
+                    "& .MuiRating-iconEmpty": {
                       color: `${Colors.LOGOlight}80`,
                     },
                   }}
                 />
-                <Typography variant="subtitle1" fontWeight="500" sx={{ color:Colors.LOGOlight}}>
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="500"
+                  sx={{ color: Colors.LOGOlight }}
+                >
                   {averageRating} ({totalReviews}{" "}
                   {totalReviews === 1 ? "review" : "reviews"})
                 </Typography>
@@ -298,8 +298,14 @@ const CategoryBusinessView = () => {
                 px: 3,
                 py: 1.5,
                 fontWeight: activeTab === "overview" ? "bold" : "normal",
-                color: activeTab === "overview" ? Colors.LOGOlight : Colors.LOGOColor,
-                borderBottom: activeTab === "overview" ? `3px solid ${Colors.LOGOlight}` : "none",
+                color:
+                  activeTab === "overview"
+                    ? Colors.LOGOlight
+                    : Colors.LOGOColor,
+                borderBottom:
+                  activeTab === "overview"
+                    ? `3px solid ${Colors.LOGOlight}`
+                    : "none",
                 textTransform: "none",
                 fontSize: "1rem",
               }}
@@ -312,8 +318,12 @@ const CategoryBusinessView = () => {
                 px: 3,
                 py: 1.5,
                 fontWeight: activeTab === "reviews" ? "bold" : "normal",
-                color: activeTab === "reviews" ? Colors.LOGOlight : Colors.LOGOColor,
-                borderBottom: activeTab === "reviews" ? `3px solid ${Colors.LOGOlight}` : "none",
+                color:
+                  activeTab === "reviews" ? Colors.LOGOlight : Colors.LOGOColor,
+                borderBottom:
+                  activeTab === "reviews"
+                    ? `3px solid ${Colors.LOGOlight}`
+                    : "none",
                 textTransform: "none",
                 fontSize: "1rem",
               }}
@@ -351,11 +361,11 @@ const CategoryBusinessView = () => {
 
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
-                    <Card 
-                      variant="outlined" 
-                      sx={{ 
+                    <Card
+                      variant="outlined"
+                      sx={{
                         borderRadius: 2,
-                        borderColor: Colors.LOGOColor
+                        borderColor: Colors.LOGOColor,
                       }}
                     >
                       <CardContent>
@@ -369,7 +379,8 @@ const CategoryBusinessView = () => {
                             color: Colors.LOGOColor,
                           }}
                         >
-                          <Person sx={{ mr: 1, color: Colors.LOGOColor  }} /> Contact Information
+                          <Person sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+                          Contact Information
                         </Typography>
                         <Stack spacing={2}>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -379,13 +390,13 @@ const CategoryBusinessView = () => {
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Email sx={{ mr: 2,  color: Colors.LOGOColor  }} />
+                            <Email sx={{ mr: 2, color: Colors.LOGOColor }} />
                             <Typography sx={{ color: Colors.textDark }}>
                               <strong>Email:</strong> {business?.email}
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Phone sx={{ mr: 2,  color: Colors.LOGOColor }} />
+                            <Phone sx={{ mr: 2, color: Colors.LOGOColor }} />
                             <Typography sx={{ color: Colors.textDark }}>
                               <strong>Phone:</strong> {business?.phone}
                             </Typography>
@@ -396,11 +407,11 @@ const CategoryBusinessView = () => {
                   </Grid>
 
                   <Grid item xs={12} md={6}>
-                    <Card 
-                      variant="outlined" 
-                      sx={{ 
+                    <Card
+                      variant="outlined"
+                      sx={{
                         borderRadius: 2,
-                        borderColor: Colors.LOGOColor
+                        borderColor: Colors.LOGOColor,
                       }}
                     >
                       <CardContent>
@@ -414,7 +425,8 @@ const CategoryBusinessView = () => {
                             color: Colors.LOGOColor,
                           }}
                         >
-                          <LocationOn sx={{ mr: 1, color: Colors.LOGOColor  }} /> Business Details
+                          <LocationOn sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+                          Business Details
                         </Typography>
                         <Stack spacing={2}>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -430,8 +442,12 @@ const CategoryBusinessView = () => {
                             />
                           </Box>
 
-                          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
-                            <LocationOn sx={{ mr: 2,  color: Colors.LOGOColor , mt: 0.5 }} />
+                          <Box
+                            sx={{ display: "flex", alignItems: "flex-start" }}
+                          >
+                            <LocationOn
+                              sx={{ mr: 2, color: Colors.LOGOColor, mt: 0.5 }}
+                            />
                             <Typography sx={{ color: Colors.textDark }}>
                               <strong>Address:</strong> {business?.address}
                               {business?.city && `, ${business.city}`}
@@ -439,10 +455,14 @@ const CategoryBusinessView = () => {
                             </Typography>
                           </Box>
                           <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <CalendarToday sx={{ mr: 2, color: Colors.LOGOColor }} />
+                            <CalendarToday
+                              sx={{ mr: 2, color: Colors.LOGOColor }}
+                            />
                             <Typography sx={{ color: Colors.textDark }}>
                               <strong>Member Since:</strong>{" "}
-                              {new Date(business?.createdAt).toLocaleDateString()}
+                              {new Date(
+                                business?.createdAt
+                              ).toLocaleDateString()}
                             </Typography>
                           </Box>
                         </Stack>
@@ -451,96 +471,117 @@ const CategoryBusinessView = () => {
                   </Grid>
 
                   <Grid item xs={12}>
-  <Card
-    variant="outlined"
-    sx={{
-      borderRadius: 2,
-      borderColor: Colors.LOGOColor,
-    }}
-  >
-    <CardContent>
-      <Typography
-        variant="h6"
-        fontWeight="bold"
-        gutterBottom
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          color: Colors.LOGOColor,
-        }}
-      >
-        <Language sx={{ mr: 1, color: Colors.LOGOColor }} /> Social Media Links
-      </Typography>
+                    <Card
+                      variant="outlined"
+                      sx={{
+                        borderRadius: 2,
+                        borderColor: Colors.LOGOColor,
+                      }}
+                    >
+                      <CardContent>
+                        <Typography
+                          variant="h6"
+                          fontWeight="bold"
+                          gutterBottom
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: Colors.LOGOColor,
+                          }}
+                        >
+                          <Language sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+                          Social Media Links
+                        </Typography>
 
-      <Box sx={{ mt: 1, display: "flex", flexWrap: "wrap", gap: 2 }}>
-        {business?.socialLinks?.facebook && (
-          <a
-            href={business.socialLinks.facebook}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Facebook sx={{ fontSize: 30, color: "#1877F2" }} />
-          </a>
-        )}
-        {business?.socialLinks?.instagram && (
-          <a
-            href={business.socialLinks.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Instagram sx={{ fontSize: 30, color: "#E4405F" }} />
-          </a>
-        )}
-        {business?.socialLinks?.twitter && (
-          <a
-            href={business.socialLinks.twitter}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Twitter sx={{ fontSize: 30, color: "#1DA1F2" }} />
-          </a>
-        )}
-        {business?.socialLinks?.linkedin && (
-          <a
-            href={business.socialLinks.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <LinkedIn sx={{ fontSize: 30, color: "#0A66C2" }} />
-          </a>
-        )}
-        {business?.socialLinks?.website && (
-          <a
-            href={business.socialLinks.website}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Language sx={{ fontSize: 30, color: Colors.LOGOColor }} />
-          </a>
-        )}
-        {business?.socialLinks?.youtube && (
-          <a
-            href={business.socialLinks.youtube}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <YouTube sx={{ fontSize: 30, color: "#FF0000" }} />
-          </a>
-        )}
-        {business?.socialLinks?.whatsapp && (
-          <a
-            href={business.socialLinks.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <WhatsApp sx={{ fontSize: 30, color: "#25D366" }} />
-          </a>
-        )}
-      </Box>
-    </CardContent>
-  </Card>
-</Grid>
-
+                        <Box
+                          sx={{
+                            mt: 1,
+                            display: "flex",
+                            flexWrap: "wrap",
+                            gap: 2,
+                          }}
+                        >
+                          {business?.socialLinks?.facebook && (
+                            <a
+                              href={business.socialLinks.facebook}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Facebook
+                                sx={{ fontSize: 30, color: "#1877F2" }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.instagram && (
+                            <a
+                              href={business.socialLinks.instagram}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Instagram
+                                sx={{ fontSize: 30, color: "#E4405F" }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.twitter && (
+                            <a
+                              href={business.socialLinks.twitter}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Twitter
+                                sx={{ fontSize: 30, color: "#1DA1F2" }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.linkedin && (
+                            <a
+                              href={business.socialLinks.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <LinkedIn
+                                sx={{ fontSize: 30, color: "#0A66C2" }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.website && (
+                            <a
+                              href={business.socialLinks.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Language
+                                sx={{ fontSize: 30, color: Colors.LOGOColor }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.youtube && (
+                            <a
+                              href={business.socialLinks.youtube}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <YouTube
+                                sx={{ fontSize: 30, color: "#FF0000" }}
+                              />
+                            </a>
+                          )}
+                          {business?.socialLinks?.whatsapp && (
+                            <a
+                              href={business.socialLinks.whatsapp}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <WhatsApp
+                                sx={{ fontSize: 30, color: "#25D366" }}
+                              />
+                            </a>
+                          )}
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 </Grid>
               </CardContent>
             </Card>
@@ -568,7 +609,11 @@ const CategoryBusinessView = () => {
                       Share Your Experience
                     </Typography>
                     <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle1" gutterBottom sx={{ color: Colors.LOGOColor }}>
+                      <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        sx={{ color: Colors.LOGOColor }}
+                      >
                         How would you rate your experience?
                       </Typography>
                       <Rating
@@ -579,7 +624,7 @@ const CategoryBusinessView = () => {
                         sx={{
                           "& .MuiRating-icon": {
                             fontSize: "2.5rem",
-                            color: Colors.LOGOColor ,
+                            color: Colors.LOGOColor,
                           },
                           "& .MuiRating-iconFilled": {
                             color: Colors.LOGOlight,
@@ -627,7 +672,6 @@ const CategoryBusinessView = () => {
                           fontSize: "1rem",
                           fontWeight: "bold",
                           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                         
                         }}
                       >
                         Post Review
@@ -648,12 +692,12 @@ const CategoryBusinessView = () => {
                 >
                   <Typography variant="body1" sx={{ color: Colors.LOGOColor }}>
                     Please{" "}
-                    <Link 
-                      onClick={() => navigate("/login")} 
-                      sx={{ 
+                    <Link
+                      onClick={() => navigate("/login")}
+                      sx={{
                         cursor: "pointer",
                         color: Colors.LOGOlight,
-                        fontWeight: 'bold'
+                        fontWeight: "bold",
                       }}
                     >
                       sign in
@@ -683,14 +727,24 @@ const CategoryBusinessView = () => {
                       color: Colors.LOGOColor,
                     }}
                   >
-                    <ChatBubble sx={{ mr: 1, color: Colors.LOGOlight }} /> Customer Reviews
+                    <ChatBubble sx={{ mr: 1, color: Colors.LOGOlight }} />{" "}
+                    Customer Reviews
                   </Typography>
 
                   {reviews?.length > 0 ? (
                     <Box>
                       {reviews.map((rev, idx) => (
-                        <Box key={idx} sx={{ mb: 3, pb: 3, borderBottom: `1px solid ${Colors.LOGOColor}` }}>
-                          <Box sx={{ display: "flex", alignItems: "flex-start" }}>
+                        <Box
+                          key={idx}
+                          sx={{
+                            mb: 3,
+                            pb: 3,
+                            borderBottom: `1px solid ${Colors.LOGOColor}`,
+                          }}
+                        >
+                          <Box
+                            sx={{ display: "flex", alignItems: "flex-start" }}
+                          >
                             <Avatar
                               src={rev?.reviewer?.avatar}
                               sx={{
@@ -703,29 +757,51 @@ const CategoryBusinessView = () => {
                               }}
                             />
                             <Box sx={{ flex: 1 }}>
-                              <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
-                                <Typography fontWeight="bold" variant="subtitle1" sx={{ color: Colors.LOGOColor }}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                <Typography
+                                  fontWeight="bold"
+                                  variant="subtitle1"
+                                  sx={{ color: Colors.LOGOColor }}
+                                >
                                   {rev?.reviewer?.name || "Anonymous"}
                                 </Typography>
-                                <Typography variant="caption" sx={{ color: Colors.LOGOColor }}>
-                                  {new Date(rev.createdAt).toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  })}
+                                <Typography
+                                  variant="caption"
+                                  sx={{ color: Colors.LOGOColor }}
+                                >
+                                  {new Date(rev.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    }
+                                  )}
                                 </Typography>
                               </Box>
-                              <Box sx={{ display: "flex", alignItems: "center", my: 1 }}>
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  my: 1,
+                                }}
+                              >
                                 <Rating
                                   value={rev.rating}
                                   readOnly
                                   size="small"
                                   precision={0.5}
-                                  sx={{ 
+                                  sx={{
                                     color: Colors.LOGOlight,
                                     "& .MuiRating-iconFilled": {
                                       color: Colors.LOGOlight,
-                                    }
+                                    },
                                   }}
                                 />
                                 <Chip
@@ -772,10 +848,17 @@ const CategoryBusinessView = () => {
                           opacity: 0.8,
                         }}
                       />
-                      <Typography variant="h6" sx={{ color: Colors.LOGOColor }} gutterBottom>
+                      <Typography
+                        variant="h6"
+                        sx={{ color: Colors.LOGOColor }}
+                        gutterBottom
+                      >
                         No Reviews Yet
                       </Typography>
-                      <Typography variant="body1" sx={{ color: Colors.LOGOColor }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ color: Colors.LOGOColor }}
+                      >
                         Be the first to share your experience with this business
                       </Typography>
                     </Box>
@@ -786,7 +869,7 @@ const CategoryBusinessView = () => {
           )}
         </Box>
       </Box>
-   <Footer />
+      <Footer />
     </>
   );
 };

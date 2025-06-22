@@ -1,32 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Avatar,
   Box,
-  Breadcrumbs,
   IconButton,
   InputAdornment,
   Typography,
+  Breadcrumbs,
   Link as MUILink,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Link, useNavigate } from "react-router-dom";
-import PageTitle from "../Components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, login } from "../redux/actions/userAction";
+import { clearErrors, userRegister } from "../../redux/actions/userAction";
 import { message } from "antd";
-import axios from "../axiosInstance";
+import PageTitle from "../../Components/PageTitle";
+import axios from "../../axiosInstance";
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, error, loading, isAuthenticated } = useSelector(
+  const { error, loading, isAuthenticated } = useSelector(
     (state) => state.user
   );
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -34,7 +36,8 @@ const Login = () => {
   const checkServerStatus = async () => {
     try {
       const response = await axios.get("/api/status");
-      if (!response?.data?.data) {
+      if (response?.data?.data === true) {
+      } else {
         message.error(
           "Oops! Something went wrong. Please try again later or contact support."
         );
@@ -51,11 +54,18 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // Login API call
+  // Handle Register Api Call
   const handleSubmit = async (e) => {
     e.preventDefault();
     checkServerStatus();
-    await dispatch(login(email, password));
+    const userData = {
+      name,
+      email,
+      phone,
+      password,
+    };
+    // checkServerStatus();
+    dispatch(userRegister(userData));
   };
 
   useEffect(() => {
@@ -63,27 +73,16 @@ const Login = () => {
       message.error(error);
       dispatch(clearErrors());
     }
-
     if (isAuthenticated) {
-      message.success("login Successfully");
-      // Redirect based on user role
-      if (user && user.role === 0) {
-        // window.location.href="/"
-        navigate("/", { replace: true });
-      } else if (user && user.role >= 1) {
-        navigate("/dashboard", { replace: true });
-      }
+      navigate("/");
     }
-  }, [error, isAuthenticated, user, dispatch, navigate]);
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, error, isAuthenticated]);
   const currentYear = new Date().getFullYear();
 
   return (
     <>
-      <PageTitle
-        title="Login - Quickdails"
-        description="Log in to your account to access your courses and exams."
-      />
+      <PageTitle title="Register" />
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
@@ -100,9 +99,8 @@ const Login = () => {
         >
           Home
         </MUILink>
-        <Typography sx={{ color: "primary.main" }}>Login</Typography>
+        <Typography sx={{ color: "primary.main" }}>Register</Typography>
       </Breadcrumbs>
-
       <Box
         sx={{
           mt: 5,
@@ -144,14 +142,13 @@ const Login = () => {
               sx={{
                 fontFamily: "Poppins, sans-serif",
                 color: "#333",
-                letterSpacing: "2.5px",
+                letterSpacing: "2px",
                 lineHeight: 1.8,
+                // fontSize: "16px",
               }}
             >
-              Welcome Back to Quickdails
+              Create Your Quickdails Account
             </Typography>
-
-            {/* Toggle between regular login and student login */}
             <Typography
               variant="h6"
               align="center"
@@ -164,13 +161,29 @@ const Login = () => {
                 fontSize: "16px",
               }}
             >
-              Please enter your login details to access your Quickdails account.
+              Please fill in the details to register and get started with
+              Quickdails.
             </Typography>
-
             <TextField
               sx={{
                 mb: 3,
                 mt: 2,
+                "& .MuiInputBase-root": {
+                  color: "text.secondary",
+                },
+                fieldset: { borderColor: "rgb(231, 235, 240)" },
+              }}
+              fullWidth
+              id="name"
+              label="Full Name"
+              placeholder="Full name"
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              sx={{
+                mb: 3,
                 "& .MuiInputBase-root": {
                   color: "text.secondary",
                 },
@@ -184,6 +197,24 @@ const Login = () => {
               placeholder="E-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <TextField
+              sx={{
+                mb: 3,
+                "& .MuiInputBase-root": {
+                  color: "text.secondary",
+                },
+                fieldset: { borderColor: "rgb(231, 235, 240)" },
+              }}
+              fullWidth
+              id="phone"
+              name="phone"
+              label="Phone"
+              type="tel"
+              placeholder="Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
             <TextField
               sx={{
@@ -212,18 +243,14 @@ const Login = () => {
               }}
             />
 
-            <p className="ForgotPassword">
-              <Link to="/password/forgot"> Forgot Password? </Link>
-            </p>
             <Button
+              fullWidth
               disabled={loading}
               variant="contained"
               type="submit"
-              fullWidth
               color="primary"
               className="courses_desc"
               sx={{
-                mt: 2,
                 borderRadius: "5px",
                 textTransform: "none",
                 fontFamily: "Poppins, sans-serif",
@@ -231,7 +258,7 @@ const Login = () => {
                 color: "white",
               }}
             >
-              {loading ? "loading..." : "Log In"}
+              {loading ? "loading..." : "Register"}
             </Button>
 
             <Box
@@ -248,10 +275,10 @@ const Login = () => {
               }}
               className="switchMember"
             >
-              Create an Account? <Link to="/register"> Sign Up </Link>
+              {" "}
+              Already a member ?{""} <Link to="/login"> Sign In </Link>{" "}
             </Box>
 
-            {/* Toggle between student and general login */}
             <Box sx={{ pt: 2 }}>
               <hr />
               <p
@@ -263,7 +290,8 @@ const Login = () => {
                   marginBottom: "-20px",
                 }}
               >
-                &copy; {currentYear} Copyright by Quickdails. All Rights Reserved.
+                &copy; {currentYear} Copyright by Quickdials. All Rights
+                Reserved.
               </p>
             </Box>
           </Box>
@@ -273,4 +301,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

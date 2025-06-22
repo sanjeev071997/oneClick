@@ -32,7 +32,10 @@ const SidebarAdm = () => {
         dispatch(logout());
         localStorage.clear();
         message.success("Logout Successfully");
-        navigate("/login", { replace: true });
+        setTimeout(() => {
+          navigate("/login");
+        }
+        , 500); 
       },
     });
   };

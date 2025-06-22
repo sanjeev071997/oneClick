@@ -10,9 +10,9 @@ import Mail from "@mui/icons-material/Mail";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
-import PageTitle from "../Components/PageTitle";
+import PageTitle from "../../Components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, forgotPassword } from "../redux/actions/userAction";
+import { clearErrors, forgotPassword } from "../../redux/actions/userAction";
 import { message as antdMessage } from "antd";
 
 const ForgotPassword = () => {
@@ -212,7 +212,7 @@ const ForgotPassword = () => {
                     marginBottom: "-20px",
                   }}
                 >
-                  &copy; {currentYear} Copyright by Quickdails. All Rights
+                  &copy; {currentYear} Copyright by Quickdials. All Rights
                   Reserved.
                 </p>
               </Box>

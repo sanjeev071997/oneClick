@@ -283,8 +283,6 @@ const AddedBusiness = () => {
     }
   };
 
- 
-
   if (loading && !businesses.length) {
     return (
       <Box

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -9,63 +9,44 @@ import {
   Link as MUILink,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
+import PageTitle from "../../Components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, userRegister } from "../redux/actions/userAction";
+import { clearErrors, resetPassword } from "../../redux/actions/userAction";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Password from "@mui/icons-material/Password";
 import { message } from "antd";
-import PageTitle from "../Components/PageTitle";
-import axios from "../axiosInstance";
 
-const Register = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, isAuthenticated } = useSelector(
-    (state) => state.user
+  const { error, success, loading } = useSelector(
+    (state) => state.forgotPassword
   );
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
-  // // Check Server Status
-  const checkServerStatus = async () => {
-    try {
-      const response = await axios.get("/api/status");
-      if (response?.data?.data === true) {
-      } else {
-        message.error(
-          "Oops! Something went wrong. Please try again later or contact support."
-        );
-      }
-    } catch (error) {
-      message.error(
-        "Error: Oops! Something went wrong. Please try again later or contact support."
-      );
-    }
-  };
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const { token } = useParams();
 
   // Toggle password visibility
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  // Handle Register Api Call
-  const handleSubmit = async (e) => {
+  const handleClickShowNewPassword = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
+  // Handle Reset Password APi Call
+  const handleSubmit = (e) => {
     e.preventDefault();
-    checkServerStatus();
-    const userData = {
-      name,
-      email,
-      phone,
-      password,
-    };
-    // checkServerStatus();
-    dispatch(userRegister(userData));
+    const myForm = new FormData();
+    myForm.set("password", password);
+    myForm.set("confirmPassword", confirmPassword);
+    dispatch(resetPassword(token, myForm));
   };
 
   useEffect(() => {
@@ -73,16 +54,21 @@ const Register = () => {
       message.error(error);
       dispatch(clearErrors());
     }
-    if (isAuthenticated) {
-      navigate("/");
+    if (success) {
+      message.success("Password Updated Successfully");
+      navigate("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, error, isAuthenticated]);
+  }, [dispatch, error, success]);
+
   const currentYear = new Date().getFullYear();
 
   return (
-    <>
-      <PageTitle title="Register" />
+    <div>
+      <PageTitle
+        title="Reset Password -  One Click"
+        description="Enter your new password to reset your account access."
+      />
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
@@ -99,21 +85,21 @@ const Register = () => {
         >
           Home
         </MUILink>
-        <Typography sx={{ color: "primary.main" }}>Register</Typography>
+        <Typography sx={{ color: "primary.main" }}>Reset Password</Typography>
       </Breadcrumbs>
       <Box
         sx={{
-          mt: 5,
+          height: "100vh",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgColor: "primary.white",
+          bgcolor: "primary.white",
         }}
       >
         <Box
           onSubmit={handleSubmit}
           component="form"
-          className="form_style border-style needs-validation"
+          className="form_style border-style"
           sx={{
             backgroundColor: "#fff",
             padding: "40px",
@@ -133,7 +119,7 @@ const Register = () => {
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: "primary.main", mb: 3 }}>
-              <LockOpenIcon />
+              <Password />
             </Avatar>
             <Typography
               variant="h5"
@@ -142,13 +128,13 @@ const Register = () => {
               sx={{
                 fontFamily: "Poppins, sans-serif",
                 color: "#333",
-                letterSpacing: "2px",
+                letterSpacing: "2.5px",
                 lineHeight: 1.8,
-                // fontSize: "16px",
               }}
             >
-              Create Your Quickdails Account
+              Reset Your Password
             </Typography>
+
             <Typography
               variant="h6"
               align="center"
@@ -161,64 +147,14 @@ const Register = () => {
                 fontSize: "16px",
               }}
             >
-              Please fill in the details to register and get started with
-              Quickdails.
+              Enter your email to receive password reset instructions and regain
+              access to your Quickdails account.
             </Typography>
-            <TextField
-              sx={{
-                mb: 3,
-                mt: 2,
-                "& .MuiInputBase-root": {
-                  color: "text.secondary",
-                },
-                fieldset: { borderColor: "rgb(231, 235, 240)" },
-              }}
-              fullWidth
-              id="name"
-              label="Full Name"
-              placeholder="Full name"
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
-              sx={{
-                mb: 3,
-                "& .MuiInputBase-root": {
-                  color: "text.secondary",
-                },
-                fieldset: { borderColor: "rgb(231, 235, 240)" },
-              }}
-              fullWidth
-              id="email"
-              label="E-mail"
-              name="email"
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
 
             <TextField
               sx={{
                 mb: 3,
-                "& .MuiInputBase-root": {
-                  color: "text.secondary",
-                },
-                fieldset: { borderColor: "rgb(231, 235, 240)" },
-              }}
-              fullWidth
-              id="phone"
-              name="phone"
-              label="Phone"
-              type="tel"
-              placeholder="Phone"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-            <TextField
-              sx={{
-                mb: 3,
+                mt: 3,
                 "& .MuiInputBase-root": {
                   color: "text.secondary",
                 },
@@ -227,11 +163,37 @@ const Register = () => {
               fullWidth
               id="password"
               name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
+              label="New Password"
+              type={showNewPassword ? "text" : "password"}
+              placeholder="New Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleClickShowNewPassword} edge="end">
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              sx={{
+                mb: 3,
+                "& .MuiInputBase-root": {
+                  color: "text.secondary",
+                },
+                fieldset: { borderColor: "rgb(231, 235, 240)" },
+              }}
+              fullWidth
+              id="ConfirmPassword"
+              name="password"
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -242,10 +204,9 @@ const Register = () => {
                 ),
               }}
             />
-
             <Button
-              fullWidth
               disabled={loading}
+              fullWidth
               variant="contained"
               type="submit"
               color="primary"
@@ -258,27 +219,8 @@ const Register = () => {
                 color: "white",
               }}
             >
-              {loading ? "loading..." : "Register"}
+              {loading ? "loading..." : "Reset Password"}
             </Button>
-
-            <Box
-              variant="h6"
-              align="center"
-              gutterBottom
-              sx={{
-                pt: 2,
-                fontFamily: "Poppins, sans-serif",
-                color: "#555",
-                letterSpacing: "1.5px",
-                lineHeight: 1.8,
-                fontSize: "16px",
-              }}
-              className="switchMember"
-            >
-              {" "}
-              Already a member ?{""} <Link to="/login"> Sign In </Link>{" "}
-            </Box>
-
             <Box sx={{ pt: 2 }}>
               <hr />
               <p
@@ -290,15 +232,14 @@ const Register = () => {
                   marginBottom: "-20px",
                 }}
               >
-                &copy; {currentYear} Copyright by Quickdails. All Rights
-                Reserved.
+                &copy; {currentYear} Copyright by Quickdials. All Rights Reserved.
               </p>
             </Box>
           </Box>
         </Box>
       </Box>
-    </>
+    </div>
   );
 };
 
-export default Register;
+export default ResetPassword;

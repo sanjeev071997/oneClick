@@ -350,7 +350,7 @@ const PricingPlans = () => {
                               mb: 0.5
                             }}
                           >
-                            /{plan.displayPeriod}
+                            / {plan.displayPeriod}
                             {plan.isAnnual && plan.displayPrice !== "0" && (
                               <Box component="span" sx={{
                                 fontSize: '0.75rem',

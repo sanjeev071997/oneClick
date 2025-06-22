@@ -147,10 +147,10 @@ const ListYourBusiness = () => {
   const handleNext = () => {
     if (activeStep === 0) {
       if (
-      !formData.businessName ||
-      !formData.state ||
-      !formData.city ||
-      !formData.category
+        !formData.businessName ||
+        !formData.state ||
+        !formData.city ||
+        !formData.category
       ) {
         message.error(
           "Please fill in all required fields for Business Information."
@@ -200,7 +200,8 @@ const ListYourBusiness = () => {
 
     if (files.length > filesToAdd.length) {
       message.warn(
-        `You can only upload a maximum of 5 images. ${files.length - filesToAdd.length
+        `You can only upload a maximum of 5 images. ${
+          files.length - filesToAdd.length
         } image(s) were not added.`
       );
     }
@@ -312,7 +313,6 @@ const ListYourBusiness = () => {
         },
         "&.Mui-focused fieldset": {
           borderColor: Colors.LOGOColor,
-
         },
       },
       "& .MuiInputLabel-root": {
@@ -496,7 +496,6 @@ const ListYourBusiness = () => {
                 sx={textFieldSx}
               />
             </Grid>
-
           </Grid>
         );
       case 1:
@@ -509,7 +508,8 @@ const ListYourBusiness = () => {
                 name: "phone",
                 icon: <Phone />,
                 type: "tel",
-                helperText: "Please include the country code, e.g. +91XXXXXXXXXX",
+                helperText:
+                  "Please include the country code, e.g. +91XXXXXXXXXX",
               },
               { label: "Email", name: "email", icon: <Email />, type: "email" },
               {
@@ -595,7 +595,11 @@ const ListYourBusiness = () => {
                         sx={{ fontSize: 30, color: Colors.LOGOColor }}
                       />
                     </Avatar>
-                    <Typography variant="h6" gutterBottom sx={{ color: Colors.LOGOColor }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ color: Colors.LOGOColor }}
+                    >
                       Upload Business Images
                     </Typography>
                     <Typography
@@ -625,20 +629,26 @@ const ListYourBusiness = () => {
 
               {formData.images.length > 0 && (
                 <Box mt={3}>
-                  <Typography variant="subtitle2" gutterBottom sx={{ color: Colors.LOGOColor }}>
+                  <Typography
+                    variant="subtitle2"
+                    gutterBottom
+                    sx={{ color: Colors.LOGOColor }}
+                  >
                     Selected Images ({formData.images.length}/5)
                   </Typography>
                   <Grid container spacing={2}>
                     {formData.images.map((img, idx) => (
                       <Grid item xs={6} sm={4} md={3} key={idx}>
-                        <Card sx={{
-                          position: "relative",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            transform: "scale(1.03)",
-                            boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
-                          },
-                        }}>
+                        <Card
+                          sx={{
+                            position: "relative",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              transform: "scale(1.03)",
+                              boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
+                            },
+                          }}
+                        >
                           <CardMedia
                             component="img"
                             height="140"
@@ -675,7 +685,11 @@ const ListYourBusiness = () => {
       case 3:
         return (
           <Box sx={{ mx: "auto", mt: 4 }}>
-            <Typography variant="h5" gutterBottom sx={{ color: Colors.LOGOColor }}>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{ color: Colors.LOGOColor }}
+            >
               Social Media Links
             </Typography>
 
@@ -714,46 +728,78 @@ const ListYourBusiness = () => {
         );
       case 4:
         return (
-          <Box sx={{
-            p: 4,
-            border: `1px solid ${Colors.LOGOlight}`,
-            borderRadius: 3,
-            backgroundColor: '#f9f9f9',
-            boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}20`,
-          }}>
+          <Box
+            sx={{
+              p: 4,
+              border: `1px solid ${Colors.LOGOlight}`,
+              borderRadius: 3,
+              backgroundColor: "#f9f9f9",
+              boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}20`,
+            }}
+          >
             {/* Plan Information */}
-            <Box sx={{
-              mb: 4,
-              p: 3,
-              backgroundColor: `${Colors.LOGOColor}08`,
-              borderRadius: 2,
-              borderLeft: `4px solid ${Colors.LOGOColor}`,
-              boxShadow: `0 2px 10px 0 ${Colors.LOGOlight}10`,
-            }}>
-              <Typography variant="h6" sx={{
-                mb: 2,
-                color: Colors.LOGOColor,
-                fontWeight: FontWeight.bold,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Selected Plan
+            <Box
+              sx={{
+                mb: 4,
+                p: 3,
+                backgroundColor: `${Colors.LOGOColor}08`,
+                borderRadius: 2,
+                borderLeft: `4px solid ${Colors.LOGOColor}`,
+                boxShadow: `0 2px 10px 0 ${Colors.LOGOlight}10`,
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: Colors.LOGOColor,
+                  fontWeight: FontWeight.bold,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Selected
+                Plan
               </Typography>
 
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: FontWeight.medium, color: Colors.LOGOlight }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: FontWeight.medium,
+                      color: Colors.LOGOlight,
+                    }}
+                  >
                     Plan Name:
                   </Typography>
-                  <Typography variant="body1" sx={{ color: Colors.LOGOColor, fontWeight: FontWeight.bold }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: Colors.LOGOColor,
+                      fontWeight: FontWeight.bold,
+                    }}
+                  >
                     {planName || "Not selected"}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: FontWeight.medium, color: Colors.LOGOlight }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: FontWeight.medium,
+                      color: Colors.LOGOlight,
+                    }}
+                  >
                     Plan Price:
                   </Typography>
-                  <Typography variant="body1" sx={{ color: Colors.LOGOColor, fontWeight: FontWeight.bold }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: Colors.LOGOColor,
+                      fontWeight: FontWeight.bold,
+                    }}
+                  >
                     {planPrice ? `₹${planPrice}` : "Not selected"}
                   </Typography>
                 </Grid>
@@ -762,14 +808,18 @@ const ListYourBusiness = () => {
 
             {/* Business Information Section */}
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{
-                mb: 2,
-                color: Colors.LOGOColor,
-                fontWeight: FontWeight.bold,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Business Information
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: Colors.LOGOColor,
+                  fontWeight: FontWeight.bold,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Business sx={{ mr: 1, color: Colors.LOGOColor }} /> Business
+                Information
               </Typography>
 
               <Grid container spacing={3}>
@@ -781,7 +831,10 @@ const ListYourBusiness = () => {
                   />
                   <DetailItem
                     label="Category"
-                    value={categories.find(c => c._id === formData.category)?.name || categoryInput}
+                    value={
+                      categories.find((c) => c._id === formData.category)
+                        ?.name || categoryInput
+                    }
                     icon={<Search sx={{ color: Colors.LOGOColor }} />}
                   />
                   <DetailItem
@@ -794,7 +847,9 @@ const ListYourBusiness = () => {
                 <Grid item xs={12} md={6}>
                   <DetailItem
                     label="Location"
-                    value={`${formData.city || ""}${formData.city && formData.state ? ", " : ""}${formData.state || ""}`}
+                    value={`${formData.city || ""}${
+                      formData.city && formData.state ? ", " : ""
+                    }${formData.state || ""}`}
                     icon={<Home sx={{ color: Colors.LOGOColor }} />}
                   />
                 </Grid>
@@ -805,14 +860,18 @@ const ListYourBusiness = () => {
 
             {/* Contact Information Section */}
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{
-                mb: 2,
-                color: Colors.LOGOColor,
-                fontWeight: FontWeight.bold,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Person sx={{ mr: 1, color: Colors.LOGOColor }} /> Contact Information
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: Colors.LOGOColor,
+                  fontWeight: FontWeight.bold,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Person sx={{ mr: 1, color: Colors.LOGOColor }} /> Contact
+                Information
               </Typography>
 
               <Grid container spacing={3}>
@@ -848,17 +907,23 @@ const ListYourBusiness = () => {
 
             {/* Media Section */}
             <Box sx={{ mb: 4 }}>
-              <Typography variant="h6" sx={{
-                mb: 2,
-                color: Colors.LOGOColor,
-                fontWeight: FontWeight.bold,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: Colors.LOGOColor,
+                  fontWeight: FontWeight.bold,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
                 <PhotoCamera sx={{ mr: 1, color: Colors.LOGOColor }} /> Media
               </Typography>
 
-              <Typography variant="subtitle1" sx={{ mb: 1, color: Colors.LOGOlight }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ mb: 1, color: Colors.LOGOlight }}
+              >
                 Images ({formData.images.length}/5)
               </Typography>
 
@@ -866,20 +931,26 @@ const ListYourBusiness = () => {
                 <Grid container spacing={2}>
                   {formData.images.map((img, index) => (
                     <Grid item xs={6} sm={4} md={3} key={index}>
-                      <Card sx={{
-                        position: 'relative',
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          transform: "scale(1.03)",
-                          boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
-                        },
-                      }}>
+                      <Card
+                        sx={{
+                          position: "relative",
+                          transition: "all 0.3s ease",
+                          "&:hover": {
+                            transform: "scale(1.03)",
+                            boxShadow: `0 4px 20px 0 ${Colors.LOGOlight}40`,
+                          },
+                        }}
+                      >
                         <CardMedia
                           component="img"
                           height="140"
-                          image={typeof img === 'string' ? img : URL.createObjectURL(img)}
+                          image={
+                            typeof img === "string"
+                              ? img
+                              : URL.createObjectURL(img)
+                          }
                           alt={`Business ${index}`}
-                          sx={{ objectFit: 'cover' }}
+                          sx={{ objectFit: "cover" }}
                         />
                       </Card>
                     </Grid>
@@ -896,14 +967,18 @@ const ListYourBusiness = () => {
 
             {/* Social Media Section */}
             <Box>
-              <Typography variant="h6" sx={{
-                mb: 2,
-                color: Colors.LOGOColor,
-                fontWeight: FontWeight.bold,
-                display: 'flex',
-                alignItems: 'center'
-              }}>
-                <Share sx={{ mr: 1, color: Colors.LOGOColor }} /> Social Media Links
+              <Typography
+                variant="h6"
+                sx={{
+                  mb: 2,
+                  color: Colors.LOGOColor,
+                  fontWeight: FontWeight.bold,
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Share sx={{ mr: 1, color: Colors.LOGOColor }} /> Social Media
+                Links
               </Typography>
 
               {Object.entries(links).some(([_, value]) => value) ? (
@@ -914,18 +989,20 @@ const ListYourBusiness = () => {
 
                     return (
                       <Grid item xs={12} sm={6} key={name}>
-                        <Box sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          p: 1.5,
-                          backgroundColor: '#f5f5f5',
-                          borderRadius: 1,
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            transform: "translateY(-2px)",
-                            boxShadow: `0 2px 10px 0 ${color}20`,
-                          },
-                        }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            p: 1.5,
+                            backgroundColor: "#f5f5f5",
+                            borderRadius: 1,
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                              transform: "translateY(-2px)",
+                              boxShadow: `0 2px 10px 0 ${color}20`,
+                            },
+                          }}
+                        >
                           <Box sx={{ color, mr: 2 }}>{icon}</Box>
                           <Link
                             href={url}
@@ -933,7 +1010,7 @@ const ListYourBusiness = () => {
                             rel="noopener noreferrer"
                             sx={{
                               color: Colors.LOGOColor,
-                              wordBreak: 'break-all',
+                              wordBreak: "break-all",
                               "&:hover": {
                                 color: Colors.LOGOlight,
                               },
@@ -964,11 +1041,14 @@ const ListYourBusiness = () => {
       <>
         <Navbar />
         <Container maxWidth="md" sx={{ py: 8, textAlign: "center" }}>
-          <Paper elevation={3} sx={{
-            p: 6,
-            borderRadius: 4,
-            background: `linear-gradient(135deg, ${Colors.LOGOlight}10, ${Colors.LOGOColor}10)`,
-          }}>
+          <Paper
+            elevation={3}
+            sx={{
+              p: 6,
+              borderRadius: 4,
+              background: `linear-gradient(135deg, ${Colors.LOGOlight}10, ${Colors.LOGOColor}10)`,
+            }}
+          >
             <Box sx={{ mb: 4 }}>
               <Avatar
                 sx={{
@@ -1007,7 +1087,7 @@ const ListYourBusiness = () => {
                 backgroundColor: Colors.LOGOlight,
                 "&:hover": {
                   backgroundColor: Colors.LOGOColor,
-                }
+                },
               }}
             >
               List Another Business
@@ -1173,7 +1253,7 @@ const ListYourBusiness = () => {
                 },
                 "&:disabled": {
                   backgroundColor: `${Colors.LOGOlight}50`,
-                }
+                },
               }}
             >
               Back
@@ -1203,7 +1283,7 @@ const ListYourBusiness = () => {
                   },
                   "&:disabled": {
                     backgroundColor: `${Colors.LOGOlight}50`,
-                  }
+                  },
                 }}
               >
                 {loading ? "Submitting..." : "Review & Submit"}
@@ -1223,14 +1303,13 @@ const ListYourBusiness = () => {
                   width: { xs: "100%", sm: "auto" },
                   "&:hover": {
                     backgroundColor: Colors.LOGOColor,
-                  }
+                  },
                 }}
               >
                 Next
               </Button>
             )}
           </Box>
-
         </Paper>
       </Container>
       <Footer />
@@ -1241,30 +1320,39 @@ const ListYourBusiness = () => {
 // Helper component for consistent detail items
 const DetailItem = ({ label, value, icon, multiline = false }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography variant="subtitle2" sx={{
-      display: 'flex',
-      alignItems: 'center',
-      mb: 0.5,
-      color: Colors.LOGOlight,
-    }}>
+    <Typography
+      variant="subtitle2"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        mb: 0.5,
+        color: Colors.LOGOlight,
+      }}
+    >
       {React.cloneElement(icon, { sx: { fontSize: 16, mr: 1 } })}
       {label}
     </Typography>
     {multiline ? (
-      <Typography variant="body1" sx={{
-        color: Colors.LOGOColor,
-        whiteSpace: 'pre-line',
-        ml: 3,
-        lineHeight: 1.6,
-      }}>
+      <Typography
+        variant="body1"
+        sx={{
+          color: Colors.LOGOColor,
+          whiteSpace: "pre-line",
+          ml: 3,
+          lineHeight: 1.6,
+        }}
+      >
         {value}
       </Typography>
     ) : (
-      <Typography variant="body1" sx={{
-        color: Colors.LOGOColor,
-        fontWeight: FontWeight.medium,
-        ml: 3,
-      }}>
+      <Typography
+        variant="body1"
+        sx={{
+          color: Colors.LOGOColor,
+          fontWeight: FontWeight.medium,
+          ml: 3,
+        }}
+      >
         {value || "Not provided"}
       </Typography>
     )}

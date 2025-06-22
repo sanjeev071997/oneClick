@@ -138,7 +138,7 @@ const CategoryDetail = () => {
     try {
       const enquiryData = {
         businessId: selectedBusiness._id,
-        userId: user?._id || null,
+        // userId: user?._id || null,
         ...values
       };
 
@@ -164,11 +164,6 @@ const CategoryDetail = () => {
     );
   }
 
-  const iconStyle = {
-    fontSize: 24,
-    margin: "0 8px",
-    cursor: "pointer",
-  };
 
   if (loading) {
     return (
@@ -433,7 +428,7 @@ const CategoryDetail = () => {
                           color: Colors.WHITE
                         }}
                       >
-                        Contact Now
+                        Enquire Now
                       </Button>
                     </div>
                   </Card>
@@ -446,7 +441,7 @@ const CategoryDetail = () => {
 
       {/* Enquiry Modal */}
       <Modal
-        title={`Contact ${selectedBusiness?.businessName}`}
+        title={`Enquire ${selectedBusiness?.businessName}`}
         visible={openEnquiry}
         onCancel={handleEnquiryClose}
         footer={null}
@@ -550,7 +545,7 @@ const CategoryDetail = () => {
               </div>
             )}
 
-            {!token && (
+            {/* {!token && (
               <Alert
                 message="Login Required"
                 description="You need to be logged in to send an enquiry"
@@ -562,7 +557,7 @@ const CategoryDetail = () => {
                   fontSize: window.innerWidth < 768 ? 12 : 14
                 }}
               />
-            )}
+            )} */}
           </div>
 
           {/* Divider - Only show on desktop */}
@@ -700,7 +695,7 @@ const CategoryDetail = () => {
                     htmlType="submit"
                     loading={enquiryLoading}
                     icon={<SendOutlined />}
-                    disabled={!token}
+                    // disabled={!token}
                     size={window.innerWidth < 768 ? 'small' : 'middle'}
                     style={{
                       backgroundColor: Colors.LOGOlight,
@@ -708,7 +703,7 @@ const CategoryDetail = () => {
                       
                     }}
                   >
-                    {window.innerWidth < 768 ? 'Send' : 'Send Message'}
+                    {window.innerWidth < 768 ? 'Send' : 'Enquire Now'}
                   </Button>
                 </div>
               </Form.Item>

@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import {
   Search as SearchIcon,
-  Add as AddIcon,
+  // Add as AddCircleOutlineOutlinedIcon,
   AccountCircle as AccountCircleIcon,
   Business as BusinessIcon,
   Update as UpdateIcon,
@@ -28,6 +28,7 @@ import {
   ExitToApp as LogoutIcon,
   Mic as MicIcon,
 } from "@mui/icons-material";
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -231,9 +232,9 @@ const Navbar = () => {
               </Box>
 
               {/* Desktop Add Business */}
-              <Button
+              {/* <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                startIcon={<AddCircleOutlineOutlinedIcon />}
                 onClick={handleAddBusiness}
                 sx={{
                   display: { xs: "none", md: "flex" },
@@ -248,17 +249,87 @@ const Navbar = () => {
                 
                 }}
               >
-                Add Business
-              </Button>
+               Free Listing Business
+              </Button> */}
+
+              <Box sx={{ position: "relative", display: "inline-block" }}>
+  {/* Small Business Tag */}
+  <Box 
+    sx={{
+      position: "absolute",
+       display: { xs: "none", md: "flex" },
+      top: -12,
+      left: 10,
+      backgroundColor: Colors.LOGOlight,
+      color: Colors.LOGOColor,
+      borderRadius: "12px",
+      px: 1.5,
+      py: 0.5,
+      fontSize: "10px",
+      fontWeight: 600,
+      fontFamily: FontFamily.arial,
+      zIndex: 1,
+    }}
+  >
+    Business
+  </Box>
+
+  {/* Free Listing Button */}
+  <Button
+    variant="contained"
+    startIcon={<AddCircleOutlineOutlinedIcon />}
+    onClick={handleAddBusiness}
+    sx={{
+      display: { xs: "none", md: "flex" },
+      backgroundColor: Colors.WHITE,
+      color: Colors.LOGOColor,
+      borderRadius: 2,
+      px: 3,
+      py: 1,
+      fontFamily: FontFamily.arial,
+      textTransform: "none",
+      fontSize: FontSize.fifteen,
+    }}
+  >
+    Free Listing
+  </Button>
+</Box>
+
 
               {/* Mobile Buttons */}
               <Box sx={{ display: { xs: "flex", md: "none" }, gap: 1 }}>
                 <IconButton sx={{ color: Colors.WHITE}} onClick={toggleMobileSearch}>
                   <SearchIcon fontSize="large" />
                 </IconButton>
-                <IconButton sx={{ color: Colors.WHITE}} onClick={handleAddBusiness}>
-                  <AddIcon fontSize="large" />
-                </IconButton>
+                {/* <IconButton sx={{ color: Colors.WHITE}} onClick={handleAddBusiness}>
+                  <AddCircleOutlineOutlinedIcon fontSize="large" />
+                </IconButton> */}
+
+                 <Box sx={{ position: "relative" }}>
+    <Box
+      sx={{
+        position: "absolute",
+        top: -10,
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: Colors.LOGOlight,
+        color: Colors.LOGOColor,
+        borderRadius: "12px",
+        px: 1.2,
+        py: 0.2,
+        fontSize: "10px",
+        fontWeight: 600,
+        fontFamily: FontFamily.arial,
+        whiteSpace: "nowrap",
+        zIndex: 1,
+      }}
+    >
+      Business
+    </Box>
+    <IconButton sx={{ color: Colors.WHITE }} onClick={handleAddBusiness}>
+      <AddCircleOutlineOutlinedIcon fontSize="large" />
+    </IconButton>
+  </Box>
               </Box>
 
               {/* Profile Menu */}
@@ -289,11 +360,18 @@ const Navbar = () => {
                       <ListItemText primary="Business"  sx={{ color:Colors.WHITE}}/>
                     </MenuItem>
 
-                    <MenuItem component={Link} to="/quries" onClick={handleProfileClose}>
+                    <MenuItem component={Link} to="/products" onClick={handleProfileClose}>
                       <ListItemIcon>
                         <UpdateIcon sx={{ color: Colors.WHITE }} />
                       </ListItemIcon>
-                      <ListItemText primary="Inquiries"  sx={{ color:Colors.WHITE}}/>
+                      <ListItemText primary="Products"  sx={{ color:Colors.WHITE}}/>
+                    </MenuItem>
+
+                    <MenuItem component={Link} to="/enquire" onClick={handleProfileClose}>
+                      <ListItemIcon>
+                        <UpdateIcon sx={{ color: Colors.WHITE }} />
+                      </ListItemIcon>
+                      <ListItemText primary="Enquiries"  sx={{ color:Colors.WHITE}}/>
                     </MenuItem>
 
                     <MenuItem component={Link} to="/reviews" onClick={handleProfileClose}>

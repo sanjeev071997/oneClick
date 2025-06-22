@@ -2,72 +2,86 @@ import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
+  Breadcrumbs,
   IconButton,
   InputAdornment,
   Typography,
-  Breadcrumbs,
   Link as MUILink,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import PageTitle from "../Components/PageTitle";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import PageTitle from "../../Components/PageTitle";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, resetPassword } from "../redux/actions/userAction";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Password from "@mui/icons-material/Password";
+import { clearErrors, login } from "../../redux/actions/userAction";
 import { message } from "antd";
+import axios from "../../axiosInstance";
 
-const ResetPassword = () => {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, success, loading } = useSelector(
-    (state) => state.forgotPassword
+  const { user, error, loading, isAuthenticated } = useSelector(
+    (state) => state.user
   );
 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const { token } = useParams();
+
+  // // Check Server Status
+  const checkServerStatus = async () => {
+    try {
+      const response = await axios.get("/api/status");
+      if (!response?.data?.data) {
+        message.error(
+          "Oops! Something went wrong. Please try again later or contact support."
+        );
+      }
+    } catch (error) {
+      message.error(
+        "Error: Oops! Something went wrong. Please try again later or contact support."
+      );
+    }
+  };
 
   // Toggle password visibility
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleClickShowNewPassword = () => {
-    setShowNewPassword(!showNewPassword);
-  };
-
-  // Handle Reset Password APi Call
-  const handleSubmit = (e) => {
+  // Login API call
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const myForm = new FormData();
-    myForm.set("password", password);
-    myForm.set("confirmPassword", confirmPassword);
-    dispatch(resetPassword(token, myForm));
+    checkServerStatus();
+    await dispatch(login(email, password));
   };
 
-  useEffect(() => {
+  // Handle errors and authentication state changes
+   useEffect(() => {
     if (error) {
       message.error(error);
       dispatch(clearErrors());
     }
-    if (success) {
-      message.success("Password Updated Successfully");
-      navigate("/login");
+    if (isAuthenticated) {
+      message.success("Login Successfully");
+      // Redirect based on user role
+      if (user && user.role === 0) {
+        navigate("/");
+      } else if (user && user.role >= 1) {
+        navigate("/dashboard");
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, error, success]);
+  }, [error, isAuthenticated, user, dispatch, navigate]);
 
   const currentYear = new Date().getFullYear();
 
   return (
-    <div>
+    <>
       <PageTitle
-        title="Reset Password -  One Click"
-        description="Enter your new password to reset your account access."
+        title="Login - Quickdails"
+        description="Log in to your account to access your courses and exams."
       />
       <Breadcrumbs
         aria-label="breadcrumb"
@@ -85,21 +99,22 @@ const ResetPassword = () => {
         >
           Home
         </MUILink>
-        <Typography sx={{ color: "primary.main" }}>Reset Password</Typography>
+        <Typography sx={{ color: "primary.main" }}>Login</Typography>
       </Breadcrumbs>
+
       <Box
         sx={{
-          height: "100vh",
+          mt: 5,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          bgcolor: "primary.white",
+          bgColor: "primary.white",
         }}
       >
         <Box
           onSubmit={handleSubmit}
           component="form"
-          className="form_style border-style"
+          className="form_style border-style needs-validation"
           sx={{
             backgroundColor: "#fff",
             padding: "40px",
@@ -119,7 +134,7 @@ const ResetPassword = () => {
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: "primary.main", mb: 3 }}>
-              <Password />
+              <LockOpenIcon />
             </Avatar>
             <Typography
               variant="h5"
@@ -132,9 +147,10 @@ const ResetPassword = () => {
                 lineHeight: 1.8,
               }}
             >
-              Reset Your Password
+              Welcome Back to Quickdails
             </Typography>
 
+            {/* Toggle between regular login and student login */}
             <Typography
               variant="h6"
               align="center"
@@ -147,36 +163,26 @@ const ResetPassword = () => {
                 fontSize: "16px",
               }}
             >
-              Enter your email to receive password reset instructions and regain
-              access to your Quickdails account.
+              Please enter your login details to access your Quickdails account.
             </Typography>
 
             <TextField
               sx={{
                 mb: 3,
-                mt: 3,
+                mt: 2,
                 "& .MuiInputBase-root": {
                   color: "text.secondary",
                 },
                 fieldset: { borderColor: "rgb(231, 235, 240)" },
               }}
               fullWidth
-              id="password"
-              name="password"
-              label="New Password"
-              type={showNewPassword ? "text" : "password"}
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleClickShowNewPassword} edge="end">
-                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
+              id="email"
+              label="E-mail"
+              name="email"
+              type="email"
+              placeholder="E-mail"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               sx={{
@@ -187,13 +193,13 @@ const ResetPassword = () => {
                 fieldset: { borderColor: "rgb(231, 235, 240)" },
               }}
               fullWidth
-              id="ConfirmPassword"
+              id="password"
               name="password"
-              label="Confirm Password"
+              label="Password"
               type={showPassword ? "text" : "password"}
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -204,14 +210,19 @@ const ResetPassword = () => {
                 ),
               }}
             />
+
+            <p className="ForgotPassword">
+              <Link to="/password/forgot"> Forgot Password? </Link>
+            </p>
             <Button
               disabled={loading}
-              fullWidth
               variant="contained"
               type="submit"
+              fullWidth
               color="primary"
               className="courses_desc"
               sx={{
+                mt: 2,
                 borderRadius: "5px",
                 textTransform: "none",
                 fontFamily: "Poppins, sans-serif",
@@ -219,8 +230,27 @@ const ResetPassword = () => {
                 color: "white",
               }}
             >
-              {loading ? "loading..." : "Reset Password"}
+              {loading ? "loading..." : "Log In"}
             </Button>
+
+            <Box
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{
+                pt: 2,
+                fontFamily: "Poppins, sans-serif",
+                color: "#555",
+                letterSpacing: "1.5px",
+                lineHeight: 1.8,
+                fontSize: "16px",
+              }}
+              className="switchMember"
+            >
+              Create an Account? <Link to="/register"> Sign Up </Link>
+            </Box>
+
+            {/* Toggle between student and general login */}
             <Box sx={{ pt: 2 }}>
               <hr />
               <p
@@ -232,14 +262,14 @@ const ResetPassword = () => {
                   marginBottom: "-20px",
                 }}
               >
-                &copy; {currentYear} Copyright by Quickdails. All Rights Reserved.
+                &copy; {currentYear} Copyright by Quickdials. All Rights Reserved.
               </p>
             </Box>
           </Box>
         </Box>
       </Box>
-    </div>
+    </>
   );
 };
 
-export default ResetPassword;
+export default Login;

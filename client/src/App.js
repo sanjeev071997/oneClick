@@ -2,13 +2,31 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProSidebarProvider } from "react-pro-sidebar";
+import { useSelector } from "react-redux";
 import { reloadUser } from "./redux/actions/userAction";
 import store from "./redux/store";
+import ConnectionStatus from "./Components/ConnectionStatus.js";
+
+// Pages
 import Home from "./pages/Home";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import About from "./pages/About.js";
+import Contact from "./pages/Contact.js";
+import Register from "./pages/Auth/Register";
+import Login from "./pages/Auth/Login";
+import ForgotPassword from "./pages/Auth/ForgotPassword.js";
+import ResetPassword from "./pages/Auth/ResetPassword.js";
+import Plans from './pages/Plans.js'
 import ListYourBusiness from "./pages/ListYourBusiness.js";
 import CategoryBusinesseView from "./pages/CategoryBusinesseView.js";
+import CategoryDetail from "./pages/CategoryDetail.js";
+import Addedbusiness from "./pages/Addedbusiness.js";
+import Reviews from "./pages/Vendors/Reviews.js";
+import Enquire from "./pages/Enquire.js";
+import Settings from './pages/Vendors/Settings.js'
+import PlansView from './pages/Vendors/PlanView.js'
+import Product from './pages/Products/Product.js'
+
+// Admin Components
 import Layout from "./admin/global/Layout";
 import AdminDashboard from "./admin/Dashboard";
 import AdminHomeBanner from "./admin/HomeBanner";
@@ -21,19 +39,7 @@ import AdminUsers from "./admin/Users/User.js"
 import AdminContact from './admin/Contact/AdminContact.js'
 import AdminPlans from './admin/Plans/Plans.js'
 import NotFound from "./pages/Error";
-import ConnectionStatus from "./Components/ConnectionStatus.js";
-import { useSelector } from "react-redux";
-import ForgotPassword from "./pages/ForgotPassword.js";
-import ResetPassword from "./pages/ResetPassword.js";
-import CategoryDetail from "./pages/CategoryDetail.js";
-import About from "./pages/About.js";
-import Contact from "./pages/Contact.js";
-import Addedbusiness from "./pages/Addedbusiness.js";
-import Reviews from "./pages/Reviews.js";
-import Quries from "./pages/Quries.js";
-import Settings from './pages/Settings.js'
-import Plans from './pages/Plans.js'
-import PlansView from './pages/PlanView.js'
+
 
 
 function App() {
@@ -98,7 +104,7 @@ function App() {
             <Route path="/plans" element={<Plans/>} />
             <Route path="/plans/view" element={<PlansView/>} />
             <Route path="/reviews" element={<Reviews/>} />
-            <Route path="/quries" element={<Quries/>} />
+            <Route path="/enquire" element={<Enquire/>} />
             <Route path="/settings" element={<Settings/>} />
             <Route path="/category/:name" element={<CategoryDetail />} />
             <Route path="/add/business" element={<ListYourBusiness />} />
@@ -106,6 +112,8 @@ function App() {
               path="/category/:name/:id"
               element={<CategoryBusinesseView />}
             />
+            <Route path="/products" element={<Product />} />
+
             {/* Admin Routes */}
             {user?.role >= 1 ? (
               <>

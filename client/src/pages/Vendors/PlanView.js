@@ -6,12 +6,13 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import EventIcon from "@mui/icons-material/Event";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import StarIcon from "@mui/icons-material/Star";
-import Footer from "../Components/Footer";
-import Navbar from "../Components/Navbar";
+import Footer from "../../Components/Footer";
+import Navbar from "../../Components/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useSelector }  from  "react-redux";
-import axios from  "../axiosInstance";
+import axios from  "../../axiosInstance";
 import { message }from "antd";
+import { Colors } from "../../Comman";
 
 const PlanView = () => {
   const navigate = useNavigate();
@@ -92,8 +93,33 @@ const PlanView = () => {
     <>
       <Navbar />
       <Box maxWidth={1200} mx="auto" mt={5} px={2} mb={5}>
-
-        <Grid container spacing={4}>
+{/* Business Heading */}
+          <Typography
+            variant="h5"
+            sx={{
+              fontFamily: "'Poppins', sans-serif",
+              fontSize: "2rem",
+              color: Colors.LOGOColor,
+              fontWeight: 700,
+              display: "inline-block",
+              position: "relative",
+              pb: 1,
+              alignSelf: { xs: "center", sm: "flex-start" },
+            }}
+          >
+            Business Plans
+            <Box
+              sx={{
+                content: '""',
+                width: 60,
+                height: 3,
+                bgcolor: Colors.LOGOColor,
+                margin: "8px auto 0",
+                borderRadius: 2,
+              }}
+            />
+          </Typography>
+        <Grid container spacing={4} mt={3}>
           {businessPlans.map(({ businessName, plan }, index) => (
             <Grid item key={index} xs={12} sm={12} md={6} lg={4}>
               <Card
@@ -141,13 +167,13 @@ const PlanView = () => {
                       {plan.name.charAt(0)}
                     </Avatar>
                     <Box>
-                      <Typography variant="h5" fontWeight="bold" color="#275559">
+                      <Typography variant="h6" fontWeight="bold" color="#275559">
                         {plan.name}
                       </Typography>
                       <Stack direction="row" alignItems="center" spacing={1}>
                         <CurrencyRupeeIcon fontSize="small" sx={{ color: '#9EDC29' }} />
                         <Typography variant="h6" fontWeight={700} color="#275559">
-                          {plan.price}/{plan.duration}
+                          {plan.price} / {plan.duration}
                         </Typography>
                       </Stack>
                     </Box>
@@ -174,7 +200,7 @@ const PlanView = () => {
 
                   <Divider sx={{ my: 2, borderColor: 'rgba(0,0,0,0.08)', borderBottomWidth: 2 }} />
 
-                  <Typography variant="subtitle1" gutterBottom fontWeight={600} sx={{ color: '#275559' }}>
+                  {/* <Typography variant="subtitle1" gutterBottom fontWeight={600} sx={{ color: '#275559' }}>
                     Plan Benefits:
                   </Typography>
 
@@ -199,7 +225,7 @@ const PlanView = () => {
                         )}
                       </Stack>
                     ))}
-                  </Stack>
+                  </Stack> */}
 
                   <Stack
                     direction={{ xs: 'row', sm: 'row', md: 'row' }}
@@ -222,7 +248,7 @@ const PlanView = () => {
                     >
                       Upgrade Plan
                     </Button>
-                    <Button
+                    {/* <Button
                       onClick={() => navigate('/contact')}
                       variant="outlined"
                       fullWidth
@@ -239,7 +265,7 @@ const PlanView = () => {
                       }}
                     >
                       Manage Subscription
-                    </Button>
+                    </Button> */}
                   </Stack>
 
                 </Box>
