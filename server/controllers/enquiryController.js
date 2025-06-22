@@ -1,4 +1,5 @@
 import Enquiry from "../models/enquiryModel.js";
+import Business from "../models/listBusinessModel.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import Errorhandler from "../utils/Errorhandler.js";
 
@@ -17,12 +18,35 @@ export const addEnquiry = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Get Enquiry
+// export const getEnquiry = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const userId = req.user.id;
+//     const enquiry = await Enquiry.find({ userId })
+//       .sort({ createdAt: -1 })
+//       .populate("userId", "name phone email").populate("businessId");
+//     res.status(200).json({
+//       success: true,
+//       data: enquiry,
+//       message: "Enquiry details fetched successfully",
+//     });
+//   } catch (error) {
+//     return next(new Errorhandler(error.message, 500));
+//   }
+// });
+
 export const getEnquiry = catchAsyncErrors(async (req, res, next) => {
   try {
-    const userId = req.user.id;
-    const enquiry = await Enquiry.find({ userId })
+    const {userId} = req.body;
+
+    // Step 1: Get all businesses added by this user
+    const businesses = await Business.find({ userId }).select('_id');
+    const businessIds = businesses.map(b => b._id);
+
+    // Step 2: Find enquiries related to those businesses
+    const enquiry = await Enquiry.find({ businessId: { $in: businessIds } })
       .sort({ createdAt: -1 })
-      .populate("userId", "name phone email").populate("businessId");
+      .populate("businessId", "businessName phone");
+
     res.status(200).json({
       success: true,
       data: enquiry,
@@ -32,6 +56,7 @@ export const getEnquiry = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
+
 
 // updateEnquiry
 export const updateEnquiry = catchAsyncErrors(async (req, res, next) => {

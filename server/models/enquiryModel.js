@@ -28,11 +28,11 @@ const enquirySchema = new mongoose.Schema(
       required: true,
     },
 
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-      required: true,
-    },
+    // userId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "users",
+    //   required: true,
+    // },
   },
 
   {

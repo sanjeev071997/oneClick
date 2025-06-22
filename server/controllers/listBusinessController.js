@@ -2,10 +2,6 @@ import Business from "../models/listBusinessModel.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import Errorhandler from "../utils/Errorhandler.js";
 import cloudinary from "../utils/cloudinary.js";
-import geoip from "geoip-lite";
-import Plans from "../models/plansModel.js";
-
-import { getLocationFromIP } from "../utils/getLocationFromIP.js";
 
 // Add Business
 // export const addBusiness = catchAsyncErrors(async (req, res, next) => {
@@ -42,71 +38,9 @@ import { getLocationFromIP } from "../utils/getLocationFromIP.js";
 //   }
 // });
 
-// export const addBusiness = catchAsyncErrors(async (req, res, next) => {
-//   try {
-//     // Upload images to Cloudinary
-//     const imageUploads = req.files.map((file) =>
-//       cloudinary.uploader.upload(file.path, {
-//         folder: "business-listings",
-//         transformation: { width: 800, height: 600, crop: "limit" },
-//       })
-//     );
-
-//     const uploadedImages = await Promise.all(imageUploads);
-//     const images = uploadedImages.map((img) => ({
-//       url: img.secure_url,
-//       public_id: img.public_id,
-//     }));
-
-//     // Parse socialLinks from JSON string if provided
-//     const parsedSocialLinks = req.body.socialLinks
-//       ? JSON.parse(req.body.socialLinks)
-//       : {};
-
-//     // Create business with parsed socialLinks
-//     const business = new Business({
-//       ...req.body,
-//       images,
-//       socialLinks: parsedSocialLinks,
-//     });
-
-//     await business.save();
-
-//     res.status(201).json({
-//       success: true,
-//       data: business,
-//       message: "Your business added successfully",
-//     });
-//   } catch (error) {
-//     return next(new Errorhandler(error.message, 500));
-//   }
-// });
-
-// Add Business with Location and Social Links
 export const addBusiness = catchAsyncErrors(async (req, res, next) => {
   try {
-    // Get IP Address
-    let ip =
-      req.headers["x-forwarded-for"]?.split(",")[0] ||
-      req.connection?.remoteAddress ||
-      req.socket?.remoteAddress ||
-      req.ip;
-
-    // Normalize localhost IP
-    if (ip === "::1" || ip === "::ffff:127.0.0.1") {
-      ip = "8.8.8.8"; // fallback to test IP for localhost
-    }
-
-    // 🔍 Get Location from IP
-    const location = await getLocationFromIP(ip);
-
-    console.log("IP:", ip);
-    console.log("Location:", location);
-    if (!location) {
-      return next(new Errorhandler("Unable to determine location from IP", 400));
-    }
-    
-    // 📸 Upload images to Cloudinary
+    // Upload images to Cloudinary
     const imageUploads = req.files.map((file) =>
       cloudinary.uploader.upload(file.path, {
         folder: "business-listings",
@@ -120,17 +54,16 @@ export const addBusiness = catchAsyncErrors(async (req, res, next) => {
       public_id: img.public_id,
     }));
 
-    // 🌐 Parse socialLinks
+    // Parse socialLinks from JSON string if provided
     const parsedSocialLinks = req.body.socialLinks
       ? JSON.parse(req.body.socialLinks)
       : {};
 
-    // 🏢 Create business
+    // Create business with parsed socialLinks
     const business = new Business({
       ...req.body,
       images,
       socialLinks: parsedSocialLinks,
-      location, // ✅ Add location to business
     });
 
     await business.save();
@@ -144,161 +77,6 @@ export const addBusiness = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
-
-
-
-
-
-// Optional: region code to full state name mapping
-// const regionMap = {
-//   AN: "Andaman and Nicobar Islands",
-//   AP: "Andhra Pradesh",
-//   AR: "Arunachal Pradesh",
-//   AS: "Assam",
-//   BR: "Bihar",
-//   CG: "Chhattisgarh",
-//   CH: "Chandigarh",
-//   DD: "Daman and Diu",
-//   DL: "Delhi",
-//   GA: "Goa",
-//   GJ: "Gujarat",
-//   HR: "Haryana",
-//   HP: "Himachal Pradesh",
-//   JH: "Jharkhand",
-//   JK: "Jammu and Kashmir",
-//   KA: "Karnataka",
-//   KL: "Kerala",
-//   LA: "Ladakh",
-//   LD: "Lakshadweep",
-//   MH: "Maharashtra",
-//   ML: "Meghalaya",
-//   MN: "Manipur",
-//   MP: "Madhya Pradesh",
-//   MZ: "Mizoram",
-//   NL: "Nagaland",
-//   OD: "Odisha",
-//   PB: "Punjab",
-//   PY: "Puducherry",
-//   RJ: "Rajasthan",
-//   SK: "Sikkim",
-//   TN: "Tamil Nadu",
-//   TR: "Tripura",
-//   UP: "Uttar Pradesh",
-//   UK: "Uttarakhand",
-//   WB: "West Bengal"
-// };
-
-// export const addBusiness = catchAsyncErrors(async (req, res, next) => {
-//   try {
-//     const { planId, socialLinks } = req.body;
-
-//     if (!planId) {
-//       return next(new Errorhandler("Plan ID is required", 400));
-//     }
-
-//     // ✅ Fetch plan details
-//     const selectedPlan = await Plans.findById(planId);
-//     if (!selectedPlan) {
-//       return next(new Errorhandler("Invalid Plan ID", 404));
-//     }
-
-//     const maxPhotos = selectedPlan.maxPhotos ?? 1;
-//     const allowSocialLinks = selectedPlan.canAddSocialLinks ?? false;
-//     const isVerifiedVendor = selectedPlan.isVerifiedVendor ?? false;
-
-//     // ✅ Upload allowed number of images to Cloudinary
-//     const filesToUpload = req.files.slice(0, maxPhotos);
-//     const imageUploads = filesToUpload.map((file) =>
-//       cloudinary.uploader.upload(file.path, {
-//         folder: "business-listings",
-//         transformation: { width: 800, height: 600, crop: "limit" },
-//       })
-//     );
-//     const uploadedImages = await Promise.all(imageUploads);
-//     const images = uploadedImages.map((img) => ({
-//       url: img.secure_url,
-//       public_id: img.public_id,
-//     }));
-
-//     // ✅ Parse social links
-//     let parsedSocialLinks = {};
-//     if (socialLinks) {
-//       const parsed = JSON.parse(socialLinks);
-//       const allEmpty = Object.values(parsed).every((val) => !val?.trim());
-
-//       if (!allowSocialLinks && !allEmpty) {
-//         return next(
-//           new Errorhandler("Social links are not allowed for this plan", 403)
-//         );
-//       }
-
-//       parsedSocialLinks = parsed;
-//     }
-
-//     // ✅ Detect user's location from IP
-//     // const ip =
-//     //   req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-//     // const geo = geoip.lookup(ip);
-
-//     // const location = geo
-//     //   ? {
-//     //       latitude: geo.ll[0],
-//     //       longitude: geo.ll[1],
-//     //       city: geo.city,
-//     //       state: regionMap[geo.region] || geo.region || "",
-//     //       country: geo.country || "",
-//     //     }
-//     //   : null;
-
-
-//     let ip =
-//   req.headers["x-forwarded-for"]?.split(",")[0] || 
-//   req.connection?.remoteAddress || 
-//   req.socket?.remoteAddress || 
-//   req.ip;
-
-// // If it's IPv6 localhost (::1), force it to 127.0.0.1
-// if (ip === "::1" || ip === "::ffff:127.0.0.1") {
-//   ip = "127.0.0.1";
-// }
-
-// // Get location
-// const geo = geoip.lookup(ip);
-
-// const location = geo
-//   ? {
-//       latitude: geo.ll[0],
-//       longitude: geo.ll[1],
-//       city: geo.city,
-//       state: regionMap[geo.region] || geo.region || "",
-//       country: geo.country || "",
-//     }
-//   : null;
-
-//     // ✅ Create business
-//     const business = new Business({
-//       ...req.body,
-//       planId,
-//       images,
-//       socialLinks: parsedSocialLinks,
-//       isVerifiedVendor,
-//       location,
-//     });
-// console.log("IP:", ip);
-// console.log("GEO:", geo);
-
-//     await business.save();
-
-//     res.status(201).json({
-//       success: true,
-//       data: business,
-//       message: "Your business added successfully",
-//     });
-//   } catch (error) {
-//     return next(new Errorhandler(error.message, 500));
-//   }
-// });
-
 
 // Get All Businesses
 export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
