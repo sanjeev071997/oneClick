@@ -99,7 +99,7 @@ function App() {
                     ) : user.role >= 1 ? (
                       <AdminDashboardHDC />
                     ) : (
-                      <Home /> // If role is undefined, null, or unexpected
+                      <Home /> 
                     )
                   ) : (
                     <Login />
