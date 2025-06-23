@@ -39,14 +39,15 @@ import NotFound from "./pages/Error";
 
 
 // User Dahboard
-import LayoutUser from "./BusinessDashboard/global/LayoutUser.js";
+import LayoutUser  from "./BusinessDashboard/global/LayoutUser.js";
 import UserDashboard from './BusinessDashboard/pages/Businessdashboard.js'
 import UserBusiness from './BusinessDashboard/pages/BusinessUser.js'
 import UserProduct from './BusinessDashboard/pages/Product.js'
-import UserReviews from './BusinessDashboard/pages/UserReviews.js'
+import UserReviews from  './BusinessDashboard/pages/UserReviews.js'
 import UserProfile from './BusinessDashboard/pages/Profile.js'
 import UserEnquries from './BusinessDashboard/pages/UserEnquries.js';
 import UserPLans from './BusinessDashboard/pages/UserPlan.js'
+import UserCateogry from './BusinessDashboard/pages/BusinessCategory.js'
 
 
 
@@ -69,18 +70,19 @@ function App() {
   const AdminBusinessHDC = Layout(AdminBusiness);
   const AdminReviewsHDC = Layout(AdminReviews);
   const AdminUsersHDC = Layout(AdminUsers)
-  const AdminContactHDC = Layout(AdminContact)
-  const AdminPlansHDC = Layout(AdminPlans)
+  const AdminContactHDC = Layout(AdminContact )
+  const AdminPlansHDC = Layout(AdminPlans )
 
 
   //Layout User
   const UserDashboardHDC = LayoutUser(UserDashboard);
-  const BusinessUsersHDC = LayoutUser(UserBusiness);
-  const UserProdcutHDC = LayoutUser(UserProduct)
-  const UserReviewsHDC = LayoutUser(UserReviews);
-  const UserPlansHDC = LayoutUser(UserPLans)
+  const  BusinessUsersHDC =  LayoutUser(UserBusiness);
+  const  UserProdcutHDC =  LayoutUser(UserProduct)
+  const UserReviewsHDC =  LayoutUser(UserReviews);
+  const UserPlansHDC = LayoutUser(UserPLans )
   const UserProfileHDC = LayoutUser(UserProfile)
   const UserEnquriesHDC = LayoutUser(UserEnquries)
+  const UserCategoryHDC = LayoutUser(UserCateogry)
 
   return (
     <>
@@ -99,7 +101,7 @@ function App() {
                     ) : user.role >= 1 ? (
                       <AdminDashboardHDC />
                     ) : (
-                      <Home /> 
+                      <Home />
                     )
                   ) : (
                     <Login />
@@ -110,8 +112,6 @@ function App() {
               }
             />
 
-
-
             {/* Common Routes  */}
             {/* <Route path="/" element={<Home />} /> */}
             <Route path="/register" element={<Register />} />
@@ -120,30 +120,31 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-
-            <Route path="/plans" element={<Plans />} />
-
+          
+            <Route path="/plans" element={<Plans/>} />
+           
             <Route path="/category/:name" element={<CategoryDetail />} />
             <Route path="/add/business" element={<ListYourBusiness />} />
             <Route
               path="/category/:name/:id"
               element={<CategoryBusinesseView />}
             />
-
-            {/* Busniess Dahboard Routes  */}
-            <Route path="/business/dashboard" element={<UserDashboardHDC />} />
+           
+           {/* Busniess Dahboard Routes  */}
+             <Route path="/business/dashboard" element={<UserDashboardHDC />} />
             <Route path="/user/business" element={<BusinessUsersHDC />} />
             <Route path="/user/product" element={<UserProdcutHDC />} />
-            <Route path="/user/reviews" element={< UserReviewsHDC />} />
+            <Route path="/user/reviews" element={< UserReviewsHDC  />} />
             <Route path="/user/plans" element={<UserPlansHDC />} />
             <Route path="/user/profile" element={<UserProfileHDC />} />
             <Route path="/user/enquries" element={<UserEnquriesHDC />} />
+            <Route path="/user/category" element={<UserCategoryHDC />} />
 
 
             {/* Admin Routes */}
             {user?.role >= 1 ? (
               <>
-                <Route path="/admin/home/banner" element={<AdminHomeBannerHDC />} />
+               <Route path="/admin/home/banner" element={<AdminHomeBannerHDC />} />
                 <Route
                   path="/admin/home/highlights"
                   element={<AdminHomeHighlightsHDC />}
@@ -156,14 +157,14 @@ function App() {
                 <Route path="/admin/business" element={<AdminBusinessHDC />} />
                 <Route path="/admin/reviews" element={<AdminReviewsHDC />} />
                 <Route path="/admin/users" element={<AdminUsersHDC />} />
-                <Route path="/admin/contact" element={<AdminContactHDC />} />
-                <Route path="/admin/plans" element={<AdminPlansHDC />} />
+                <Route path="/admin/contact" element={<AdminContactHDC/>} />
+                <Route path="/admin/plans" element={<AdminPlansHDC/>} />
               </>
             ) : null}
             {/* Page not found Route */}
             <Route path="*" element={<NotFound />} />
 
-
+           
           </Routes>
         </BrowserRouter>
       </ProSidebarProvider>

@@ -4,8 +4,7 @@ import {
 } from "@mui/material";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import EventIcon from "@mui/icons-material/Event";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import StarIcon from "@mui/icons-material/Star";
+
 
 import { useNavigate } from "react-router-dom";
 import { useSelector }  from  "react-redux";
@@ -199,32 +198,6 @@ const PlanView = () => {
 
                   <Divider sx={{ my: 2, borderColor: 'rgba(0,0,0,0.08)', borderBottomWidth: 2 }} />
 
-                  {/* <Typography variant="subtitle1" gutterBottom fontWeight={600} sx={{ color: '#275559' }}>
-                    Plan Benefits:
-                  </Typography>
-
-                  <Stack spacing={1} mb={3}>
-                    {plan.features.map((feature, index) => (
-                      <Stack key={index} direction="row" alignItems="center" spacing={1}
-                        sx={{ p: 1, borderRadius: 1, '&:hover': { backgroundColor: '#f5faf6' } }}>
-                        <CheckCircleIcon sx={{ color: '#9EDC29' }} />
-                        <Typography variant="body1" sx={{ color: '#275559' }}>
-                          {feature}
-                        </Typography>
-                        {index < 2 && (
-                          <Chip icon={<StarIcon sx={{ color: '#ffc107', fontSize: 16 }} />}
-                            label="Popular" size="small"
-                            sx={{
-                              ml: 'auto!important',
-                              backgroundColor: '#fff8e1',
-                              color: '#ff8f00',
-                              fontSize: 12
-                            }}
-                          />
-                        )}
-                      </Stack>
-                    ))}
-                  </Stack> */}
 
                   <Stack
                     direction={{ xs: 'row', sm: 'row', md: 'row' }}
@@ -247,24 +220,7 @@ const PlanView = () => {
                     >
                       Upgrade Plan
                     </Button>
-                    {/* <Button
-                      onClick={() => navigate('/contact')}
-                      variant="outlined"
-                      fullWidth
-                      sx={{
-                        color: '#275559',
-                        borderColor: '#275559',
-                        '&:hover': { borderColor: '#1a3a3d', backgroundColor: '#f9f9f9' },
-                        py: 1.5,
-                        px: { xs: 2, sm: 3, md: 4 },
-                        borderRadius: 2,
-                        fontWeight: 'bold',
-                        textTransform: 'none',
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
-                      Manage Subscription
-                    </Button> */}
+                  
                   </Stack>
 
                 </Box>
