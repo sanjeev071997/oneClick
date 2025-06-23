@@ -48,13 +48,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { message } from "antd";
-import axios from "../axiosInstance";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import { Colors, FontSize } from "../Comman";
+import axios from '../../axiosInstance';
+
+import { Colors, FontSize } from '../../Comman';
 import { State, City } from "country-state-city";
 
-const AddedBusiness = () => {
+const Business = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const [businesses, setBusinesses] = useState([]);
@@ -298,7 +297,7 @@ const AddedBusiness = () => {
 
   return (
     <>
-      <Navbar />
+  
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box
@@ -1066,12 +1065,11 @@ const AddedBusiness = () => {
             </Button>
           </DialogActions>
         </Dialog>
-
       
       </Container>
-      <Footer />
+
     </>
   );
 };
 
-export default AddedBusiness;
+export default Business;

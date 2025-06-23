@@ -9,11 +9,9 @@ import {
 } from '@mui/icons-material';
 import { message, Modal } from "antd";
 import axios from '../../axiosInstance';
-import Navbar from '../../Components/Navbar';
-import Footer from '../../Components/Footer';
 import { Colors, FontFamily, FontSize } from "../../Comman";
 
-const ReviewsPage = () => {
+const  UserReviews = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,7 +118,6 @@ const ReviewsPage = () => {
 
   return (
     <>
-      <Navbar />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ textAlign: 'center', my: 2 }}>
           <Typography
@@ -364,9 +361,8 @@ const ReviewsPage = () => {
           </DialogActions>
         </Dialog>
       </Container>
-      <Footer />
     </>
   );
 };
 
-export default ReviewsPage;
+export default UserReviews;

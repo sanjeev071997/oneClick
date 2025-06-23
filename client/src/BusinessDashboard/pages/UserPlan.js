@@ -6,8 +6,7 @@ import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import EventIcon from "@mui/icons-material/Event";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import StarIcon from "@mui/icons-material/Star";
-import Footer from "../../Components/Footer";
-import Navbar from "../../Components/Navbar";
+
 import { useNavigate } from "react-router-dom";
 import { useSelector }  from  "react-redux";
 import axios from  "../../axiosInstance";
@@ -66,11 +65,11 @@ const PlanView = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+      
         <Box height="60vh" display="flex" justifyContent="center" alignItems="center">
           <CircularProgress />
         </Box>
-        <Footer />
+     
       </>
     );
   }
@@ -78,20 +77,20 @@ const PlanView = () => {
   if (businessPlans.length === 0) {
     return (
       <>
-        <Navbar />
+   
         <Box textAlign="center" mt={10}>
           <Typography variant="h6" color="text.secondary">
             No plan details available.
           </Typography>
         </Box>
-        <Footer />
+     
       </>
     );
   }
 
   return (
     <>
-      <Navbar />
+   
       <Box maxWidth={1200} mx="auto" mt={5} px={2} mb={5}>
 {/* Business Heading */}
           <Typography
@@ -274,7 +273,7 @@ const PlanView = () => {
           ))}
         </Grid>
       </Box>
-      <Footer />
+    
     </>
   );
 };

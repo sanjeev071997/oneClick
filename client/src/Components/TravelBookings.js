@@ -59,9 +59,9 @@ const TravelBookings = () => {
   }, []);
 
   const travelOptions = [
-    { icon: <FlightIcon sx={{ color: '#1976d2' }} />, title: "Flight", poweredBy: "Easemytrip.com", name: "Flights" },
+    { icon: <FlightIcon sx={{ color: '#1976d2' }} />, title: "Flight", poweredBy: "Easemytrip.com", name: "Flight" },
     { icon: <BusIcon sx={{ color: '#d81b60' }} />, title: "Bus", subtitle: "Affordable Rides", name: "Bus" },
-    { icon: <TrainIcon sx={{ color: '#ff9800' }} />, title: "Train", subtitle: "Budget-friendly Travel", name: "Trains" },
+    { icon: <TrainIcon sx={{ color: '#ff9800' }} />, title: "Train", subtitle: "Budget-friendly Travel", name: "Train" },
     { icon: <HotelIcon sx={{ color: '#4caf50' }} />, title: "Hotel", subtitle: "Stay Comfortable", name: "hotels" },
     { icon: <CarIcon sx={{ color: '#9c27b0' }} />, title: "Car Rentals", poweredBy: "Easemytrip.com", name: "Car Rentals" }
   ];

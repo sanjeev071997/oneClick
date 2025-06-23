@@ -55,30 +55,7 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      {/* <BannerContainer>
-        <Slider {...settings}>
-          {images?.map((url, index) => (
-            <BannerImage
-              key={index}
-              sx={{
-                height: {
-                  xs: "200px",
-                  sm: "200px",
-                  md: "400px",
-                  lg: "500px",
-                },
-              }}
-            >
-              <img
-                src={url?.imageUrl}
-                alt={`Slide ${index + 1}`}
-                style={{ height: "100%", width: "100%" }}
-              />
-            </BannerImage>
-          ))}
-        </Slider>
-      </BannerContainer> */}
-
+      
       <BannerContainer>
         <Slider {...settings}>
           {images?.map((url, index) => (

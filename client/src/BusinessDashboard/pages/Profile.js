@@ -34,10 +34,7 @@ import {
   UPDATE_PASSWORD_RESET
 } from "../../redux/constants/userConstants";
 import { message } from "antd";
-import Navbar from "../../Components/Navbar";
-import Footer from "../../Components/Footer";
-import PageTitle from "../../Components/PageTitle";
-import { Colors, FontSize, FontWeight } from "../../Comman";
+import { Colors, FontSize, FontWeight } from '../../Comman';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -48,7 +45,7 @@ function TabPanel(props) {
   );
 }
 
-export default function UserProfile() {
+export default function Profile() {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
@@ -95,8 +92,7 @@ export default function UserProfile() {
 
   return (
     <>
-      <PageTitle title={`${user?.name}'s Profile`} />
-      <Navbar />
+     
       <Container maxWidth="xl" sx={{ mt: 5, mb: 10 }}>
         <Grid container spacing={4}>
           {/* Sidebar Profile Summary */}
@@ -585,7 +581,7 @@ export default function UserProfile() {
           </Grid>
         </Grid>
       </Container>
-      <Footer />
+ 
     </>
   );
 }

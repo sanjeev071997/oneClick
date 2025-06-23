@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import axios from "../axiosInstance";
+import axios from '../../axiosInstance'
 import {Input, Row, Col, Card, Avatar, Typography, Tooltip, Space, Drawer,Form, message,Popconfirm,Divider, Empty, Button as AntButton,} from "antd";
 import {UserOutlined,ShopOutlined,PhoneOutlined,MailOutlined,CalendarOutlined,EyeOutlined,DeleteOutlined,SearchOutlined,CloseOutlined,CommentOutlined,} from "@ant-design/icons";
 import { Button as MuiButton } from "@mui/material";
-import Navbar from "../Components/Navbar";
-import Footer from "../Components/Footer";
-import { Colors, FontSize } from "../Comman";
+
+import { Colors, FontSize } from '../../Comman'
 import { useSelector } from "react-redux";
 const { Title, Text,  } = Typography;
 
-const Enquire = () => {
+const UserEnquire= () => {
   const { user } = useSelector((state) => state.user);
   const [queries, setQueries] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +75,7 @@ const Enquire = () => {
 
   return (
     <>
-      <Navbar />
+     
       <div
         style={{
           maxWidth: 1200,
@@ -509,9 +508,9 @@ const Enquire = () => {
           </Form>
         </Drawer>
       </div>
-      <Footer />
     </>
   );
 };
 
-export default Enquire;
+export default UserEnquire;
+
