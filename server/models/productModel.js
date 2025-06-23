@@ -32,10 +32,12 @@ const productSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  image: {
-    type: String,
-    default: '',
-  },
+  images: [
+    {
+      url: String,
+      public_id: String,
+    },
+  ],
   totalPrice: {
     type: Number,
     default: 0, // can also be computed in pre-save
