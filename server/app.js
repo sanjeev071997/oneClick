@@ -59,7 +59,7 @@ app.use("/api/v1/enquiry", enquiryRoute);
 app.use("/api/v1/contact", contactRoute);
 app.use("/api/v1/homehighlights", homeHighlightsRoute);
 app.use("/api/v1/plans", plansRoute);
-app.use("/api/v1/product",productRoute);
+app.use("/api/v1/product", productRoute);
 app.use("/api/v1/product/category", productCategoryRoute);
 
 // Static files
