@@ -1,66 +1,1047 @@
+// import React, { useEffect, useState } from "react";
+// import Navbar from "../Components/Navbar";
+// import { useLocation, useNavigate } from "react-router-dom";
+// import {
+//   Box,
+//   Typography,
+//   Grid,
+//   Card,
+//   CardContent,
+//   TextField,
+//   Button,
+//   Avatar,
+//   Breadcrumbs,
+//   Stack,
+//   Link,
+//   IconButton,
+//   Chip,
+// } from "@mui/material";
+// import Rating from "@mui/material/Rating";
+// import Slider from "react-slick";
+// import axios from "../axiosInstance";
+// import { useSelector } from "react-redux";
+// import {
+//   Home,
+//   ArrowBack,
+//   Star,
+//   Send,
+//   LocationOn,
+//   Email,
+//   Phone,
+//   Person,
+//   CalendarToday,
+//   ChatBubble,
+//   Facebook,
+//   Instagram,
+//   Twitter,
+//   LinkedIn,
+//   Language,
+//   YouTube,
+//   WhatsApp,
+
+// } from "@mui/icons-material";
+// import "slick-carousel/slick/slick.css";
+// import "slick-carousel/slick/slick-theme.css";
+// import { message } from "antd";
+// import { Colors } from "../Comman";
+// import Footer from "../Components/Footer";
+// import BusinessTabs from "../Components/Business/BusinessTabs";
+
+// const FontWeight = {
+//   light: 300,
+//   regular: 400,
+//   medium: 500,
+//   bold: 700,
+//   heading1: 800,
+//   heading2: 600,
+// };
+
+// const CategoryBusinessView = () => {
+//   const navigate = useNavigate();
+//   const { user } = useSelector((state) => state.user);
+//   const { state } = useLocation();
+//   const business = state?.business;
+//   const [rating, setRating] = useState(0);
+//   const [reviewText, setReviewText] = useState("");
+//   const [reviews, setReviews] = useState([]);
+//   const [activeTab, setActiveTab] = useState("overview");
+
+//   const totalReviews = reviews.length;
+//   const averageRating =
+//     totalReviews > 0
+//       ? (
+//           reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
+//           totalReviews
+//         ).toFixed(1)
+//       : 0;
+
+//   const handleReviewSubmit = async () => {
+//     if (!reviewText || rating === 0) {
+//       return message.error("Please enter a review and rating.");
+//     }
+
+//     const newReview = {
+//       businessId: business._id,
+//       rating,
+//       comment: reviewText,
+//       reviewer: user._id,
+//     };
+//     try {
+//       const res = await axios.post("/api/v1/review/add", newReview);
+//       if (res.data.success) {
+//         message.success("Review submitted successfully!");
+//         setRating(0);
+//         setReviewText("");
+//         getReview();
+//       } else {
+//         message.error(res.data.message || "Failed to submit review.");
+//       }
+//     } catch (error) {
+//       console.error("Review submit error", error);
+//       message.error("An error occurred while submitting your review.");
+//     }
+//   };
+
+//   const getReview = async () => {
+//     if (!business?._id) return;
+//     try {
+//       const response = await axios.post("/api/v1/review/get", {
+//         businessId: business._id,
+//       });
+//       if (response.data.success === true) {
+//         setReviews(response.data.data);
+//       } else {
+//         message.error("Failed to load reviews.");
+//       }
+//     } catch (error) {
+//       console.log(error);
+//       message.error("An error occurred while fetching reviews.");
+//     }
+//   };
+
+//   useEffect(() => {
+//     getReview();
+//   }, [business]);
+
+//   const sliderSettings = {
+//     dots: true,
+//     infinite: business?.images?.length > 1,
+//     speed: 500,
+//     slidesToShow: 1,
+//     slidesToScroll: 1,
+//     autoplay: true,
+//     arrows: false,
+//     fade: true,
+//   };
+
+//   // Tab configuration
+//   // const tabs = [
+//   //   {
+//   //     id: "overview",
+//   //     label: "Overview",
+//   //     icon: null,
+//   //   },
+//   //   {
+//   //     id: "services",
+//   //     label: "Services",
+//   //     icon: <DesignServices sx={{ mr: 1 }} />,
+//   //   },
+//   //   {
+//   //     id: "products",
+//   //     label: "Products",
+//   //     icon: <ShoppingBag sx={{ mr: 1 }} />,
+//   //   },
+//   //   {
+//   //     id: "media",
+//   //     label: "Media",
+//   //     icon: <PermMedia sx={{ mr: 1 }} />,
+//   //   },
+//   //   {
+//   //     id: "reviews",
+//   //     label: `Reviews (${totalReviews})`,
+//   //     icon: <ChatBubble sx={{ mr: 1 }} />,
+//   //   },
+//   //   {
+//   //     id: "contact",
+//   //     label: "Contact",
+//   //     icon: <ContactMail sx={{ mr: 1 }} />,
+//   //   },
+//   // ];
+
+  
+//   return (
+//     <>
+//       <Navbar />
+//       <Box
+//         sx={{
+//           maxWidth: 1300,
+//           mx: "auto",
+//           px: { xs: 2, md: 4 },
+//           py: 3,
+//         }}
+//       >
+//         {/* Header Section */}
+//         <Box sx={{ mb: 4 }}>
+//           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+//             <IconButton
+//               onClick={() => navigate(-1)}
+//               sx={{
+//                 mr: 1,
+//                 backgroundColor: Colors.LOGOColor,
+//                 color: Colors.WHITE,
+//                 "&:hover": {
+//                   backgroundColor: Colors.LOGOlight,
+//                 },
+//               }}
+//             >
+//               <ArrowBack />
+//             </IconButton>
+//             <Breadcrumbs aria-label="breadcrumb">
+//               <Link
+//                 underline="hover"
+//                 color="inherit"
+//                 onClick={() => navigate("/")}
+//                 sx={{
+//                   display: "flex",
+//                   alignItems: "center",
+//                   cursor: "pointer",
+//                 }}
+//               >
+//                 <Home sx={{ mr: 0.5 }} fontSize="inherit" />
+//                 <Typography fontWeight="500">Home</Typography>
+//               </Link>
+//               <Typography color={Colors.BLACK} fontWeight="500">
+//                 {business?.businessName}
+//               </Typography>
+//             </Breadcrumbs>
+//           </Box>
+
+//           {/* Image Gallery */}
+//           <Box
+//             sx={{
+//               borderRadius: 3,
+//               overflow: "hidden",
+//               boxShadow: 3,
+//               position: "relative",
+//               width: "100%",
+//               height: { xs: 250, sm: 350, md: 450 },
+//               "&:before": {
+//                 content: '""',
+//                 position: "absolute",
+//                 bottom: 0,
+//                 left: 0,
+//                 right: 0,
+//                 height: "100px",
+//                 background:
+//                   "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+//                 zIndex: 1,
+//               },
+//             }}
+//           >
+//             <Slider {...sliderSettings}>
+//               {business?.images?.map((img, index) => (
+//                 <Box key={index}>
+//                   <Box
+//                     sx={{
+//                       width: "100%",
+//                       height: { xs: 250, sm: 350, md: 540 },
+//                       backgroundImage: `url(${img?.url})`,
+//                       backgroundSize: "cover",
+//                       backgroundPosition: "center",
+//                       backgroundRepeat: "no-repeat",
+//                       position: "relative",
+//                       display: "flex",
+//                       alignItems: "center",
+//                       justifyContent: "center",
+//                     }}
+//                   />
+//                 </Box>
+//               ))}
+//             </Slider>
+
+//             {/* Business Name Overlay */}
+//             <Box
+//               sx={{
+//                 position: "absolute",
+//                 bottom: 0,
+//                 left: 0,
+//                 right: 0,
+//                 p: 3,
+//                 zIndex: 2,
+//                 color: Colors.WHITE,
+//               }}
+//             >
+//               <Typography
+//                 variant="h3"
+//                 fontWeight="bold"
+//                 sx={{
+//                   textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+//                   fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+//                 }}
+//               >
+//                 {business?.businessName}
+//               </Typography>
+//               <Box
+//                 sx={{
+//                   display: "flex",
+//                   alignItems: "center",
+//                   mt: 1,
+//                   backdropFilter: "blur(5px)",
+//                   p: 1,
+//                   borderRadius: 1,
+//                   width: "fit-content",
+//                 }}
+//               >
+//                 <Rating
+//                   value={Number(averageRating)}
+//                   precision={0.1}
+//                   readOnly
+//                   sx={{
+//                     mr: 1,
+//                     "& .MuiRating-iconFilled": {
+//                       color: Colors.LOGOlight,
+//                     },
+//                     "& .MuiRating-iconEmpty": {
+//                       color: `${Colors.LOGOlight}80`,
+//                     },
+//                   }}
+//                 />
+//                 <Typography
+//                   variant="subtitle1"
+//                   fontWeight="500"
+//                   sx={{ color: Colors.LOGOlight }}
+//                 >
+//                   {averageRating} ({totalReviews}{" "}
+//                   {totalReviews === 1 ? "review" : "reviews"})
+//                 </Typography>
+//               </Box>
+//             </Box>
+//           </Box>
+//         </Box>
+
+//         {/* Business Info Tabs */}
+//         <Box sx={{ mb: 4 }}>
+//           <Box
+//             sx={{
+//               display: "flex",
+//               borderBottom: 1,
+//               borderColor: Colors.LOGOColor,
+//               mb: 3,
+//               overflowX: "auto",
+//               "&::-webkit-scrollbar": {
+//                 display: "none",
+//               },
+//             }}
+//           >
+//             {/* {tabs.map((tab) => (
+//               <Button
+//                 key={tab.id}
+//                 onClick={() => setActiveTab(tab.id)}
+//                 sx={{
+//                   px: 3,
+//                   py: 1.5,
+//                   fontWeight: activeTab === tab.id ? "bold" : "normal",
+//                   color:
+//                     activeTab === tab.id ? Colors.LOGOlight : Colors.LOGOColor,
+//                   borderBottom:
+//                     activeTab === tab.id
+//                       ? `3px solid ${Colors.LOGOlight}`
+//                       : "none",
+//                   textTransform: "none",
+//                   fontSize: "1rem",
+//                   whiteSpace: "nowrap",
+//                   minWidth: "fit-content",
+//                 }}
+//                 startIcon={tab.icon}
+//               >
+//                 {tab.label}
+//               </Button>
+//             ))} */}
+// <BusinessTabs  activeTab={activeTab} setActiveTab={setActiveTab} totalReviews={totalReviews}/>
+
+
+//           </Box>
+
+//           {activeTab === "overview" && (
+//             <Card
+//               sx={{
+//                 borderRadius: 3,
+//                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                 overflow: "hidden",
+//                 background: Colors.WHITE,
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   gutterBottom
+//                   sx={{ color: Colors.LOGOColor }}
+//                 >
+//                   About {business?.businessName}
+//                 </Typography>
+
+//                 <Typography
+//                   variant="body1"
+//                   paragraph
+//                   sx={{ color: Colors.textDark, mb: 3 }}
+//                 >
+//                   {business?.description}
+//                 </Typography>
+
+//                 <Grid container spacing={3}>
+//                   <Grid item xs={12} md={6}>
+//                     <Card
+//                       variant="outlined"
+//                       sx={{
+//                         borderRadius: 2,
+//                         borderColor: Colors.LOGOColor,
+//                       }}
+//                     >
+//                       <CardContent>
+//                         <Typography
+//                           variant="h6"
+//                           fontWeight="bold"
+//                           gutterBottom
+//                           sx={{
+//                             display: "flex",
+//                             alignItems: "center",
+//                             color: Colors.LOGOColor,
+//                           }}
+//                         >
+//                           <Person sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+//                           Contact Information
+//                         </Typography>
+//                         <Stack spacing={2}>
+//                           <Box sx={{ display: "flex", alignItems: "center" }}>
+//                             <Person sx={{ mr: 2, color: Colors.LOGOColor }} />
+//                             <Typography sx={{ color: Colors.textDark }}>
+//                               <strong>Owner:</strong> {business?.ownerName}
+//                             </Typography>
+//                           </Box>
+//                           <Box sx={{ display: "flex", alignItems: "center" }}>
+//                             <Email sx={{ mr: 2, color: Colors.LOGOColor }} />
+//                             <Typography sx={{ color: Colors.textDark }}>
+//                               <strong>Email:</strong> {business?.email}
+//                             </Typography>
+//                           </Box>
+//                           <Box sx={{ display: "flex", alignItems: "center" }}>
+//                             <Phone sx={{ mr: 2, color: Colors.LOGOColor }} />
+//                             <Typography sx={{ color: Colors.textDark }}>
+//                               <strong>Phone:</strong> {business?.phone}
+//                             </Typography>
+//                           </Box>
+//                         </Stack>
+//                       </CardContent>
+//                     </Card>
+//                   </Grid>
+
+//                   <Grid item xs={12} md={6}>
+//                     <Card
+//                       variant="outlined"
+//                       sx={{
+//                         borderRadius: 2,
+//                         borderColor: Colors.LOGOColor,
+//                       }}
+//                     >
+//                       <CardContent>
+//                         <Typography
+//                           variant="h6"
+//                           fontWeight="bold"
+//                           gutterBottom
+//                           sx={{
+//                             display: "flex",
+//                             alignItems: "center",
+//                             color: Colors.LOGOColor,
+//                           }}
+//                         >
+//                           <LocationOn sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+//                           Business Details
+//                         </Typography>
+//                         <Stack spacing={2}>
+//                           <Box sx={{ display: "flex", alignItems: "center" }}>
+//                             <Chip
+//                               label={business?.category?.name}
+//                               size="small"
+//                               sx={{
+//                                 mr: 2,
+//                                 backgroundColor: Colors.LOGOColor,
+//                                 color: Colors.WHITE,
+//                                 fontWeight: FontWeight.bold,
+//                               }}
+//                             />
+//                           </Box>
+
+//                           <Box
+//                             sx={{ display: "flex", alignItems: "flex-start" }}
+//                           >
+//                             <LocationOn
+//                               sx={{ mr: 2, color: Colors.LOGOColor, mt: 0.5 }}
+//                             />
+//                             <Typography sx={{ color: Colors.textDark }}>
+//                               <strong>Address:</strong> {business?.address}
+//                               {business?.city && `, ${business.city}`}
+//                               {business?.state && `, ${business.state}`}
+//                             </Typography>
+//                           </Box>
+//                           <Box sx={{ display: "flex", alignItems: "center" }}>
+//                             <CalendarToday
+//                               sx={{ mr: 2, color: Colors.LOGOColor }}
+//                             />
+//                             <Typography sx={{ color: Colors.textDark }}>
+//                               <strong>Member Since:</strong>{" "}
+//                               {new Date(
+//                                 business?.createdAt
+//                               ).toLocaleDateString()}
+//                             </Typography>
+//                           </Box>
+//                         </Stack>
+//                       </CardContent>
+//                     </Card>
+//                   </Grid>
+
+//                   <Grid item xs={12}>
+//                     <Card
+//                       variant="outlined"
+//                       sx={{
+//                         borderRadius: 2,
+//                         borderColor: Colors.LOGOColor,
+//                       }}
+//                     >
+//                       <CardContent>
+//                         <Typography
+//                           variant="h6"
+//                           fontWeight="bold"
+//                           gutterBottom
+//                           sx={{
+//                             display: "flex",
+//                             alignItems: "center",
+//                             color: Colors.LOGOColor,
+//                           }}
+//                         >
+//                           <Language sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
+//                           Social Media Links
+//                         </Typography>
+
+//                         <Box
+//                           sx={{
+//                             mt: 1,
+//                             display: "flex",
+//                             flexWrap: "wrap",
+//                             gap: 2,
+//                           }}
+//                         >
+//                           {business?.socialLinks?.facebook && (
+//                             <a
+//                               href={business.socialLinks.facebook}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <Facebook
+//                                 sx={{ fontSize: 30, color: "#1877F2" }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.instagram && (
+//                             <a
+//                               href={business.socialLinks.instagram}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <Instagram
+//                                 sx={{ fontSize: 30, color: "#E4405F" }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.twitter && (
+//                             <a
+//                               href={business.socialLinks.twitter}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <Twitter
+//                                 sx={{ fontSize: 30, color: "#1DA1F2" }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.linkedin && (
+//                             <a
+//                               href={business.socialLinks.linkedin}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <LinkedIn
+//                                 sx={{ fontSize: 30, color: "#0A66C2" }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.website && (
+//                             <a
+//                               href={business.socialLinks.website}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <Language
+//                                 sx={{ fontSize: 30, color: Colors.LOGOColor }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.youtube && (
+//                             <a
+//                               href={business.socialLinks.youtube}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <YouTube
+//                                 sx={{ fontSize: 30, color: "#FF0000" }}
+//                               />
+//                             </a>
+//                           )}
+//                           {business?.socialLinks?.whatsapp && (
+//                             <a
+//                               href={business.socialLinks.whatsapp}
+//                               target="_blank"
+//                               rel="noopener noreferrer"
+//                             >
+//                               <WhatsApp
+//                                 sx={{ fontSize: 30, color: "#25D366" }}
+//                               />
+//                             </a>
+//                           )}
+//                         </Box>
+//                       </CardContent>
+//                     </Card>
+//                   </Grid>
+//                 </Grid>
+//               </CardContent>
+//             </Card>
+//           )}
+
+//           {activeTab === "services" && (
+//             <Card
+//               sx={{
+//                 borderRadius: 3,
+//                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                 overflow: "hidden",
+//                 background: Colors.WHITE,
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   gutterBottom
+//                   sx={{ color: Colors.LOGOColor }}
+//                 >
+//                   Our Services
+//                 </Typography>
+//                 <Typography
+//                   variant="body1"
+//                   sx={{ color: Colors.textDark, textAlign: "center", py: 4 }}
+//                 >
+//                   Services content will be displayed here
+//                 </Typography>
+//               </CardContent>
+//             </Card>
+//           )}
+
+//           {activeTab === "products" && (
+//             <Card
+//               sx={{
+//                 borderRadius: 3,
+//                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                 overflow: "hidden",
+//                 background: Colors.WHITE,
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   gutterBottom
+//                   sx={{ color: Colors.LOGOColor }}
+//                 >
+//                   Our Products
+//                 </Typography>
+//                 <Typography
+//                   variant="body1"
+//                   sx={{ color: Colors.textDark, textAlign: "center", py: 4 }}
+//                 >
+//                   Products content will be displayed here
+//                 </Typography>
+//               </CardContent>
+//             </Card>
+//           )}
+
+//           {activeTab === "media" && (
+//             <Card
+//               sx={{
+//                 borderRadius: 3,
+//                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                 overflow: "hidden",
+//                 background: Colors.WHITE,
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   gutterBottom
+//                   sx={{ color: Colors.LOGOColor }}
+//                 >
+//                   Media Gallery
+//                 </Typography>
+//                 <Typography
+//                   variant="body1"
+//                   sx={{ color: Colors.textDark, textAlign: "center", py: 4 }}
+//                 >
+//                   Media content will be displayed here
+//                 </Typography>
+//               </CardContent>
+//             </Card>
+//           )}
+
+//           {activeTab === "reviews" && (
+//             <Box>
+//               {/* Add Review Section */}
+//               {user ? (
+//                 <Card
+//                   sx={{
+//                     borderRadius: 3,
+//                     boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                     background: Colors.WHITE,
+//                     mb: 3,
+//                   }}
+//                 >
+//                   <CardContent>
+//                     <Typography
+//                       variant="h5"
+//                       fontWeight="bold"
+//                       gutterBottom
+//                       sx={{ color: Colors.LOGOColor }}
+//                     >
+//                       Share Your Experience
+//                     </Typography>
+//                     <Box sx={{ mb: 3 }}>
+//                       <Typography
+//                         variant="subtitle1"
+//                         gutterBottom
+//                         sx={{ color: Colors.LOGOColor }}
+//                       >
+//                         How would you rate your experience?
+//                       </Typography>
+//                       <Rating
+//                         value={rating}
+//                         onChange={(e, newVal) => setRating(newVal)}
+//                         size="large"
+//                         precision={0.5}
+//                         sx={{
+//                           "& .MuiRating-icon": {
+//                             fontSize: "2.5rem",
+//                             color: Colors.LOGOColor,
+//                           },
+//                           "& .MuiRating-iconFilled": {
+//                             color: Colors.LOGOlight,
+//                           },
+//                         }}
+//                       />
+//                     </Box>
+//                     <TextField
+//                       fullWidth
+//                       multiline
+//                       minRows={4}
+//                       placeholder="Tell others about your experience..."
+//                       value={reviewText}
+//                       onChange={(e) => setReviewText(e.target.value)}
+//                       variant="outlined"
+//                       sx={{
+//                         mb: 2,
+//                         "& .MuiOutlinedInput-root": {
+//                           borderRadius: 2,
+//                           "& fieldset": {
+//                             borderColor: Colors.LOGOColor,
+//                           },
+//                           "&:hover fieldset": {
+//                             borderColor: Colors.LOGOColor,
+//                           },
+//                           "&.Mui-focused fieldset": {
+//                             borderColor: Colors.LOGOColor,
+//                             borderWidth: "2px",
+//                           },
+//                         },
+//                       }}
+//                     />
+
+//                     <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+//                       <Button
+//                         variant="contained"
+//                         endIcon={<Send />}
+//                         onClick={handleReviewSubmit}
+//                         sx={{
+//                           background: Colors.LOGOlight,
+//                           px: 4,
+//                           py: 1.5,
+//                           borderRadius: 2,
+//                           textTransform: "none",
+//                           fontSize: "1rem",
+//                           fontWeight: "bold",
+//                           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+//                         }}
+//                       >
+//                         Post Review
+//                       </Button>
+//                     </Box>
+//                   </CardContent>
+//                 </Card>
+//               ) : (
+//                 <Box
+//                   sx={{
+//                     textAlign: "center",
+//                     p: 3,
+//                     backgroundColor: Colors.lightBg,
+//                     borderRadius: 2,
+//                     border: `2px dashed ${Colors.LOGOColor}`,
+//                     mb: 3,
+//                   }}
+//                 >
+//                   <Typography variant="body1" sx={{ color: Colors.LOGOColor }}>
+//                     Please{" "}
+//                     <Link
+//                       onClick={() => navigate("/login")}
+//                       sx={{
+//                         cursor: "pointer",
+//                         color: Colors.LOGOlight,
+//                         fontWeight: "bold",
+//                       }}
+//                     >
+//                       sign in
+//                     </Link>{" "}
+//                     to leave a review
+//                   </Typography>
+//                 </Box>
+//               )}
+
+//               {/* Reviews List */}
+//               <Card
+//                 sx={{
+//                   borderRadius: 3,
+//                   boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                   background: Colors.WHITE,
+//                 }}
+//               >
+//                 <CardContent>
+//                   <Typography
+//                     variant="h5"
+//                     fontWeight="bold"
+//                     gutterBottom
+//                     sx={{
+//                       display: "flex",
+//                       alignItems: "center",
+//                       mb: 3,
+//                       color: Colors.LOGOColor,
+//                     }}
+//                   >
+//                     <ChatBubble sx={{ mr: 1, color: Colors.LOGOlight }} />{" "}
+//                     Customer Reviews
+//                   </Typography>
+
+//                   {reviews?.length > 0 ? (
+//                     <Box>
+//                       {reviews.map((rev, idx) => (
+//                         <Box
+//                           key={idx}
+//                           sx={{
+//                             mb: 3,
+//                             pb: 3,
+//                             borderBottom: `1px solid ${Colors.LOGOColor}`,
+//                           }}
+//                         >
+//                           <Box
+//                             sx={{ display: "flex", alignItems: "flex-start" }}
+//                           >
+//                             <Avatar
+//                               src={rev?.reviewer?.avatar}
+//                               sx={{
+//                                 color: Colors.LOGOColor,
+//                                 width: 48,
+//                                 height: 48,
+//                                 mr: 2,
+//                                 boxShadow: 1,
+//                                 border: `2px solid ${Colors.LOGOColor}`,
+//                               }}
+//                             />
+//                             <Box sx={{ flex: 1 }}>
+//                               <Box
+//                                 sx={{
+//                                   display: "flex",
+//                                   justifyContent: "space-between",
+//                                   flexWrap: "wrap",
+//                                 }}
+//                               >
+//                                 <Typography
+//                                   fontWeight="bold"
+//                                   variant="subtitle1"
+//                                   sx={{ color: Colors.LOGOColor }}
+//                                 >
+//                                   {rev?.reviewer?.name || "Anonymous"}
+//                                 </Typography>
+//                                 <Typography
+//                                   variant="caption"
+//                                   sx={{ color: Colors.LOGOColor }}
+//                                 >
+//                                   {new Date(rev.createdAt).toLocaleDateString(
+//                                     "en-US",
+//                                     {
+//                                       year: "numeric",
+//                                       month: "long",
+//                                       day: "numeric",
+//                                     }
+//                                   )}
+//                                 </Typography>
+//                               </Box>
+//                               <Box
+//                                 sx={{
+//                                   display: "flex",
+//                                   alignItems: "center",
+//                                   my: 1,
+//                                 }}
+//                               >
+//                                 <Rating
+//                                   value={rev.rating}
+//                                   readOnly
+//                                   size="small"
+//                                   precision={0.5}
+//                                   sx={{
+//                                     color: Colors.LOGOlight,
+//                                     "& .MuiRating-iconFilled": {
+//                                       color: Colors.LOGOlight,
+//                                     },
+//                                   }}
+//                                 />
+//                                 <Chip
+//                                   label={`${rev.rating}`}
+//                                   size="small"
+//                                   sx={{
+//                                     ml: 1,
+//                                     backgroundColor: Colors.LOGOColor,
+//                                     color: Colors.WHITE,
+//                                     fontWeight: "bold",
+//                                   }}
+//                                 />
+//                               </Box>
+//                               <Typography
+//                                 sx={{
+//                                   backgroundColor: "rgba(255,255,255,0.7)",
+//                                   p: 2,
+//                                   borderRadius: 1,
+//                                   color: Colors.LOGOColor,
+//                                 }}
+//                               >
+//                                 "{rev.comment}"
+//                               </Typography>
+//                             </Box>
+//                           </Box>
+//                         </Box>
+//                       ))}
+//                     </Box>
+//                   ) : (
+//                     <Box
+//                       sx={{
+//                         textAlign: "center",
+//                         p: 4,
+//                         backgroundColor: Colors.lightBg,
+//                         borderRadius: 2,
+//                         border: `2px dashed ${Colors.LOGOColor}`,
+//                       }}
+//                     >
+//                       <Star
+//                         sx={{
+//                           fontSize: 60,
+//                           color: Colors.LOGOlight,
+//                           mb: 2,
+//                           opacity: 0.8,
+//                         }}
+//                       />
+//                       <Typography
+//                         variant="h6"
+//                         sx={{ color: Colors.LOGOColor }}
+//                         gutterBottom
+//                       >
+//                         No Reviews Yet
+//                       </Typography>
+//                       <Typography
+//                         variant="body1"
+//                         sx={{ color: Colors.LOGOColor }}
+//                       >
+//                         Be the first to share your experience with this business
+//                       </Typography>
+//                     </Box>
+//                   )}
+//                 </CardContent>
+//               </Card>
+//             </Box>
+//           )}
+
+//           {activeTab === "contact" && (
+//             <Card
+//               sx={{
+//                 borderRadius: 3,
+//                 boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+//                 overflow: "hidden",
+//                 background: Colors.WHITE,
+//               }}
+//             >
+//               <CardContent>
+//                 <Typography
+//                   variant="h5"
+//                   fontWeight="bold"
+//                   gutterBottom
+//                   sx={{ color: Colors.LOGOColor }}
+//                 >
+//                   Contact Us
+//                 </Typography>
+//                 <Typography
+//                   variant="body1"
+//                   sx={{ color: Colors.textDark, textAlign: "center", py: 4 }}
+//                 >
+//                   Contact form and information will be displayed here
+//                 </Typography>
+//               </CardContent>
+//             </Card>
+//           )}
+//         </Box>
+//       </Box>
+//       <Footer />
+//     </>
+//   );
+// };
+
+// export default CategoryBusinessView;
+
+
 import React, { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Avatar,
-  Breadcrumbs,
-  Stack,
-  Link,
-  IconButton,
-  Chip,
-} from "@mui/material";
-import Rating from "@mui/material/Rating";
-import Slider from "react-slick";
+import { Box, Typography, Card, CardContent } from "@mui/material";
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
-import {
-  Home,
-  ArrowBack,
-  Star,
-  Send,
-  LocationOn,
-  Email,
-  Phone,
-  Person,
-  CalendarToday,
-  ChatBubble,
-  Facebook,
-  Instagram,
-  Twitter,
-  LinkedIn,
-  Language,
-  YouTube,
-  WhatsApp,
-} from "@mui/icons-material";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { message } from "antd";
 import { Colors } from "../Comman";
 import Footer from "../Components/Footer";
-
-const FontWeight = {
-  light: 300,
-  regular: 400,
-  medium: 500,
-  bold: 700,
-  heading1: 800,
-  heading2: 600,
-};
+import BusinessTabs from "../Components/Business/BusinessTabs";
+import BusinessHeader from "../Components/Business/BusinessHeader";
+import BusinessOverview from "../Components/Business/BusinessOverview";
+import BusinessServices from "../Components/Business/BusinessServices";
+import BusinessProducts from "../Components/Business/BusinessProducts";
+import BusinessMedia from "../Components/Business/BusinessMedia";
+import BusinessReviews from "../Components/Business/BusinessReviews";
+import BusinessContact from "../Components/Business/BusinessContact";
 
 const CategoryBusinessView = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
   const { state } = useLocation();
   const business = state?.business;
-  const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -72,33 +1053,6 @@ const CategoryBusinessView = () => {
           totalReviews
         ).toFixed(1)
       : 0;
-
-  const handleReviewSubmit = async () => {
-    if (!reviewText || rating === 0) {
-      return message.error("Please enter a review and rating.");
-    }
-
-    const newReview = {
-      businessId: business._id,
-      rating,
-      comment: reviewText,
-      reviewer: user._id,
-    };
-    try {
-      const res = await axios.post("/api/v1/review/add", newReview);
-      if (res.data.success) {
-        message.success("Review submitted successfully!");
-        setRating(0);
-        setReviewText("");
-        getReview();
-      } else {
-        message.error(res.data.message || "Failed to submit review.");
-      }
-    } catch (error) {
-      console.error("Review submit error", error);
-      message.error("An error occurred while submitting your review.");
-    }
-  };
 
   const getReview = async () => {
     if (!business?._id) return;
@@ -121,17 +1075,6 @@ const CategoryBusinessView = () => {
     getReview();
   }, [business]);
 
-  const sliderSettings = {
-    dots: true,
-    infinite: business?.images?.length > 1,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    arrows: false,
-    fade: true,
-  };
-
   return (
     <>
       <Navbar />
@@ -144,728 +1087,49 @@ const CategoryBusinessView = () => {
         }}
       >
         {/* Header Section */}
-        <Box sx={{ mb: 4 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <IconButton
-              onClick={() => navigate(-1)}
-              sx={{
-                mr: 1,
-                backgroundColor: Colors.LOGOColor,
-                color: Colors.WHITE,
-                "&:hover": {
-                  backgroundColor: Colors.LOGOlight,
-                },
-              }}
-            >
-              <ArrowBack />
-            </IconButton>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link
-                underline="hover"
-                color="inherit"
-                onClick={() => navigate("/")}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-              >
-                <Home sx={{ mr: 0.5 }} fontSize="inherit" />
-                <Typography fontWeight="500">Home</Typography>
-              </Link>
-              <Typography color={Colors.BLACK} fontWeight="500">
-                {business?.businessName}
-              </Typography>
-            </Breadcrumbs>
-          </Box>
-
-          {/* Image Gallery */}
-          <Box
-            sx={{
-              borderRadius: 3,
-              overflow: "hidden",
-              boxShadow: 3,
-              position: "relative",
-              width: "100%",
-              height: { xs: 250, sm: 350, md: 450 },
-              "&:before": {
-                content: '""',
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: "100px",
-                background:
-                  "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
-                zIndex: 1,
-              },
-            }}
-          >
-            <Slider {...sliderSettings}>
-              {business?.images?.map((img, index) => (
-                <Box key={index}>
-                  <Box
-                    sx={{
-                      width: "100%",
-                      height: { xs: 250, sm: 350, md: 540 },
-                      backgroundImage: `url(${img?.url})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      position: "relative",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  />
-                </Box>
-              ))}
-            </Slider>
-
-            {/* Business Name Overlay */}
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                p: 3,
-                zIndex: 2,
-                color: Colors.WHITE,
-              }}
-            >
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                sx={{
-                  textShadow: "0 2px 4px rgba(0,0,0,0.5)",
-                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-                }}
-              >
-                {business?.businessName}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  mt: 1,
-                  backdropFilter: "blur(5px)",
-                  p: 1,
-                  borderRadius: 1,
-                  width: "fit-content",
-                }}
-              >
-                <Rating
-                  value={Number(averageRating)}
-                  precision={0.1}
-                  readOnly
-                  sx={{
-                    mr: 1,
-                    "& .MuiRating-iconFilled": {
-                      color: Colors.LOGOlight,
-                    },
-                    "& .MuiRating-iconEmpty": {
-                      color: `${Colors.LOGOlight}80`,
-                    },
-                  }}
-                />
-                <Typography
-                  variant="subtitle1"
-                  fontWeight="500"
-                  sx={{ color: Colors.LOGOlight }}
-                >
-                  {averageRating} ({totalReviews}{" "}
-                  {totalReviews === 1 ? "review" : "reviews"})
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+        <BusinessHeader 
+          business={business} 
+          averageRating={averageRating} 
+          totalReviews={totalReviews} 
+        />
 
         {/* Business Info Tabs */}
         <Box sx={{ mb: 4 }}>
-          <Box
-            sx={{
-              display: "flex",
-              borderBottom: 1,
-              borderColor: Colors.LOGOColor,
-              mb: 3,
-            }}
-          >
-            <Button
-              onClick={() => setActiveTab("overview")}
-              sx={{
-                px: 3,
-                py: 1.5,
-                fontWeight: activeTab === "overview" ? "bold" : "normal",
-                color:
-                  activeTab === "overview"
-                    ? Colors.LOGOlight
-                    : Colors.LOGOColor,
-                borderBottom:
-                  activeTab === "overview"
-                    ? `3px solid ${Colors.LOGOlight}`
-                    : "none",
-                textTransform: "none",
-                fontSize: "1rem",
-              }}
-            >
-              Overview
-            </Button>
-            <Button
-              onClick={() => setActiveTab("reviews")}
-              sx={{
-                px: 3,
-                py: 1.5,
-                fontWeight: activeTab === "reviews" ? "bold" : "normal",
-                color:
-                  activeTab === "reviews" ? Colors.LOGOlight : Colors.LOGOColor,
-                borderBottom:
-                  activeTab === "reviews"
-                    ? `3px solid ${Colors.LOGOlight}`
-                    : "none",
-                textTransform: "none",
-                fontSize: "1rem",
-              }}
-            >
-              Reviews ({totalReviews})
-            </Button>
-          </Box>
+          <BusinessTabs 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab} 
+            totalReviews={totalReviews} 
+          />
 
           {activeTab === "overview" && (
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-                overflow: "hidden",
-                background: Colors.WHITE,
-              }}
-            >
-              <CardContent>
-                <Typography
-                  variant="h5"
-                  fontWeight="bold"
-                  gutterBottom
-                  sx={{ color: Colors.LOGOColor }}
-                >
-                  About {business?.businessName}
-                </Typography>
+            <BusinessOverview business={business} />
+          )}
 
-                <Typography
-                  variant="body1"
-                  paragraph
-                  sx={{ color: Colors.textDark, mb: 3 }}
-                >
-                  {business?.description}
-                </Typography>
+          {activeTab === "services" && (
+            <BusinessServices business={business} />
+          )}
 
-                <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        borderRadius: 2,
-                        borderColor: Colors.LOGOColor,
-                      }}
-                    >
-                      <CardContent>
-                        <Typography
-                          variant="h6"
-                          fontWeight="bold"
-                          gutterBottom
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: Colors.LOGOColor,
-                          }}
-                        >
-                          <Person sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
-                          Contact Information
-                        </Typography>
-                        <Stack spacing={2}>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Person sx={{ mr: 2, color: Colors.LOGOColor }} />
-                            <Typography sx={{ color: Colors.textDark }}>
-                              <strong>Owner:</strong> {business?.ownerName}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Email sx={{ mr: 2, color: Colors.LOGOColor }} />
-                            <Typography sx={{ color: Colors.textDark }}>
-                              <strong>Email:</strong> {business?.email}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Phone sx={{ mr: 2, color: Colors.LOGOColor }} />
-                            <Typography sx={{ color: Colors.textDark }}>
-                              <strong>Phone:</strong> {business?.phone}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  </Grid>
+          {activeTab === "products" && (
+            <BusinessProducts business={business} />
+          )}
 
-                  <Grid item xs={12} md={6}>
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        borderRadius: 2,
-                        borderColor: Colors.LOGOColor,
-                      }}
-                    >
-                      <CardContent>
-                        <Typography
-                          variant="h6"
-                          fontWeight="bold"
-                          gutterBottom
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: Colors.LOGOColor,
-                          }}
-                        >
-                          <LocationOn sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
-                          Business Details
-                        </Typography>
-                        <Stack spacing={2}>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <Chip
-                              label={business?.category?.name}
-                              size="small"
-                              sx={{
-                                mr: 2,
-                                backgroundColor: Colors.LOGOColor,
-                                color: Colors.WHITE,
-                                fontWeight: FontWeight.bold,
-                              }}
-                            />
-                          </Box>
-
-                          <Box
-                            sx={{ display: "flex", alignItems: "flex-start" }}
-                          >
-                            <LocationOn
-                              sx={{ mr: 2, color: Colors.LOGOColor, mt: 0.5 }}
-                            />
-                            <Typography sx={{ color: Colors.textDark }}>
-                              <strong>Address:</strong> {business?.address}
-                              {business?.city && `, ${business.city}`}
-                              {business?.state && `, ${business.state}`}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: "flex", alignItems: "center" }}>
-                            <CalendarToday
-                              sx={{ mr: 2, color: Colors.LOGOColor }}
-                            />
-                            <Typography sx={{ color: Colors.textDark }}>
-                              <strong>Member Since:</strong>{" "}
-                              {new Date(
-                                business?.createdAt
-                              ).toLocaleDateString()}
-                            </Typography>
-                          </Box>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-
-                  <Grid item xs={12}>
-                    <Card
-                      variant="outlined"
-                      sx={{
-                        borderRadius: 2,
-                        borderColor: Colors.LOGOColor,
-                      }}
-                    >
-                      <CardContent>
-                        <Typography
-                          variant="h6"
-                          fontWeight="bold"
-                          gutterBottom
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: Colors.LOGOColor,
-                          }}
-                        >
-                          <Language sx={{ mr: 1, color: Colors.LOGOColor }} />{" "}
-                          Social Media Links
-                        </Typography>
-
-                        <Box
-                          sx={{
-                            mt: 1,
-                            display: "flex",
-                            flexWrap: "wrap",
-                            gap: 2,
-                          }}
-                        >
-                          {business?.socialLinks?.facebook && (
-                            <a
-                              href={business.socialLinks.facebook}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Facebook
-                                sx={{ fontSize: 30, color: "#1877F2" }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.instagram && (
-                            <a
-                              href={business.socialLinks.instagram}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Instagram
-                                sx={{ fontSize: 30, color: "#E4405F" }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.twitter && (
-                            <a
-                              href={business.socialLinks.twitter}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Twitter
-                                sx={{ fontSize: 30, color: "#1DA1F2" }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.linkedin && (
-                            <a
-                              href={business.socialLinks.linkedin}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <LinkedIn
-                                sx={{ fontSize: 30, color: "#0A66C2" }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.website && (
-                            <a
-                              href={business.socialLinks.website}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <Language
-                                sx={{ fontSize: 30, color: Colors.LOGOColor }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.youtube && (
-                            <a
-                              href={business.socialLinks.youtube}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <YouTube
-                                sx={{ fontSize: 30, color: "#FF0000" }}
-                              />
-                            </a>
-                          )}
-                          {business?.socialLinks?.whatsapp && (
-                            <a
-                              href={business.socialLinks.whatsapp}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <WhatsApp
-                                sx={{ fontSize: 30, color: "#25D366" }}
-                              />
-                            </a>
-                          )}
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
+          {activeTab === "media" && (
+            <BusinessMedia business={business} />
           )}
 
           {activeTab === "reviews" && (
-            <Box>
-              {/* Add Review Section */}
-              {user ? (
-                <Card
-                  sx={{
-                    borderRadius: 3,
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-                    background: Colors.WHITE,
-                    mb: 3,
-                  }}
-                >
-                  <CardContent>
-                    <Typography
-                      variant="h5"
-                      fontWeight="bold"
-                      gutterBottom
-                      sx={{ color: Colors.LOGOColor }}
-                    >
-                      Share Your Experience
-                    </Typography>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography
-                        variant="subtitle1"
-                        gutterBottom
-                        sx={{ color: Colors.LOGOColor }}
-                      >
-                        How would you rate your experience?
-                      </Typography>
-                      <Rating
-                        value={rating}
-                        onChange={(e, newVal) => setRating(newVal)}
-                        size="large"
-                        precision={0.5}
-                        sx={{
-                          "& .MuiRating-icon": {
-                            fontSize: "2.5rem",
-                            color: Colors.LOGOColor,
-                          },
-                          "& .MuiRating-iconFilled": {
-                            color: Colors.LOGOlight,
-                          },
-                        }}
-                      />
-                    </Box>
-                    <TextField
-                      fullWidth
-                      multiline
-                      minRows={4}
-                      placeholder="Tell others about your experience..."
-                      value={reviewText}
-                      onChange={(e) => setReviewText(e.target.value)}
-                      variant="outlined"
-                      sx={{
-                        mb: 2,
-                        "& .MuiOutlinedInput-root": {
-                          borderRadius: 2,
-                          "& fieldset": {
-                            borderColor: Colors.LOGOColor,
-                          },
-                          "&:hover fieldset": {
-                            borderColor: Colors.LOGOColor,
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: Colors.LOGOColor,
-                            borderWidth: "2px",
-                          },
-                        },
-                      }}
-                    />
+            <BusinessReviews 
+              business={business}
+              user={user}
+              reviews={reviews}
+              getReview={getReview}
+              averageRating={averageRating}
+              totalReviews={totalReviews}
+            />
+          )}
 
-                    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                      <Button
-                        variant="contained"
-                        endIcon={<Send />}
-                        onClick={handleReviewSubmit}
-                        sx={{
-                          background: Colors.LOGOlight,
-                          px: 4,
-                          py: 1.5,
-                          borderRadius: 2,
-                          textTransform: "none",
-                          fontSize: "1rem",
-                          fontWeight: "bold",
-                          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                        }}
-                      >
-                        Post Review
-                      </Button>
-                    </Box>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Box
-                  sx={{
-                    textAlign: "center",
-                    p: 3,
-                    backgroundColor: Colors.lightBg,
-                    borderRadius: 2,
-                    border: `2px dashed ${Colors.LOGOColor}`,
-                    mb: 3,
-                  }}
-                >
-                  <Typography variant="body1" sx={{ color: Colors.LOGOColor }}>
-                    Please{" "}
-                    <Link
-                      onClick={() => navigate("/login")}
-                      sx={{
-                        cursor: "pointer",
-                        color: Colors.LOGOlight,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      sign in
-                    </Link>{" "}
-                    to leave a review
-                  </Typography>
-                </Box>
-              )}
-
-              {/* Reviews List */}
-              <Card
-                sx={{
-                  borderRadius: 3,
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-                  background: Colors.WHITE,
-                }}
-              >
-                <CardContent>
-                  <Typography
-                    variant="h5"
-                    fontWeight="bold"
-                    gutterBottom
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      mb: 3,
-                      color: Colors.LOGOColor,
-                    }}
-                  >
-                    <ChatBubble sx={{ mr: 1, color: Colors.LOGOlight }} />{" "}
-                    Customer Reviews
-                  </Typography>
-
-                  {reviews?.length > 0 ? (
-                    <Box>
-                      {reviews.map((rev, idx) => (
-                        <Box
-                          key={idx}
-                          sx={{
-                            mb: 3,
-                            pb: 3,
-                            borderBottom: `1px solid ${Colors.LOGOColor}`,
-                          }}
-                        >
-                          <Box
-                            sx={{ display: "flex", alignItems: "flex-start" }}
-                          >
-                            <Avatar
-                              src={rev?.reviewer?.avatar}
-                              sx={{
-                                color: Colors.LOGOColor,
-                                width: 48,
-                                height: 48,
-                                mr: 2,
-                                boxShadow: 1,
-                                border: `2px solid ${Colors.LOGOColor}`,
-                              }}
-                            />
-                            <Box sx={{ flex: 1 }}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  flexWrap: "wrap",
-                                }}
-                              >
-                                <Typography
-                                  fontWeight="bold"
-                                  variant="subtitle1"
-                                  sx={{ color: Colors.LOGOColor }}
-                                >
-                                  {rev?.reviewer?.name || "Anonymous"}
-                                </Typography>
-                                <Typography
-                                  variant="caption"
-                                  sx={{ color: Colors.LOGOColor }}
-                                >
-                                  {new Date(rev.createdAt).toLocaleDateString(
-                                    "en-US",
-                                    {
-                                      year: "numeric",
-                                      month: "long",
-                                      day: "numeric",
-                                    }
-                                  )}
-                                </Typography>
-                              </Box>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  my: 1,
-                                }}
-                              >
-                                <Rating
-                                  value={rev.rating}
-                                  readOnly
-                                  size="small"
-                                  precision={0.5}
-                                  sx={{
-                                    color: Colors.LOGOlight,
-                                    "& .MuiRating-iconFilled": {
-                                      color: Colors.LOGOlight,
-                                    },
-                                  }}
-                                />
-                                <Chip
-                                  label={`${rev.rating}`}
-                                  size="small"
-                                  sx={{
-                                    ml: 1,
-                                    backgroundColor: Colors.LOGOColor,
-                                    color: Colors.WHITE,
-                                    fontWeight: "bold",
-                                  }}
-                                />
-                              </Box>
-                              <Typography
-                                sx={{
-                                  backgroundColor: "rgba(255,255,255,0.7)",
-                                  p: 2,
-                                  borderRadius: 1,
-                                  color: Colors.LOGOColor,
-                                }}
-                              >
-                                "{rev.comment}"
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
-                  ) : (
-                    <Box
-                      sx={{
-                        textAlign: "center",
-                        p: 4,
-                        backgroundColor: Colors.lightBg,
-                        borderRadius: 2,
-                        border: `2px dashed ${Colors.LOGOColor}`,
-                      }}
-                    >
-                      <Star
-                        sx={{
-                          fontSize: 60,
-                          color: Colors.LOGOlight,
-                          mb: 2,
-                          opacity: 0.8,
-                        }}
-                      />
-                      <Typography
-                        variant="h6"
-                        sx={{ color: Colors.LOGOColor }}
-                        gutterBottom
-                      >
-                        No Reviews Yet
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        sx={{ color: Colors.LOGOColor }}
-                      >
-                        Be the first to share your experience with this business
-                      </Typography>
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Box>
+          {activeTab === "contact" && (
+            <BusinessContact business={business} />
           )}
         </Box>
       </Box>

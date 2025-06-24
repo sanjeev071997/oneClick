@@ -75,7 +75,7 @@ const ProductTable = () => {
   const fetchBusinesses = async () => {
     setLoading(true);
     try {
-      // Assuming GET request might need params for userId, not data
+      //  GET request 
       const res = await axios.get("/api/v1/business/get", {
          params: { userId: user._id }, 
       });
