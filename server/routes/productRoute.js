@@ -20,9 +20,9 @@ router.post("/create", upload.array('images', 5), isAuthenticatedUser, createPro
 
 router.get("/get/:businessId", getAllProductsByBusinessId); // Get all products by business ID and User
 
-router.put("/update/:productId", upload.array('images', 5), isAuthenticatedUser, updateProductById); // Update a product
+router.put("/update/:id", upload.array('images', 5), isAuthenticatedUser, updateProductById); // Update a product
 
-router.delete("/delete/:productId", isAuthenticatedUser, deleteProductById); // Delete a product
+router.delete("/delete/:id", isAuthenticatedUser, deleteProductById); // Delete a product
 
 router.get("/get/product/:id", getProductById); // Get a product by ID User 
 

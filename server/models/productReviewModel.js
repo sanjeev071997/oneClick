@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-const reviewSchema = new mongoose.Schema(
+const productReviewSchema = new mongoose.Schema(
   {
-    businessId: {
+    productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Business",
+      ref: "Product",
       required: true,
     },
 
@@ -30,6 +30,6 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-const reviewModel = mongoose.model("review", reviewSchema);
+const productReviewModel = mongoose.model("ProductReview", productReviewSchema);
 
-export default reviewModel;
+export default productReviewModel;

@@ -31,20 +31,48 @@ export const register = catchAsyncErrors(async (req, res, next) => {
 });
 
 // user login
+// export const login = catchAsyncErrors(async (req, res, next) => {
+//   const { email, password } = req.body;
+//   const user = await User.findOne({ email }).select("+password");
+
+//   if (!user) {
+//     return next(new Errorhandler("Invalid email or password", 401));
+//   }
+
+//   // Compare Password
+//   const isPasswordMatched = await user.comparePassword(password);
+//   if (!isPasswordMatched) {
+//     return next(new Errorhandler("Invalid email or password", 401));
+//   }
+//   sendToken(user, 200, res);
+// });
+
 export const login = catchAsyncErrors(async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email }).select("+password");
+  try {
+    const { email, password } = req.body;
+    const escapeRegex = (text) =>
+      text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    const normalizedEmail = escapeRegex(email.toLowerCase());
 
-  if (!user) {
-    return next(new Errorhandler("Invalid email or password", 401));
-  }
+    // Find the user by email (case-insensitive) and ensure the account is active
+    const user = await User.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
+    }).select("+password");
 
-  // Compare Password
-  const isPasswordMatched = await user.comparePassword(password);
-  if (!isPasswordMatched) {
-    return next(new Errorhandler("Invalid email or password", 401));
+    if (!user) {
+      return next(new Errorhandler("Invalid email or password", 401));
+    }
+
+    const isPasswordMatched = await user.comparePassword(password);
+
+    if (!isPasswordMatched) {
+      return next(new Errorhandler("Invalid email or password", 401));
+    }
+    sendToken(user, 200, res);
+  } catch (error) {
+    logger.error(error);
+    return next(new Errorhandler(error.message, 500));
   }
-  sendToken(user, 200, res);
 });
 
 // Logout User

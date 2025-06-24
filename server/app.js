@@ -16,7 +16,8 @@ import contactRoute from "./routes/contactRoute.js"
 import homeHighlightsRoute from "./routes/homeHighlightsRoute.js";
 import plansRoute from "./routes/plansRoute.js";
 import productRoute from "./routes/productRoute.js";
-import productCategoryRoute from "./routes/productCategoryRoute.js"
+import productCategoryRoute from "./routes/productCategoryRoute.js";
+import productReviewRoute from "./routes/productReviewRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -61,6 +62,7 @@ app.use("/api/v1/homehighlights", homeHighlightsRoute);
 app.use("/api/v1/plans", plansRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/product/category", productCategoryRoute);
+app.use("/api/v1/product/review", productReviewRoute);
 
 // Static files
 app.use(express.static(path.join(__dirname, "./build")));

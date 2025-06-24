@@ -79,6 +79,7 @@ export const getAllProductsByAdmin = catchAsyncErrors(
 export const updateProductById = catchAsyncErrors(async (req, res, next) => {
   try {
     const { id } = req.params;
+    console.log(id, "product")
     const product = await Product.findById(id);
 
     if (!product) {
