@@ -4,46 +4,9 @@ import Errorhandler from "../utils/Errorhandler.js";
 import cloudinary from "../utils/cloudinary.js";
 
 // create a new product
-// export const createProduct = catchAsyncErrors(async (req, res, next) => {
-//   try {
-//     console.log(req.body, "Product")
-//     // Upload images to Cloudinary
-//     const imageUploads = req.files.map((file) =>
-//       cloudinary.uploader.upload(file.path, {
-//         folder: "business-product",
-//         transformation: { width: 800, height: 600, crop: "limit" },
-//       })
-//     );
-
-//     const uploadedImages = await Promise.all(imageUploads);
-//     const images = uploadedImages?.map((img) => ({
-//       url: img.secure_url,
-//       public_id: img.public_id,
-//     }));
-
-//     console.log(uploadedImages, "uploadedImages")
-//     const product = new Product({
-//       ...req.body,
-//       images,
-//     });
-
-//     await product.save();
-//     res.status(201).json({
-//       success: true,
-//       message: "Product created successfully",
-//       data: product,
-//     });
-//   } catch (error) {
-//     return next(new Errorhandler(error.message, 500));
-//   }
-// });
-
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
   try {
-    console.log(req.body, "Product");
-
     let images = [];
-
     // Upload images to Cloudinary if they exist
     if (req.files && req.files.length > 0) {
       const imageUploads = req.files.map((file) =>
