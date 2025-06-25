@@ -56,7 +56,7 @@ const UserReviews = () => {
         });
       }
     } catch (err) {
-      console.error('Error fetching reviews:', err);
+   
     } finally {
       setLoading(false);
     }

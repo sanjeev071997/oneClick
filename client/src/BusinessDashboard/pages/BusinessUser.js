@@ -87,14 +87,12 @@ const Business = () => {
 
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.get("/api/v1/business/get", {
-     data: { userId: user._id },
-      });
-      console.log( res,' res')
+      const res = await axios.get("/api/v1/business/get"
+      );
       setBusinesses(res.data.data);
       setFilteredBusinesses(res.data.data);
     } catch (error) {
-      message.error("Failed to fetch businesses");
+      message.error("No businesses found. Please add a business to get started.");
     } finally {
       setLoading(false);
     }
@@ -103,7 +101,7 @@ const Business = () => {
   useEffect(() => {
     if (user?._id) fetchBusinesses();
     setStates(State.getStatesOfCountry("IN"));
-  }, [user]);
+  }, [user?._id]);
 
   useEffect(() => {
     if (formData.state) {

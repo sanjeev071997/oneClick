@@ -62,7 +62,6 @@ const  Upgradeplan = () => {
       setPlans(formattedPlans);
       setDisplayPlans(formatPlansForDisplay(formattedPlans, 0));
     } catch (error) {
-      console.error("Error fetching plans:", error);
       setPlans([]);
       setDisplayPlans([]);
     } finally {

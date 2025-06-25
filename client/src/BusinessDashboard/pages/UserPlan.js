@@ -20,9 +20,9 @@ const PlanView = () => {
 
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.get("/api/v1/business/get", {
-        data: { userId: user._id }
-      });
+      const res = await axios.get("/api/v1/business/get", 
+      
+      );
 
       const businesses = res.data?.data || [];
       const plans = businesses
@@ -50,7 +50,7 @@ const PlanView = () => {
       }
     } catch (error) {
       console.error(error);
-      message.error("Failed to fetch businesses.");
+      message.error("You don't have any businesses yet.");
     } finally {
       setLoading(false);
     }

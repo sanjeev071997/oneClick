@@ -25,7 +25,7 @@ const UserEnquire= () => {
       });
       setQueries(response.data.data);
     } catch (error) {
-      message.error("Failed to fetch enquiries" + error.message);
+      message.error("ou don't have any enquries yet." + error.message);
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,7 @@ const UserEnquire= () => {
 
   useEffect(() => {
     fetchQueries();
-  }, [user._id]);
+  }, [user?._id]);
 
   //filter quries
   const filteredQueries = queries?.filter((q) => {

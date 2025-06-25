@@ -44,7 +44,7 @@ const BusinessCategory = () => {
       }
     } catch (error) {
       console.error(error);
-      message.error("Failed to fetch businesses");
+      message.error("No businesses found. Please add a business to continue.");
     }
   };
 
@@ -61,8 +61,7 @@ const BusinessCategory = () => {
       console.log (res ,'res ')
       setCategories(res.data?.data || []);
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
-      message.error("Failed to fetch categories.");
+      message.error("You don't have any categories yet.");
     } finally {
       setLoading(false);
     }
@@ -108,7 +107,6 @@ const BusinessCategory = () => {
       fetchCategories(); 
       setTabValue(1); 
     } catch (error) {
-      console.error("Submit failed:", error);
       message.error(`Failed to ${currentCategory ? "update" : "add"} category.`);
     } finally {
       setFormLoading(false);
@@ -133,8 +131,7 @@ const BusinessCategory = () => {
           message.success("Category deleted successfully!");
           fetchCategories();
         } catch (error) {
-          console.error("Delete failed:", error);
-          message.error("Failed to delete category.");
+          message.error("The category you're looking for was not found.");
         } finally {
           setLoading(false);
         }
@@ -228,15 +225,15 @@ const BusinessCategory = () => {
                     type="submit"
                     variant="contained"
                     startIcon={
-                      formLoading ? <CircularProgress size={20} color="inherit" /> : <AddIcon /> // Changed to AddIcon
+                      formLoading ? <CircularProgress size={20} color="inherit" /> : <AddIcon /> 
                     }
-                    disabled={formLoading || !selectedBusinessId} // Disable if no business selected
+                    disabled={formLoading || !selectedBusinessId} 
                     sx={{
                       py: 1.5,
                       borderRadius: 2,
                       fontWeight: 'bold',
                       bgcolor: Colors.LOGOColor,
-                      '&:hover': { bgcolor: Colors.LOGOlight }
+                      '&:hover': { bgcolor: Colors.LOGOlight}
                     }}
                   >
                     {formLoading ? "Adding..." : "Add Category"}
