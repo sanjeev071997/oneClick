@@ -76,9 +76,8 @@ const ProductTable = () => {
     setLoading(true);
     try {
       //  GET request 
-      const res = await axios.get("/api/v1/business/get", {
-         params: { userId: user._id }, 
-      });
+      const res = await axios.get("/api/v1/business/get"
+       );
       setBusinesses(res.data?.data || []);
       if (res.data?.data.length === 1 && !isEditMode) {
         setCurrentProduct(prev => ({ ...prev, businessId: res.data.data[0]._id }));

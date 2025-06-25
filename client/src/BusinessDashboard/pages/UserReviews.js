@@ -273,6 +273,7 @@ const UserReviews = () => {
               {paginatedReviews.map((review) => (
                 <Grid item key={review._id} xs={12} sm={6} md={4}>
                   <Card elevation={0} sx={{
+                    mt:4,
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',

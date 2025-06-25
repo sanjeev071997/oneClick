@@ -35,9 +35,8 @@ const BusinessCategory = () => {
   // --- Fetch Businesses associated with the user ---
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.get("/api/v1/business/get", {
-        params: { userId: user._id },
-      });
+      const res = await axios.get("/api/v1/business/get", 
+       );
       const data = res.data?.data || [];
       setBusinesses(data);
       if (data.length > 0 && !selectedBusinessId) {
