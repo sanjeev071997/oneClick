@@ -89,7 +89,7 @@ const businessSchema = new mongoose.Schema({
   city: String,
   state: String,
   country: String,
-  fullAddress: String, 
+  address: String, 
 },
 
 

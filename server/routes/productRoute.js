@@ -2,7 +2,7 @@ import express from "express";
 import multer from 'multer';
 import {
     createProduct,
-    getAllProductsByBusinessId,
+    getAllProductsByUserId,
     updateProductById,
     deleteProductById,
     getProductById,
@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.post("/create", upload.array('images', 5), isAuthenticatedUser, createProduct); // Add a new product
 
-router.get("/get/:businessId", getAllProductsByBusinessId); // Get all products by business ID and User
+router.get("/get/:userId", getAllProductsByUserId); // Get all products by userId and User
 
 router.put("/update/:id", upload.array('images', 5), isAuthenticatedUser, updateProductById); // Update a product
 

@@ -36,13 +36,13 @@ import {
   Close,
   Phone,
   Email,
-  LocationOn,
   Star,
   AddBusiness,
   Search,
   Facebook,
   Instagram,
   Link as LinkIcon,
+  Add,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -88,8 +88,9 @@ const Business = () => {
   const fetchBusinesses = async () => {
     try {
       const res = await axios.get("/api/v1/business/get", {
-        params: { userId: user._id },
+     data: { userId: user._id },
       });
+      console.log( res,' res')
       setBusinesses(res.data.data);
       setFilteredBusinesses(res.data.data);
     } catch (error) {
@@ -233,7 +234,7 @@ const Business = () => {
       formDataToSend.append("state", formData.state);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("id", selectedBusiness._id);
-      
+
       Object.entries(formData.socialLinks).forEach(([key, value]) => {
         formDataToSend.append(key, value);
       });
@@ -337,16 +338,8 @@ const Business = () => {
               width: { xs: "100%", sm: "300px" },
             }}
           />
-          <Button
-            variant="contained"
-            startIcon={<AddBusiness />}
-            onClick={() => navigate("/plans")}
-            sx={{
-              bgcolor: Colors.LOGOColor,
-              "&:hover": { bgcolor: Colors.LOGOlight },
-              whiteSpace: "nowrap",
-            }}
-          >
+
+          <Button variant="contained" startIcon={<Add />} onClick={() => navigate("/upgrade/plan")} sx={{ backgroundColor: '#9EDC29', '&:hover': { backgroundColor: '#7CB51F' } }}>
             Add Business
           </Button>
         </Box>
@@ -424,138 +417,132 @@ const Business = () => {
           )}
         </Paper>
       ) : (
-        <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
-          <TableContainer>
-            <Table>
-              <TableHead sx={{ bgcolor: Colors.LOGOlight }}>
-                <TableRow>
-                  <TableCell sx={{ color: "white", fontWeight: 600 }}>Business</TableCell>
-                  <TableCell sx={{ color: "white", fontWeight: 600 }}>Contact</TableCell>
-                  <TableCell sx={{ color: "white", fontWeight: 600 }}>Location</TableCell>
-                  <TableCell sx={{ color: "white", fontWeight: 600 }}>Social</TableCell>
-                  <TableCell sx={{ color: "white", fontWeight: 600 }}>Rating</TableCell>
-                  <TableCell sx={{ color: "white", fontWeight: 600, textAlign: "center" }}>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredBusinesses.map((business) => (
-                  <TableRow key={business._id} hover>
-                    <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                        <Avatar
-                          src={business.images?.[0]?.url}
-                          alt={business.businessName}
-                          sx={{ width: 56, height: 56 }}
-                        />
-                        <Box>
-                          <Typography fontWeight={600}>{business.businessName}</Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                            }}
-                          >
-                            {business.description}
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Phone fontSize="small" color="primary" />
-                          <Typography>{business.phone}</Typography>
-                        </Box>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Email fontSize="small" color="primary" />
-                          <Typography>{business.email}</Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <LocationOn fontSize="small" color="primary" />
-                        <Typography>
-                          {business.city}, {business.state}
-                        </Typography>
-                      </Box>
-                      <Typography variant="body2" color="text.secondary">
-                        {business.address}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", gap: 0.5 }}>
-                        {business.socialLinks?.facebook && (
-                          <Tooltip title="Facebook">
-                            <IconButton
-                              size="small"
-                              href={business.socialLinks.facebook}
-                              target="_blank"
-                              sx={{ color: "#1877F2" }}
-                            >
-                              <Facebook fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {business.socialLinks?.instagram && (
-                          <Tooltip title="Instagram">
-                            <IconButton
-                              size="small"
-                              href={business.socialLinks.instagram}
-                              target="_blank"
-                              sx={{ color: "#E4405F" }}
-                            >
-                              <Instagram fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {business.socialLinks?.website && (
-                          <Tooltip title="Website">
-                            <IconButton
-                              size="small"
-                              href={business.socialLinks.website}
-                              target="_blank"
-                              sx={{ color: Colors.LOGOColor }}
-                            >
-                              <LinkIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        icon={<Star fontSize="small" />}
-                        label={`${Number(business?.rating || 0).toFixed(1)} (${business?.ratingCount || 0})`}
-                        size="small"
-                        sx={{
-                          bgcolor: Colors.LOGOlight,
-                          color: "white",
-                          fontWeight: 600,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
-                      <Tooltip title="Edit">
-                        <IconButton
-                          size="small"
-                          onClick={() => handleOpenDialog("edit", business)}
-                          sx={{ color: Colors.LOGOColor }}
-                        >
-                          <Edit />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3
+        }}>
+          <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
+            <TableContainer>
+              <Table>
+                <TableHead sx={{ bgcolor: Colors.LOGOColor}}>
+                  <TableRow>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Business</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Contact</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Social</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Rating</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600, textAlign: "center" }}>Actions</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+                </TableHead>
+                <TableBody>
+                  {filteredBusinesses.map((business) => (
+                    <TableRow key={business._id} hover>
+                      <TableCell>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                          <Avatar
+                            src={business.images?.[0]?.url}
+                            alt={business.businessName}
+                            sx={{ width: 56, height: 56 }}
+                          />
+                          <Box>
+                            <Typography fontWeight={600}>{business.businessName}</Typography>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                              }}
+                            >
+                              {business.description}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Phone fontSize="small" color="primary" />
+                            <Typography>{business.phone}</Typography>
+                          </Box>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            <Email fontSize="small" color="primary" />
+                            <Typography>{business.email}</Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: "flex", gap: 0.5 }}>
+                          {business.socialLinks?.facebook && (
+                            <Tooltip title="Facebook">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.facebook}
+                                target="_blank"
+                                sx={{ color: "#1877F2" }}
+                              >
+                                <Facebook fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {business.socialLinks?.instagram && (
+                            <Tooltip title="Instagram">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.instagram}
+                                target="_blank"
+                                sx={{ color: "#E4405F" }}
+                              >
+                                <Instagram fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {business.socialLinks?.website && (
+                            <Tooltip title="Website">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.website}
+                                target="_blank"
+                                sx={{ color: Colors.LOGOColor }}
+                              >
+                                <LinkIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Chip
+                          icon={<Star fontSize="small" />}
+                          label={`${Number(business?.rating || 0).toFixed(1)} (${business?.ratingCount || 0})`}
+                          size="small"
+                          sx={{
+                            bgcolor: Colors.LOGOlight,
+                            color: "white",
+                            fontWeight: 600,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ textAlign: "center" }}>
+                        <Tooltip title="Edit">
+                          <IconButton
+                            size="small"
+                            onClick={() => handleOpenDialog("edit", business)}
+                            sx={{ color: Colors.LOGOColor }}
+                          >
+                            <Edit />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Box>
       )}
 
       {/* Edit Dialog */}
@@ -608,10 +595,17 @@ const Business = () => {
             }}
           />
           <Tab
-            label="Media"
+            label="Social Links"
             sx={{
               fontWeight: 600,
               color: activeTab === 1 ? Colors.LOGOColor : "text.secondary",
+            }}
+          />
+          <Tab
+            label="Media"
+            sx={{
+              fontWeight: 600,
+              color: activeTab === 2 ? Colors.LOGOColor : "text.secondary",
             }}
           />
         </Tabs>
@@ -722,62 +716,69 @@ const Business = () => {
                       </Select>
                     </FormControl>
                   </Box>
+                </Grid>
+              </Grid>
+            </Box>
+          ) : activeTab === 1 ? (
+            <Box sx={{ p: 3 }}>
+              <Typography variant="subtitle1" fontWeight={600} mb={2}>
+                Social Media Links
+              </Typography>
 
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                      Social Links
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Facebook"
-                      name="socialLinks.facebook"
-                      value={formData.socialLinks.facebook}
-                      onChange={handleChange}
-                      margin="normal"
-                      size="small"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Facebook color="primary" />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Instagram"
-                      name="socialLinks.instagram"
-                      value={formData.socialLinks.instagram}
-                      onChange={handleChange}
-                      margin="normal"
-                      size="small"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Instagram color="primary" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ mt: 2 }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Website"
-                      name="socialLinks.website"
-                      value={formData.socialLinks.website}
-                      onChange={handleChange}
-                      margin="normal"
-                      size="small"
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LinkIcon color="primary" />
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ mt: 2 }}
-                    />
-                  </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Facebook"
+                    name="socialLinks.facebook"
+                    value={formData.socialLinks.facebook}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Facebook color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Instagram"
+                    name="socialLinks.instagram"
+                    value={formData.socialLinks.instagram}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Instagram color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Website"
+                    name="socialLinks.website"
+                    value={formData.socialLinks.website}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LinkIcon color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
                 </Grid>
               </Grid>
             </Box>
@@ -786,7 +787,7 @@ const Business = () => {
               <Typography variant="subtitle1" fontWeight={600} mb={2}>
                 Business Images ({formData.images.length + newImages.length}/5)
               </Typography>
-              
+
               <Box
                 sx={{
                   display: "grid",
@@ -911,7 +912,7 @@ const Business = () => {
               </Box>
 
               <Typography variant="body2" color="text.secondary">
-                Upload up to 5 high-quality images (JPEG, PNG)
+                Upload up to 5
               </Typography>
             </Box>
           )}

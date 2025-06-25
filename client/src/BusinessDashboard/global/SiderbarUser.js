@@ -20,7 +20,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 const SidebarUser = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [iconsVisible, setIconsVisible] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   const { confirm } = Modal;
   const handleLogout = () => {
@@ -34,24 +34,16 @@ const SidebarUser = () => {
         message.success("Logout Successfully");
         setTimeout(() => {
           navigate("/login");
-        }, 500); 
+        }, 500);
       },
     });
   };
 
-  const toggleIcons = () => {
-    setIconsVisible(!iconsVisible);
-  };
-
   return (
-    <Sidebar 
-      backgroundColor="#275559" 
-      width={iconsVisible ? "250px" : "80px"}
-      style={{ 
-        height: "100vh",
-        boxShadow: "2px 0 10px rgba(0,0,0,0.1)",
-        transition: "width 0.3s ease"
-      }}
+    <Sidebar
+      backgroundColor="#275559"
+      collapsed={collapsed}
+      style={{ height: "100vh", boxShadow: "2px 0 10px rgba(0,0,0,0.1)" }}
     >
       <Box
         sx={{
@@ -61,28 +53,16 @@ const SidebarUser = () => {
           color: "white"
         }}
       >
-        {/* Header with toggle button */}
-        <Box sx={{ 
-          p: 3, 
-          display: "flex", 
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderBottom: "1px solid rgba(255,255,255,0.1)" 
-        }}>
-          {iconsVisible && <h2 style={{ margin: 0, color: "#9EDC29" }}>Quickdails</h2>}
-          <IconButton 
-            onClick={toggleIcons}
-            sx={{ 
-              color: "#9EDC29",
-              marginLeft: iconsVisible ? 0 : 'auto'
-            }}
-          >
-            {iconsVisible ? <MenuOpenIcon /> : <MenuIcon />}
+        {/* Header */}
+        <Box sx={{ p: 2, display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+          {!collapsed && <h2 style={{ margin: 0, color: "#9EDC29" }}>Quickdails</h2>}
+          <IconButton onClick={() => setCollapsed(!collapsed)} sx={{ color: "#9EDC29", ml: 'auto' }}>
+            {collapsed ? <MenuIcon /> : <MenuOpenIcon />}
           </IconButton>
         </Box>
 
-        {/* Main Menu */}
-        <Box sx={{ flex: 1, pt: 2 }}>
+        {/* Menu */}
+        <Box sx={{ flex: 1, pt: 1 }}>
           <Menu
             menuItemStyles={{
               button: {
@@ -92,68 +72,31 @@ const SidebarUser = () => {
                 [`&.${menuClasses.disabled}`]: {
                   color: "white",
                 },
-                "&:hover": {
+                '&:hover': {
                   backgroundColor: "rgba(255,255,255,0.1)",
                   color: "#9EDC29",
                 },
                 [`&.${menuClasses.active}`]: {
                   backgroundColor: "rgba(255,255,255,0.2)",
                   color: "#9EDC29",
-                },
+                }
               },
               icon: {
-                [`&.${menuClasses.icon}`]: {
-                  color: "#9EDC29",
-                },
+                color: "#9EDC29"
               },
             }}
           >
-            <MenuItem
-              component={<Link to='/business/dashboard' />}
-              icon={iconsVisible ? <DashboardIcon /> : null}
-            >
-              {iconsVisible ? "Dashboard" : <DashboardIcon />}
-            </MenuItem>
-
-            <MenuItem
-              component={<Link to="/user/business"/>}
-              icon={iconsVisible ? <BusinessIcon /> : null}
-            >
-              {iconsVisible ? "Business" : <BusinessIcon />}
-            </MenuItem>
-
-            <MenuItem
-              component={<Link to="/user/product" />}
-              icon={iconsVisible ? <CategoryOutlinedIcon /> : null}
-            >
-              {iconsVisible ? "Product" : <CategoryOutlinedIcon />}
-            </MenuItem>
-            <MenuItem
-              component={<Link to="/user/enquries" />}
-              icon={iconsVisible ? <PeopleIcon /> : null}
-            >
-              {iconsVisible ? "Enquries" : <PeopleIcon />}
-            </MenuItem>
-
-            <MenuItem
-              component={<Link to="/user/reviews"/>}
-              icon={iconsVisible ? <RateReviewIcon /> : null}
-            >
-              {iconsVisible ? "Reviews" : <RateReviewIcon />}
-            </MenuItem>
-
-            <MenuItem
-              component={<Link to="/user/plans" />}
-              icon={iconsVisible ? <PeopleIcon /> : null}
-            >
-              {iconsVisible ? "Plans" : <PeopleIcon />}
-            </MenuItem>
-
-         
+            <MenuItem component={<Link to='/business/dashboard' />} icon={<DashboardIcon />}>Dashboard</MenuItem>
+            <MenuItem component={<Link to='/user/business' />} icon={<BusinessIcon />}>Business</MenuItem>
+            <MenuItem component={<Link to='/user/category' />} icon={<PeopleIcon />}>Category</MenuItem>
+            <MenuItem component={<Link to='/user/product' />} icon={<CategoryOutlinedIcon />}>Product</MenuItem>
+            <MenuItem component={<Link to='/user/enquries' />} icon={<PeopleIcon />}>Enquiries</MenuItem>
+            <MenuItem component={<Link to='/user/reviews' />} icon={<RateReviewIcon />}>Reviews</MenuItem>
+            <MenuItem component={<Link to='/user/plans' />} icon={<PeopleIcon />}>Plans</MenuItem>
           </Menu>
         </Box>
 
-        {/* Bottom Section (Settings & Logout) */}
+        {/* Bottom Menu */}
         <Box sx={{ p: 2, borderTop: "1px solid rgba(255,255,255,0.1)" }}>
           <Menu
             menuItemStyles={{
@@ -161,31 +104,20 @@ const SidebarUser = () => {
                 [`&.${menuClasses.button}`]: {
                   color: "white",
                 },
-                "&:hover": {
+                '&:hover': {
                   backgroundColor: "rgba(255,255,255,0.1)",
                   color: "#9EDC29",
-                },
+                }
               },
               icon: {
-                [`&.${menuClasses.icon}`]: {
-                  color: "#9EDC29",
-                },
+                color: "#9EDC29"
               },
             }}
           >
-            <MenuItem
-              component={<Link to="/user/profile" />}
-              icon={iconsVisible ? <ManageAccountsIcon /> : null}
-            >
-              {iconsVisible ? "Settings" : <ManageAccountsIcon />}
-            </MenuItem>
+            <MenuItem component={<Link to='/upgrade/plan' />} icon={<PeopleIcon />}>Upgrade Plan</MenuItem>
 
-            <MenuItem 
-              onClick={handleLogout}
-              icon={iconsVisible ? <LoginIcon /> : null}
-            >
-              {iconsVisible ? "Log out" : <LoginIcon />}
-            </MenuItem>
+            <MenuItem component={<Link to='/user/profile' />} icon={<ManageAccountsIcon />}>Settings</MenuItem>
+            <MenuItem onClick={handleLogout} icon={<LoginIcon />}>Logout</MenuItem>
           </Menu>
         </Box>
       </Box>

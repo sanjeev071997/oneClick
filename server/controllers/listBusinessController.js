@@ -1,4 +1,5 @@
 import Business from "../models/listBusinessModel.js";
+import User from "../models/userModel.js"
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import Errorhandler from "../utils/Errorhandler.js";
 import cloudinary from "../utils/cloudinary.js";
@@ -67,6 +68,11 @@ export const addBusiness = catchAsyncErrors(async (req, res, next) => {
     });
 
     await business.save();
+
+    // Update user role to 2
+    if (req.body.userId) {
+      await User.findByIdAndUpdate(req.body.userId, { role: 2 });
+    }
 
     res.status(201).json({
       success: true,

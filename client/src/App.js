@@ -48,6 +48,7 @@ import UserProfile from './BusinessDashboard/pages/Profile.js'
 import UserEnquries from './BusinessDashboard/pages/UserEnquries.js';
 import UserPLans from './BusinessDashboard/pages/UserPlan.js'
 import UserCateogry from './BusinessDashboard/pages/BusinessCategory.js'
+import UpgradePLan from "./BusinessDashboard/pages/Upgradeplan.js";
 
 
 
@@ -83,6 +84,7 @@ function App() {
   const UserProfileHDC = LayoutUser(UserProfile)
   const UserEnquriesHDC = LayoutUser(UserEnquries)
   const UserCategoryHDC = LayoutUser(UserCateogry)
+  const UserPlanHDC = LayoutUser(UpgradePLan )
 
   return (
     <>
@@ -136,6 +138,7 @@ function App() {
             <Route path="/user/product" element={<UserProdcutHDC />} />
             <Route path="/user/reviews" element={< UserReviewsHDC  />} />
             <Route path="/user/plans" element={<UserPlansHDC />} />
+            <Route path="/upgrade/plan" element={<UserPlanHDC />} />
             <Route path="/user/profile" element={<UserProfileHDC />} />
             <Route path="/user/enquries" element={<UserEnquriesHDC />} />
             <Route path="/user/category" element={<UserCategoryHDC />} />
