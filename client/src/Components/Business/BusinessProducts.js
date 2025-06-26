@@ -27,6 +27,7 @@ const BusinessProducts = () => {
     setLoading(true);
     try {
       const res = await axios.get(`/api/v1/product/get/${user._id}`);
+      console.log(res, "product")
       setProducts(res.data?.data || []);
     } catch (err) {
       message.error("You don't have any product yet.");
@@ -61,20 +62,6 @@ const BusinessProducts = () => {
 
   return (
     <>
-      {/* <Typography
-        variant="h5"
-        fontWeight="bold"
-        gutterBottom
-        align="center"
-        sx={{
-          color: Colors.LOGOColor,
-          fontFamily: ` 'Arial', sans-serif'`,
-          mb: 2,
-        }}
-      >
-        Our Product
-      </Typography> */}
-
 
       {loading ? (
         <Box display="flex" justifyContent="center" py={4}>
@@ -177,11 +164,11 @@ const BusinessProducts = () => {
                             mr: 1,
                           }}
                         >
-                          ${originalPrice.toFixed(2)}
+                          {originalPrice.toFixed(2)}
                         </Typography>
                       )}
                       <Typography variant="body1" fontWeight="bold" color="text.primary">
-                        ${currentPrice.toFixed(2)}
+                        {currentPrice.toFixed(2)}
                       </Typography>
                     </Box>
                   </CardContent>

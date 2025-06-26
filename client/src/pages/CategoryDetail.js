@@ -142,6 +142,7 @@ const CategoryDetail = () => {
       };
 
       const response = await axios.post("/api/v1/enquiry/add", enquiryData);
+      console.log(response,'response')
 
       if (response.data.success) {
         message.success('Enquiry sent successfully!');
