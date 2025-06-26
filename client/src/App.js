@@ -19,6 +19,7 @@ import Plans from './pages/Plans.js'
 import ListYourBusiness from "./pages/ListYourBusiness.js";
 import CategoryBusinesseView from "./pages/CategoryBusinesseView.js";
 import CategoryDetail from "./pages/CategoryDetail.js";
+import ProductDetail from "./pages/ProductDetail.js";
 
 
 
@@ -122,7 +123,7 @@ function App() {
             <Route path="/password/reset/:token" element={<ResetPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-          
+            <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/plans" element={<Plans/>} />
            
             <Route path="/category/:name" element={<CategoryDetail />} />

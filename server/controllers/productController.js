@@ -45,8 +45,8 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
 // Get all products by business ID
 export const getAllProductsByUserId = catchAsyncErrors(
   async (req, res, next) => {
-    const { userId } = req.params;
-    const products = await Product.find({ userId }).sort({ createdAt: -1 });
+    const { businessId } = req.params;
+    const products = await Product.find({ businessId }).sort({ createdAt: -1 });
 
     // Check if there are no products
     if (!products || products.length === 0) {

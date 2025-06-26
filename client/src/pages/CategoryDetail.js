@@ -138,7 +138,6 @@ const CategoryDetail = () => {
     try {
       const enquiryData = {
         businessId: selectedBusiness._id,
-        // userId: user?._id || null,
         ...values
       };
 
