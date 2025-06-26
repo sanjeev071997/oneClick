@@ -61,19 +61,20 @@ export const getAllProductsByBusinessId = catchAsyncErrors(
 );
 
 // Get all products by user ID
-export const getAllProductsByUserId = catchAsyncErrors(
+export const getAllProductsByUserIdAdmin = catchAsyncErrors(
   async (req, res, next) => {
     const { userId } = req.params;
-    const products = await Product.find({ userId }).sort({ createdAt: -1 });
 
+    const allProducts = await Product.find({ userId }).sort({ createdAt: -1 });
+    
     // Check if there are no products
-    if (!products || products.length === 0) {
+    if (!allProducts || allProducts.length === 0) {
       return next(new Errorhandler("No products found for this business", 404));
     }
 
     res.status(200).json({
       success: true,
-      data: products,
+      data: allProducts,
     });
   }
 );
