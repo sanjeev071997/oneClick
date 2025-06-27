@@ -25,7 +25,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const ProductTable = () => {
   const user = useSelector((state) => state.user.user);
-
+  const userId = user?._id
   const [products, setProducts] = useState([]);
   const [businesses, setBusinesses] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -48,12 +48,7 @@ const ProductTable = () => {
     images: []
   });
 
-  useEffect(() => {
-    if (user?._id) {
-      fetchBusinesses();
-      fetchProducts();
-    }
-  }, [user?._id]);
+
 
   const fetchBusinesses = async () => {
     setLoading(true);
@@ -72,10 +67,12 @@ const ProductTable = () => {
     }
   };
 
+
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/v1/product/get/${user._id}`);
+      const res = await axios.get(`/api/v1/product/get/business/${userId}`);
       setProducts(res.data?.data || []);
     } catch (err) {
       message.error("You don't have any product  yet.");
@@ -83,6 +80,14 @@ const ProductTable = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (userId) {
+      fetchBusinesses();
+      fetchProducts();
+    }
+  }, [userId]);
+
 
   const handleOpenAddDialog = () => {
     setCurrentProduct({

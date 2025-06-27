@@ -5,6 +5,7 @@ import {
     addBusiness,
     getBusinessByCategory,
     getAllBusiness,
+    getBusinessById,
     getUserBusiness,
     updateBusiness,
     deleteBusiness
@@ -20,6 +21,7 @@ const router = express.Router();
 router.post("/add", upload.array('images', 5), isAuthenticatedUser, addBusiness);
 router.post("/get",  getBusinessByCategory); // Get Business by Category. This route does not require authentication
 
+router.get("/get/:id",  getBusinessById);
 // Business User
 router.put("/update", upload.array('images', 5), isAuthenticatedUser, updateBusiness);
 router.get("/get", isAuthenticatedUser, getUserBusiness); // Get User Business. This route requires authentication

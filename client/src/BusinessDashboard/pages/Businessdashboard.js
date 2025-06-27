@@ -13,7 +13,6 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
 import axios from '../../axiosInstance';
 import { Colors } from '../../Comman';
 
@@ -38,47 +37,78 @@ const Dashboard = () => {
     recommendationRate: 0
   });
 
+  const fetchBusinesses = async () => {
+    try {
+      const res = await axios.get('/api/v1/business/get');
+      setBusinesses(res.data?.data || []);
+    } catch {
+      message.error("Failed to fetch businesses");
+    }
+  };
+
+  const fetchEnquiries = async () => {
+    try {
+      const res = await axios.post('/api/v1/enquiry/get', { userId: user._id });
+      setQueries(res.data?.data || []);
+    } catch {
+      message.error("Failed to fetch enquiries");
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const res = await axios.get('/api/v1/review/get');
+      const reviewData = res.data?.data || [];
+      setReviews(reviewData);
+
+      const total = reviewData.length;
+      const avgRating = total > 0
+        ? (reviewData.reduce((sum, r) => sum + Number(r.rating || 0), 0) / total).toFixed(1)
+        : 0;
+      const recommended = reviewData.filter(r => Number(r.rating || 0) >= 4).length;
+
+      setReviewStats({
+        averageRating: avgRating,
+        totalReviews: total,
+        recommendationRate: total > 0 ? Math.round((recommended / total) * 100) : 0
+      });
+    } catch {
+      message.error("Failed to fetch reviews");
+    }
+  };
+
+  const fetchPlans = async () => {
+    try {
+      const res = await axios.get('/api/v1/plans/get');
+      setPlans(res.data?.data || []);
+    } catch {
+      message.error("Failed to fetch plans");
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`/api/v1/product/get/business/${user._id}`);
+      setProducts(res.data?.data || []);
+    } catch {
+      message.error("Failed to fetch products");
+    }
+  };
+
   useEffect(() => {
     if (!user?._id) return;
 
-    const fetchAllData = async () => {
+    const fetchData = async () => {
       setLoading(true);
-      try {
-        const [bizRes, queryRes, reviewRes, planRes, prodRes] = await Promise.all([
-          axios.get('/api/v1/business/get'),
-          axios.post('/api/v1/enquiry/get', { userId: user._id }),
-          axios.get('/api/v1/review/get'),
-          axios.get('/api/v1/plans/get'),
-          axios.get(`/api/v1/product/get/${user._id}`)
-        ]);
-
-        setBusinesses(bizRes.data?.data || []);
-        setQueries(queryRes.data?.data || []);
-        setPlans(planRes.data?.data || []);
-        setProducts(prodRes.data?.data || []);
-
-        const reviewData = reviewRes.data?.data || [];
-        setReviews(reviewData);
-
-        const total = reviewData.length;
-        const avgRating = total > 0
-          ? (reviewData.reduce((sum, r) => sum + Number(r.rating || 0), 0) / total).toFixed(1)
-          : 0;
-        const recommended = reviewData.filter(r => Number(r.rating || 0) >= 4).length;
-
-        setReviewStats({
-          averageRating: avgRating,
-          totalReviews: total,
-          recommendationRate: total > 0 ? Math.round((recommended / total) * 100) : 0
-        });
-      } catch (err) {
-        message.error("Failed to load dashboard data.");
-      } finally {
-        setLoading(false);
-      }
+      await fetchBusinesses();
+      await fetchEnquiries();
+      await fetchReviews();
+      await fetchPlans();
+      await fetchProducts();
+      setLoading(false);
     };
 
-    fetchAllData();
+    fetchData();
   }, [user]);
 
   if (loading) {
@@ -111,7 +141,6 @@ const Dashboard = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Stat Cards */}
         {stats.map((stat, idx) => (
           <Grid item xs={12} sm={6} md={4} lg={2.4} key={idx}>
             <Paper
@@ -144,7 +173,6 @@ const Dashboard = () => {
           </Grid>
         ))}
 
-        {/* Charts */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 3, borderRadius: 3, height: 400, bgcolor: '#ffffff' }}>
             <Typography variant="h6" fontWeight={700} mb={2} color={Colors.LOGOColor}>

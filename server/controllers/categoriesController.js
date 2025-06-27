@@ -73,6 +73,28 @@ export const getCategories = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
+// Get Category by ID
+export const getCategoriesById = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const getCategories = await Categories.findById(id); 
+
+    if (!getCategories) {
+      return next(new Errorhandler("Category not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      getCategories,
+      message: "Category details fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});
+
+
 // Update Categories
 export const updateCategories = catchAsyncErrors(async (req, res, next) => {
   const { id, name, categoryImage } = req.body;

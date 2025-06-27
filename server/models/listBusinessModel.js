@@ -91,12 +91,10 @@ const businessSchema = new mongoose.Schema({
   //   address: String,
   // },
 
-  service: [
-    {
-      type: String,
-      required: [true, "Service is required"],
-    },
-  ],
+  service: {
+  type: Array,
+  required: [true, "Service is required"],
+  },
 
   createdAt: {
     type: Date,

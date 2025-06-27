@@ -67,10 +67,13 @@ const Login = () => {
     if (isAuthenticated) {
       message.success("Login Successfully");
       // Redirect based on user role
-      if (user && user.role === 0) {
+      if (user && user.role >= 2) {
         navigate("/business/dashboard");
       } else if (user && user.role >= 1) {
         navigate("/dashboard");
+      }
+      else if (user && user.role >= 0) {
+        navigate("/");
       }
     }
   }, [error, isAuthenticated, user, dispatch, navigate]);

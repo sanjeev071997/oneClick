@@ -3,6 +3,7 @@ import multer from 'multer';
 import {
     addCategories,
     getCategories,
+    getCategoriesById,
     updateCategories,
     deleteCategories
 } from "../controllers/categoriesController.js";
@@ -15,6 +16,8 @@ const upload = multer({ storage });
 const router = express.Router();
 
 router.get("/get", getCategories);
+
+router.get("/get/:id", getCategoriesById);
 
 router.post("/add",upload.single('categoryImage'), isAuthenticatedUser, isAdmin, addCategories);
 

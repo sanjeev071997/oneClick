@@ -21,8 +21,6 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
         url: img.secure_url,
         public_id: img.public_id,
       }));
-
-      console.log(uploadedImages, "uploadedImages");
     }
 
     const product = new Product({
@@ -170,31 +168,40 @@ export const deleteProductById = catchAsyncErrors(async (req, res, next) => {
 
 // Get a product by ID
 export const getProductById = catchAsyncErrors(async (req, res, next) => {
-  const { productId } = req.params;
-  const product = await Product.findById(productId);
-  if (!product) {
-    return next(new Errorhandler("Product not found", 404));
+  try {
+    const { id } = req.params;
+
+    const getProduct = await Product.findById(id);
+
+    if (!getProduct) {
+      return next(new Errorhandler("Product not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      getProduct,
+      message: "Product details fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
   }
-  res.status(200).json({
-    success: true,
-    data: product,
-  });
 });
 
-// // Get all products
-// export const getAllProducts = catchAsyncErrors(async (req, res, next) => {
-//     const products = await Product.find().sort({ createdAt: -1 });
+// Get All Product User Side
+export const getAllProduct = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const allProduct = await Product.find().sort({ createdAt: -1 }).populate("businessId", "businessName phone");
 
-//     // Check if there are no products
-//     if (!products || products.length === 0) {
-//         return next(new Errorhandler("No products found", 404));
-//     }
+    if (!allProduct) {
+      return next(new Errorhandler("Product not found", 404));
+    }
 
-//     res.status(200).json({
-//         success: true,
-//         data: products,
-//     });
-//     }
-// );
-
-
+    res.status(200).json({
+      success: true,
+      allProduct,
+      message: "All product details fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+})

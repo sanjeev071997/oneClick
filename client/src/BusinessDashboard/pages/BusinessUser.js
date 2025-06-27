@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -29,6 +30,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Autocomplete,
 } from "@mui/material";
 import {
   Edit,
@@ -65,10 +67,12 @@ const Business = () => {
     phone: "",
     email: "",
     address: "",
+    service: [],
     city: "",
     state: "",
     description: "",
     images: [],
+    category: "",
     socialLinks: {
       facebook: "",
       instagram: "",
@@ -84,11 +88,13 @@ const Business = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [serviceInput, setServiceInput] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [categoryInput, setCategoryInput] = useState("");
 
   const fetchBusinesses = async () => {
     try {
-      const res = await axios.get("/api/v1/business/get"
-      );
+      const res = await axios.get("/api/v1/business/get");
       setBusinesses(res.data.data);
       setFilteredBusinesses(res.data.data);
     } catch (error) {
@@ -98,18 +104,34 @@ const Business = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get("/api/v1/categories/get");
+      setCategories(res.data.getCategories || []);
+    } catch (error) {
+      message.error("Failed to load categories");
+    }
+  };
+
   useEffect(() => {
-    if (user?._id) fetchBusinesses();
+    if (user?._id) {
+      fetchBusinesses();
+      fetchCategories();
+    }
     setStates(State.getStatesOfCountry("IN"));
   }, [user?._id]);
 
   useEffect(() => {
     if (formData.state) {
-      setCities(City.getCitiesOfState("IN", formData.state));
+      const selectedState = states.find(s => s.isoCode === formData.state);
+      if (selectedState) {
+        setCities(City.getCitiesOfState("IN", selectedState.isoCode));
+      }
     } else {
       setCities([]);
+      setFormData(prev => ({ ...prev, city: "" }));
     }
-  }, [formData.state]);
+  }, [formData.state, states]);
 
   useEffect(() => {
     if (searchTerm.trim() === "") {
@@ -127,14 +149,16 @@ const Business = () => {
     setSelectedBusiness(business);
     if (type === "edit" && business) {
       setFormData({
-        businessName: business?.businessName || "",
+        businessName: business.businessName || "",
         phone: business.phone || "",
         email: business.email || "",
         address: business.address || "",
+        service: business.service || [],
         city: business.city || "",
         state: business.state || "",
         description: business.description || "",
         images: business.images || [],
+        category: business.category?._id || "",
         socialLinks: {
           facebook: business.socialLinks?.facebook || "",
           instagram: business.socialLinks?.instagram || "",
@@ -144,6 +168,7 @@ const Business = () => {
           youtube: business.socialLinks?.youtube || "",
         },
       });
+      setCategoryInput(business.category?.name || "");
       setDeletedImages([]);
       setNewImages([]);
     } else {
@@ -152,10 +177,12 @@ const Business = () => {
         phone: "",
         email: "",
         address: "",
+        service: [],
         city: "",
         state: "",
         description: "",
         images: [],
+        category: "",
         socialLinks: {
           facebook: "",
           instagram: "",
@@ -165,6 +192,7 @@ const Business = () => {
           youtube: "",
         },
       });
+      setCategoryInput("");
     }
     setOpenDialog(true);
   };
@@ -191,8 +219,38 @@ const Business = () => {
     }
   };
 
+  const handleAddService = () => {
+    if (serviceInput.trim() && !formData.service.includes(serviceInput.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        service: [...prev.service, serviceInput.trim()]
+      }));
+      setServiceInput("");
+    }
+  };
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+  };
+
+
+  const handleDeleteService = (serviceToDelete) => {
+    setFormData(prev => ({
+      ...prev,
+      service: prev.service.filter(service => service !== serviceToDelete)
+    }));
+  };
+
+  const handleCategorySelect = (event, value) => {
+    if (value) {
+      const selectedCategory = categories.find(cat => cat.name === value);
+      if (selectedCategory) {
+        setFormData(prev => ({
+          ...prev,
+          category: selectedCategory._id
+        }));
+      }
+    }
+    setCategoryInput(value || "");
   };
 
   const handleImageUpload = (e) => {
@@ -230,7 +288,9 @@ const Business = () => {
       formDataToSend.append("address", formData.address);
       formDataToSend.append("city", formData.city);
       formDataToSend.append("state", formData.state);
+      formDataToSend.append("service", JSON.stringify(formData.service));
       formDataToSend.append("description", formData.description);
+      formDataToSend.append("category", formData.category);
       formDataToSend.append("id", selectedBusiness._id);
 
       Object.entries(formData.socialLinks).forEach(([key, value]) => {
@@ -423,9 +483,11 @@ const Business = () => {
           <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
             <TableContainer>
               <Table>
-                <TableHead sx={{ bgcolor: Colors.LOGOColor}}>
+                <TableHead sx={{ bgcolor: Colors.LOGOColor }}>
                   <TableRow>
                     <TableCell sx={{ color: "white", fontWeight: 600 }}>Business</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Category</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Services</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: 600 }}>Contact</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: 600 }}>Social</TableCell>
                     <TableCell sx={{ color: "white", fontWeight: 600 }}>Rating</TableCell>
@@ -444,19 +506,26 @@ const Business = () => {
                           />
                           <Box>
                             <Typography fontWeight={600}>{business.businessName}</Typography>
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{
-                                display: "-webkit-box",
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                              }}
-                            >
-                              {business.description}
-                            </Typography>
+
                           </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography>{business.category?.name}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {business.service?.map((service, index) => (
+                            <Chip
+                              key={index}
+                              label={service}
+                              size="small"
+                              sx={{
+                                backgroundColor: Colors.LOGOlight,
+                                color: 'white',
+                              }}
+                            />
+                          ))}
                         </Box>
                       </TableCell>
                       <TableCell>
@@ -626,6 +695,73 @@ const Business = () => {
                       margin="normal"
                       size="small"
                     />
+
+                    {/* Category Field */}
+                    <Autocomplete
+                      freeSolo
+                      options={categories.map(category => category.name)}
+                      inputValue={categoryInput}
+                      onInputChange={(event, newInputValue) => {
+                        setCategoryInput(newInputValue);
+                      }}
+                      onChange={handleCategorySelect}
+                      value={categoryInput}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Category"
+                          margin="normal"
+                          size="small"
+                          fullWidth
+                        />
+                      )}
+                      sx={{ mt: 2 }}
+                    />
+
+                    {/* Services Field */}
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        fullWidth
+                        label="Add Service"
+                        value={serviceInput}
+                        onChange={(e) => setServiceInput(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddService();
+                          }
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <Button
+                                onClick={handleAddService}
+                                disabled={!serviceInput.trim()}
+                                size="small"
+                              >
+                                Add
+                              </Button>
+                            </InputAdornment>
+                          ),
+                        }}
+                        margin="normal"
+                        size="small"
+                      />
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                        {formData.service.map((service, index) => (
+                          <Chip
+                            key={index}
+                            label={service}
+                            onDelete={() => handleDeleteService(service)}
+                            sx={{
+                              backgroundColor: Colors.LOGOlight,
+                              color: 'white',
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    </Box>
+
                     <TextField
                       fullWidth
                       label="Description"
@@ -635,31 +771,6 @@ const Business = () => {
                       margin="normal"
                       multiline
                       rows={4}
-                      size="small"
-                      sx={{ mt: 2 }}
-                    />
-                  </Box>
-
-                  <Box>
-                    <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                      Contact Details
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      label="Phone Number"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      margin="normal"
-                      size="small"
-                    />
-                    <TextField
-                      fullWidth
-                      label="Email Address"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      margin="normal"
                       size="small"
                       sx={{ mt: 2 }}
                     />
@@ -686,7 +797,7 @@ const Business = () => {
                       <InputLabel>State</InputLabel>
                       <Select
                         name="state"
-                        value={formData.state}
+                        value={formData.state || ""}
                         onChange={handleChange}
                         label="State"
                       >
@@ -701,16 +812,22 @@ const Business = () => {
                       <InputLabel>City</InputLabel>
                       <Select
                         name="city"
-                        value={formData.city}
+                        value={formData.city || ""}
                         onChange={handleChange}
                         label="City"
                         disabled={!formData.state}
                       >
-                        {cities.map((city) => (
-                          <MenuItem key={city.name} value={city.name}>
-                            {city.name}
+                        {cities.length > 0 ? (
+                          cities.map((city) => (
+                            <MenuItem key={city.name} value={city.name}>
+                              {city.name}
+                            </MenuItem>
+                          ))
+                        ) : (
+                          <MenuItem disabled value="">
+                            {formData.state ? "No cities available" : "Select state first"}
                           </MenuItem>
-                        ))}
+                        )}
                       </Select>
                     </FormControl>
                   </Box>

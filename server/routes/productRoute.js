@@ -7,6 +7,7 @@ import {
     updateProductById,
     deleteProductById,
     getProductById,
+    getAllProduct,
     getAllProductsByAdmin,
 } from "../controllers/productController.js";
 import { isAuthenticatedUser, isAdmin } from "../middlewares/authMiddleware.js";
@@ -28,6 +29,8 @@ router.put("/update/:id", upload.array('images', 5), isAuthenticatedUser, update
 router.delete("/delete/:id", isAuthenticatedUser, deleteProductById); // Delete a product
 
 router.get("/get/product/:id", getProductById); // Get a product by ID User 
+
+router.get("/all", getAllProduct) // Get All Product user side
 
 router.get("/admin/all", isAuthenticatedUser, isAdmin, getAllProductsByAdmin); // Get all products by Admin
 

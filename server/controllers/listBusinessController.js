@@ -100,7 +100,7 @@ export const getAllBusiness = catchAsyncErrors(async (req, res, next) => {
   }
 });
 
-// Get Business by ID
+// Get Business by category ID
 export const getBusinessByCategory = catchAsyncErrors(
   async (req, res, next) => {
     try {
@@ -120,6 +120,27 @@ export const getBusinessByCategory = catchAsyncErrors(
     }
   }
 );
+
+// Get Business by ID
+export const getBusinessById = catchAsyncErrors(async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const getBusiness = await Business.findById(id).populate("category", "name"); 
+
+    if (!getBusiness) {
+      return next(new Errorhandler("Business not found", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      getBusiness,
+      message: "Business details fetched successfully",
+    });
+  } catch (error) {
+    return next(new Errorhandler(error.message, 500));
+  }
+});
 
 // Get User Business
 export const getUserBusiness = catchAsyncErrors(async (req, res, next) => {
