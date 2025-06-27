@@ -82,16 +82,21 @@ const businessSchema = new mongoose.Schema({
     whatsapp: { type: String },
   },
 
+  //   location: {
+  //   latitude: Number,
+  //   longitude: Number,
+  //   city: String,
+  //   state: String,
+  //   country: String,
+  //   address: String,
+  // },
 
-  location: {
-  latitude: Number,
-  longitude: Number,
-  city: String,
-  state: String,
-  country: String,
-  address: String, 
-},
-
+  service: [
+    {
+      type: String,
+      required: [true, "Service is required"],
+    },
+  ],
 
   createdAt: {
     type: Date,

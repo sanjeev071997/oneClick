@@ -1,0 +1,14 @@
+
+Product Review All Apis
+
+post -> /api/v1/api/v1/product/review/add   // Add a new product review
+
+post -> /api/v1/api/v1/product/review/get  // Get all product review by productId pass karni hai body. me productId -> User pr
+
+put -> /api/v1/api/v1/product/review/:id  // Update a product review
+
+put -> /api/v1/api/v1/product/review/:id  // Delete a product review
+
+get -> /api/v1/api/v1/product/get  // Get a product review by ID -> User 
+
+get -> /api/v1/api/v1/product/review  // Get all product review by Admin
