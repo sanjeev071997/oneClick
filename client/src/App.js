@@ -99,7 +99,7 @@ function App() {
               element={
                 isAuthenticated ? (
                   user ? (
-                    user.role === 0 ? (
+                    user.role === 2 ? (
                       <UserDashboardHDC />
                     ) : user.role >= 1 ? (
                       <AdminDashboardHDC />

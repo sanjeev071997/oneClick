@@ -13,21 +13,34 @@ import { message } from "antd";
 import axios from "../../axiosInstance";
 import { Colors } from "../../Comman";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import StarIcon from '@mui/icons-material/Star';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const BusinessProducts = () => {
   const { user } = useSelector((state) => state.user);
+  const { id } = useParams();
   const [products, setProducts] = useState([]);
+  const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const businessId = id;
+
+  const fetchBusinesses = async () => {
+    try {
+      const res = await axios.get("/api/v1/business/get");
+      setBusinesses(res.data.data);
+    } catch (error) {
+      message.error("No businesses found. Please add a business to get started.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`/api/v1/product/get/${user._id}`);
-      console.log(res, "product")
+      const res = await axios.get(`/api/v1/product/get/${businessId}`);
       setProducts(res.data?.data || []);
     } catch (err) {
       message.error("You don't have any product yet.");
@@ -37,16 +50,11 @@ const BusinessProducts = () => {
   };
 
   useEffect(() => {
-    if (user?._id) {
+    if (businessId) {
       fetchProducts();
+      fetchBusinesses();
     }
-  }, [user?._id]);
-
-  const getFirstImage = (product) => {
-    return Array.isArray(product.images) && product.images.length > 0
-      ? product.images[0].url || product.images[0]
-      : null;
-  };
+  }, [businessId]);
 
   const handleCardClick = (product) => {
     navigate(`/product/${product._id}`, { state: { product } });
@@ -62,7 +70,6 @@ const BusinessProducts = () => {
 
   return (
     <>
-
       {loading ? (
         <Box display="flex" justifyContent="center" py={4}>
           <CircularProgress />
@@ -77,12 +84,9 @@ const BusinessProducts = () => {
       ) : (
         <Grid container spacing={3} mt={1}>
           {products.map((product) => {
-            const image = getFirstImage(product);
-            const originalPrice = parseFloat(product.originalPrice || product.price * 1.3);
-            const currentPrice = parseFloat(product.price);
-            const discountPercentage = originalPrice > currentPrice
-              ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
-              : 0;
+            const image = Array.isArray(product.images) && product.images.length > 0
+              ? product.images[0].url || product.images[0]
+              : "";
 
             return (
               <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
@@ -92,7 +96,6 @@ const BusinessProducts = () => {
                     cursor: "pointer",
                     borderRadius: 2,
                     transition: "0.3s",
-                   
                     display: "flex",
                     flexDirection: "column",
                     position: "relative",
@@ -100,8 +103,8 @@ const BusinessProducts = () => {
                     overflow: "hidden",
                   }}
                 >
-                  {/*  discount badge */}
-                  {discountPercentage > 0 && (
+                  {/* Discount Badge */}
+                  {product.discount > 0 && (
                     <Box
                       sx={{
                         position: "absolute",
@@ -120,7 +123,7 @@ const BusinessProducts = () => {
                         zIndex: 2,
                       }}
                     >
-                      {discountPercentage}% OFF
+                      {product.discount}% OFF
                     </Box>
                   )}
 
@@ -133,17 +136,17 @@ const BusinessProducts = () => {
                     }}
                   >
                     <img
-                      src={image || ""}
+                      src={image}
                       alt={product.name}
                       style={{
                         width: '100%',
                         height: '100%',
-                       backgroundSize: 'cover',
+                        backgroundSize: 'cover',
                         display: 'block',
+                        objectFit: 'cover'
                       }}
                     />
                   </Box>
-
 
                   {/* Product Details */}
                   <CardContent sx={{ flexGrow: 1, pt: 1 }}>
@@ -155,7 +158,7 @@ const BusinessProducts = () => {
                       {product.name}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                      {originalPrice > currentPrice && (
+                      {product.price >product.totalPrice&& (
                         <Typography
                           variant="body2"
                           sx={{
@@ -164,11 +167,11 @@ const BusinessProducts = () => {
                             mr: 1,
                           }}
                         >
-                          {originalPrice.toFixed(2)}
+                          {parseFloat(product.price).toFixed(2)}
                         </Typography>
                       )}
                       <Typography variant="body1" fontWeight="bold" color="text.primary">
-                        {currentPrice.toFixed(2)}
+                        {parseFloat(product.totalPrice || product.price).toFixed(2)}
                       </Typography>
                     </Box>
                   </CardContent>
