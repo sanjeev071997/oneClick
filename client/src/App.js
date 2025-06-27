@@ -16,7 +16,7 @@ import Login from "./pages/Auth/Login";
 import ForgotPassword from "./pages/Auth/ForgotPassword.js";
 import ResetPassword from "./pages/Auth/ResetPassword.js";
 import Plans from './pages/Plans.js'
-import ListYourBusiness from "./pages/ListYourBusiness.js";
+import ListYourBusiness from './pages/List/ListYourBusiness.js'
 import CategoryBusinesseView from "./pages/CategoryBusinesseView.js";
 import CategoryDetail from "./pages/CategoryDetail.js";
 import ProductDetail from "./pages/ProductDetail.js";

@@ -34,7 +34,6 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(
     images[0]?.url || images[0] || ""
   );
-  const [isFavorite, setIsFavorite] = useState(false);
   const [zoom, setZoom] = useState(false);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
 
