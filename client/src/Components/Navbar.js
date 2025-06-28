@@ -7,13 +7,9 @@ import {
   Box,
   IconButton,
   ListItemText,
-  ListItemIcon,
   InputBase,
   Paper,
   Button,
-  Divider,
-  Menu,
-  MenuItem,
   List,
   ListItem,
 } from "@mui/material";
@@ -28,7 +24,6 @@ import {
   Mic as MicIcon,
 } from "@mui/icons-material";
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, message } from "antd";
@@ -110,7 +105,7 @@ const Navbar = () => {
   };
 
   const handleCategorySelect = (category) => {
-    navigate(`/category/${category.name}`, { state: { category } });
+    navigate(`/category/${category?._id}`);
     setSearchTerm("");
     setFilteredCategories([]);
     setShowMobileSearch(false);

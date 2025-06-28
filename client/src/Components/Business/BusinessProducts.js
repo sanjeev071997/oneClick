@@ -18,7 +18,6 @@ import StarIcon from '@mui/icons-material/Star';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const BusinessProducts = () => {
-  const { user } = useSelector((state) => state.user);
   const { id } = useParams();
   const [products, setProducts] = useState([]);
   const [businesses, setBusinesses] = useState([]);
@@ -26,24 +25,13 @@ const BusinessProducts = () => {
   const navigate = useNavigate();
   const businessId = id;
 
-  const fetchBusinesses = async () => {
-    try {
-      const res = await axios.get("/api/v1/business/get");
-      setBusinesses(res.data.data);
-    } catch (error) {
-      message.error("No businesses found. Please add a business to get started.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const res = await axios.get(`/api/v1/product/get/${businessId}`);
       setProducts(res.data?.data || []);
     } catch (err) {
-      message.error("You don't have any product yet.");
+      // message.warning("You don't have any product yet.");
     } finally {
       setLoading(false);
     }
@@ -52,7 +40,6 @@ const BusinessProducts = () => {
   useEffect(() => {
     if (businessId) {
       fetchProducts();
-      fetchBusinesses();
     }
   }, [businessId]);
 

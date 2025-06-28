@@ -48,9 +48,9 @@ const TravelBookings = () => {
     if (!categories || categories.length === 0) return;
     const category = categories.find(cat => cat.name.toLowerCase() === name.toLowerCase());
     if (category) {
-      navigate(`/category/${category.name}`, { state: { category } });
+      navigate(`/category/${category?._id}`, { state: { category } });
     } else {
-      navigate(`/category/${name}`);
+      navigate(`/category/${category?._id}`);
     }
   };
 

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -22,42 +21,54 @@ const categories = [
   {
     title: 'Transporters',
     services: [
-      { label: 'Truck Transport', image: require('../Images/truck.jpg'), name: 'Transport Services' },
-      { label: 'Bike Transport', image: require('../Images/bike.jpg'), name: 'Transport Services' },
-      { label: 'Car Transport', image: require('../Images/car.webp'), name: 'Transport Services' },
+      { label: 'Truck Transport', image: require('../Images/truck.jpg'), name: 'Transporters' },
+      { label: 'Bike Transport', image: require('../Images/bike.jpg'), name: 'Transporters' },
+      { label: 'Car Transport', image: require('../Images/car.webp'), name: 'Transporters' },
     ],
   },
   {
     title: 'Courier Service',
     services: [
-      { label: 'Local Courier', image: require('../Images/local.jpg'), name: 'Courier Delivery' },
-      { label: 'National Courier', image: require('../Images/National.webp'), name: 'Courier Delivery' },
-      { label: 'International Courier', image: require('../Images/interr.webp'), name: 'Courier Delivery' },
+      { label: 'Local Courier', image: require('../Images/local.jpg'), name: 'Courier Service' },
+      { label: 'National Courier', image: require('../Images/National.webp'), name: 'Courier Service' },
+      { label: 'International Courier', image: require('../Images/interr.webp'), name: 'Courier Service' },
     ],
   },
 ];
 
-const CategorySection = () => {
+const CategoriesBanner = () => {
   const navigate = useNavigate();
   const [banners, setBanners] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Fetch banners and categories
   useEffect(() => {
-    const fetchBanners = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('/api/v1/homehighlights/get');
-        setBanners(res.data.homeHighlights || []);
+        const [bannerRes, categoryRes] = await Promise.all([
+          axios.get('/api/v1/homehighlights/get'),
+          axios.get('/api/v1/categories/get'),
+        ]);
+
+        setBanners(bannerRes.data.homeHighlights || []);
+        setCategoryList(categoryRes.data.getCategories || []);
       } catch (error) {
-        console.error('Failed to fetch banners', error);
+        console.error('Failed to fetch data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBanners();
+    fetchData();
   }, []);
 
-  
+  // ✅ Get category object by name
+  const getCategoryByName = (name) => {
+    return categoryList.find(
+      (cat) => cat.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+  };
 
   const sliderSettings = {
     dots: true,
@@ -71,7 +82,8 @@ const CategorySection = () => {
 
   return (
     <Container maxWidth={false} sx={{ mt: 8, px: { xs: 2, sm: 3, md: 4 } }}>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3,  alignItems: 'stretch' }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, alignItems: 'stretch' }}>
+        
         {/* Left Side - Categories */}
         <Box sx={{ flex: 1 }}>
           <Grid container spacing={2}>
@@ -90,40 +102,48 @@ const CategorySection = () => {
                     {category.title}
                   </Typography>
                   <Grid container spacing={2}>
-                    {category.services.map((service, idx) => (
-                      <Grid item xs={4} key={idx}>
-                        <Card
-                          sx={{ borderRadius: 2, boxShadow: 'none', cursor: 'pointer' }}
-                          onClick={() =>
-                            navigate(`/category/${service.name}`, {
-                              state: { category: service },
-                            })
-                          }
-                        >
-                          <CardMedia
-                            component="img"
-                            height="140"
-                            image={service.image}
-                            alt={service.label}
-                            sx={{
-                              borderRadius: 2,
-                              transition: '0.3s',
-                              '&:hover': { boxShadow: 3 },
+                    {category.services.map((service, idx) => {
+                      const matchedCategory = getCategoryByName(service.name);
+
+                      return (
+                        <Grid item xs={4} key={idx}>
+                          <Card
+                            sx={{ borderRadius: 2, boxShadow: 'none', cursor: 'pointer' }}
+                            onClick={() => {
+                              if (matchedCategory?._id) {
+                                navigate(`/category/${matchedCategory._id}`, {
+                                  state: { category: matchedCategory },
+                                });
+                              } else {
+                                alert(`No category found for ${service.name}`);
+                              }
                             }}
-                          />
-                          <CardContent sx={{ p: 1 }}>
-                            <Typography
-                              variant="body2"
-                              align="center"
-                              fontWeight={FontWeight.heading2}
-                              sx={{ color: Colors.LOGOColor, fontFamily: FontFamily.inriaSerif }}
-                            >
-                              {service.label}
-                            </Typography>
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ))}
+                          >
+                            <CardMedia
+                              component="img"
+                              height="140"
+                              image={service.image}
+                              alt={service.label}
+                              sx={{
+                                borderRadius: 2,
+                                transition: '0.3s',
+                                '&:hover': { boxShadow: 3 },
+                              }}
+                            />
+                            <CardContent sx={{ p: 1 }}>
+                              <Typography
+                                variant="body2"
+                                align="center"
+                                fontWeight={FontWeight.heading2}
+                                sx={{ color: Colors.LOGOColor, fontFamily: FontFamily.inriaSerif }}
+                              >
+                                {service.label}
+                              </Typography>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      );
+                    })}
                   </Grid>
                 </Paper>
               </Grid>
@@ -133,49 +153,45 @@ const CategorySection = () => {
 
         {/* Right Side - Banner Slider */}
         <Box
-  sx={{
-    flex: 1,
-    borderRadius: 3,
-    overflow: 'hidden',
-    height: { xs: 250, sm: 450, md: 548 },
-    position: 'relative',
-    pb: 4,
-  }}
->
-  {loading ? (
-    <CircularProgress />
-  ) : (
-    <Slider {...sliderSettings}>
-      {banners?.map((banner, index) => (
-        <Box
-          key={index}
           sx={{
-            height: { xs: 250, sm: 450, md: 548 }, 
+            flex: 1,
+            borderRadius: 3,
+            overflow: 'hidden',
+            height: { xs: 250, sm: 450, md: 548 },
+            position: 'relative',
+            pb: 4,
           }}
         >
-          <img
-            src={banner?.imageUrl}
-            alt={`Banner ${index + 1}`}
-            style={{
-              width: '100%',
-              height: '100%',
-              // objectFit: 'cover',
-               backgroundSize:"cover",
-              borderRadius: '16px',
-              display: 'block',
-            }}
-          />
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <Slider {...sliderSettings}>
+              {banners.map((banner, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    height: { xs: 250, sm: 450, md: 548 },
+                  }}
+                >
+                  <img
+                    src={banner?.imageUrl}
+                    alt={`Banner ${index + 1}`}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundSize: 'cover',
+                      borderRadius: '16px',
+                      display: 'block',
+                    }}
+                  />
+                </Box>
+              ))}
+            </Slider>
+          )}
         </Box>
-      ))}
-    </Slider>
-  )}
-</Box>
-
-
       </Box>
     </Container>
   );
 };
 
-export default CategorySection;
-
+export default CategoriesBanner;

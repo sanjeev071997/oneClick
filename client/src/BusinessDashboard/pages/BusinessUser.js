@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -45,23 +44,25 @@ import {
   Instagram,
   Link as LinkIcon,
   Add,
+  Twitter,
+  LinkedIn,
+  YouTube,
+  WhatsApp,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { message } from "antd";
-import axios from '../../axiosInstance';
-import { Colors } from '../../Comman';
+import axios from "../../axiosInstance";
+import { Colors } from "../../Comman";
 import { State, City } from "country-state-city";
 
 const Business = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
-  const [businesses, setBusinesses] = useState([]);
-  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogType, setDialogType] = useState(null);
-  const [selectedBusiness, setSelectedBusiness] = useState(null);
+
   const [formData, setFormData] = useState({
     businessName: "",
     phone: "",
@@ -82,6 +83,9 @@ const Business = () => {
       youtube: "",
     },
   });
+  const [businesses, setBusinesses] = useState([]);
+  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [newImages, setNewImages] = useState([]);
   const [deletedImages, setDeletedImages] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
@@ -98,7 +102,9 @@ const Business = () => {
       setBusinesses(res.data.data);
       setFilteredBusinesses(res.data.data);
     } catch (error) {
-      message.error("No businesses found. Please add a business to get started.");
+      message.error(
+        "No businesses found. Please add a business to get started."
+      );
     } finally {
       setLoading(false);
     }
@@ -122,18 +128,6 @@ const Business = () => {
   }, [user?._id]);
 
   useEffect(() => {
-    if (formData.state) {
-      const selectedState = states.find(s => s.isoCode === formData.state);
-      if (selectedState) {
-        setCities(City.getCitiesOfState("IN", selectedState.isoCode));
-      }
-    } else {
-      setCities([]);
-      setFormData(prev => ({ ...prev, city: "" }));
-    }
-  }, [formData.state, states]);
-
-  useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredBusinesses(businesses);
     } else {
@@ -147,19 +141,27 @@ const Business = () => {
   const handleOpenDialog = (type, business = null) => {
     setDialogType(type);
     setSelectedBusiness(business);
+
     if (type === "edit" && business) {
-      setFormData({
+      // Find the complete state object that matches the business's state
+      const matchedState = states.find(
+        (s) => s.isoCode === business.state || s.name === business.state
+      );
+      // First prepare all the form data
+      const initialFormData = {
         businessName: business.businessName || "",
         phone: business.phone || "",
         email: business.email || "",
         address: business.address || "",
         service: business.service || [],
         city: business.city || "",
-        state: business.state || "",
+        // state: business.state || "",
+        state: matchedState ? matchedState.isoCode : business.state || "",
         description: business.description || "",
         images: business.images || [],
         category: business.category?._id || "",
         socialLinks: {
+          linkedin: business.socialLinks?.linkedin || "",
           facebook: business.socialLinks?.facebook || "",
           instagram: business.socialLinks?.instagram || "",
           twitter: business.socialLinks?.twitter || "",
@@ -167,11 +169,14 @@ const Business = () => {
           website: business.socialLinks?.website || "",
           youtube: business.socialLinks?.youtube || "",
         },
-      });
+      };
+      // Now set the form data
+      setFormData(initialFormData);
       setCategoryInput(business.category?.name || "");
       setDeletedImages([]);
       setNewImages([]);
     } else {
+      // Reset form for new business
       setFormData({
         businessName: "",
         phone: "",
@@ -197,6 +202,18 @@ const Business = () => {
     setOpenDialog(true);
   };
 
+  useEffect(() => {
+    if (formData.state) {
+      const selectedState = states.find((s) => s.isoCode === formData.state);
+      if (selectedState) {
+        setCities(City.getCitiesOfState("IN", selectedState.isoCode));
+      }
+    } else {
+      setCities([]);
+      setFormData((prev) => ({ ...prev, city: "" }));
+    }
+  }, [formData.state, states]);
+
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setNewImages([]);
@@ -220,10 +237,13 @@ const Business = () => {
   };
 
   const handleAddService = () => {
-    if (serviceInput.trim() && !formData.service.includes(serviceInput.trim())) {
-      setFormData(prev => ({
+    if (
+      serviceInput.trim() &&
+      !formData.service.includes(serviceInput.trim())
+    ) {
+      setFormData((prev) => ({
         ...prev,
-        service: [...prev.service, serviceInput.trim()]
+        service: [...prev.service, serviceInput.trim()],
       }));
       setServiceInput("");
     }
@@ -232,21 +252,20 @@ const Business = () => {
     setSearchTerm(e.target.value);
   };
 
-
   const handleDeleteService = (serviceToDelete) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      service: prev.service.filter(service => service !== serviceToDelete)
+      service: prev.service.filter((service) => service !== serviceToDelete),
     }));
   };
 
   const handleCategorySelect = (event, value) => {
     if (value) {
-      const selectedCategory = categories.find(cat => cat.name === value);
+      const selectedCategory = categories.find((cat) => cat.name === value);
       if (selectedCategory) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          category: selectedCategory._id
+          category: selectedCategory._id,
         }));
       }
     }
@@ -288,15 +307,16 @@ const Business = () => {
       formDataToSend.append("address", formData.address);
       formDataToSend.append("city", formData.city);
       formDataToSend.append("state", formData.state);
-      formDataToSend.append("service", JSON.stringify(formData.service));
+      formData.service.forEach((item) => {
+        formDataToSend.append("service", item);
+      });
       formDataToSend.append("description", formData.description);
       formDataToSend.append("category", formData.category);
       formDataToSend.append("id", selectedBusiness._id);
-
-      Object.entries(formData.socialLinks).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-
+      formDataToSend.append(
+        "socialLinks",
+        JSON.stringify(formData.socialLinks)
+      );
       newImages.forEach((img) => {
         formDataToSend.append("images", img.file);
       });
@@ -397,7 +417,15 @@ const Business = () => {
             }}
           />
 
-          <Button variant="contained" startIcon={<Add />} onClick={() => navigate("/upgrade/plan")} sx={{ backgroundColor: '#9EDC29', '&:hover': { backgroundColor: '#7CB51F' } }}>
+          <Button
+            variant="contained"
+            startIcon={<Add />}
+            onClick={() => navigate("/upgrade/plan")}
+            sx={{
+              backgroundColor: "#9EDC29",
+              "&:hover": { backgroundColor: "#7CB51F" },
+            }}
+          >
             Add Business
           </Button>
         </Box>
@@ -475,38 +503,63 @@ const Business = () => {
           )}
         </Paper>
       ) : (
-        <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 3
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 3,
+          }}
+        >
           <Paper elevation={3} sx={{ borderRadius: 3, overflow: "hidden" }}>
             <TableContainer>
               <Table>
                 <TableHead sx={{ bgcolor: Colors.LOGOColor }}>
                   <TableRow>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Business</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Category</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Services</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Contact</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Social</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600 }}>Rating</TableCell>
-                    <TableCell sx={{ color: "white", fontWeight: 600, textAlign: "center" }}>Actions</TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Business
+                    </TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Category
+                    </TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Services
+                    </TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Contact
+                    </TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Social
+                    </TableCell>
+                    <TableCell sx={{ color: "white", fontWeight: 600 }}>
+                      Rating
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        color: "white",
+                        fontWeight: 600,
+                        textAlign: "center",
+                      }}
+                    >
+                      Actions
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredBusinesses.map((business) => (
                     <TableRow key={business._id} hover>
                       <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                        >
                           <Avatar
                             src={business.images?.[0]?.url}
                             alt={business.businessName}
                             sx={{ width: 56, height: 56 }}
                           />
                           <Box>
-                            <Typography fontWeight={600}>{business.businessName}</Typography>
-
+                            <Typography fontWeight={600}>
+                              {business.businessName}
+                            </Typography>
                           </Box>
                         </Box>
                       </TableCell>
@@ -514,27 +567,47 @@ const Business = () => {
                         <Typography>{business.category?.name}</Typography>
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {business.service?.map((service, index) => (
+                        <Box
+                          sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}
+                        >
+                          {business?.service?.map((service, index) => (
                             <Chip
                               key={index}
                               label={service}
                               size="small"
                               sx={{
                                 backgroundColor: Colors.LOGOlight,
-                                color: 'white',
+                                color: "white",
                               }}
                             />
                           ))}
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <Phone fontSize="small" color="primary" />
                             <Typography>{business.phone}</Typography>
                           </Box>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1,
+                            }}
+                          >
                             <Email fontSize="small" color="primary" />
                             <Typography>{business.email}</Typography>
                           </Box>
@@ -578,12 +651,66 @@ const Business = () => {
                               </IconButton>
                             </Tooltip>
                           )}
+
+                          {business.socialLinks?.twitter && (
+                            <Tooltip title="Twitter">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.twitter}
+                                target="_blank"
+                                sx={{ color: Colors.LOGOColor }}
+                              >
+                                <Twitter fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          {business.socialLinks?.linkedin && (
+                            <Tooltip title="Twitter">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.linkedin}
+                                target="_blank"
+                                sx={{ color: Colors.LOGOColor }}
+                              >
+                                <LinkedIn fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          {business.socialLinks?.youtube && (
+                            <Tooltip title="Twitter">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.youtube}
+                                target="_blank"
+                                sx={{ color: Colors.LOGOColor }}
+                              >
+                                <YouTube fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+
+                          {business.socialLinks?.whatsapp && (
+                            <Tooltip title="Twitter">
+                              <IconButton
+                                size="small"
+                                href={business.socialLinks.whatsapp}
+                                target="_blank"
+                                sx={{ color: Colors.LOGOColor }}
+                              >
+                                <whatsApp fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
                         </Box>
                       </TableCell>
                       <TableCell>
                         <Chip
                           icon={<Star fontSize="small" />}
-                          label={`${Number(business?.rating || 0).toFixed(1)} (${business?.ratingCount || 0})`}
+                          label={`${Number(business?.rating || 0).toFixed(
+                            1
+                          )} (${business?.ratingCount || 0})`}
                           size="small"
                           sx={{
                             bgcolor: Colors.LOGOlight,
@@ -699,7 +826,7 @@ const Business = () => {
                     {/* Category Field */}
                     <Autocomplete
                       freeSolo
-                      options={categories.map(category => category.name)}
+                      options={categories.map((category) => category.name)}
                       inputValue={categoryInput}
                       onInputChange={(event, newInputValue) => {
                         setCategoryInput(newInputValue);
@@ -726,7 +853,7 @@ const Business = () => {
                         value={serviceInput}
                         onChange={(e) => setServiceInput(e.target.value)}
                         onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
+                          if (e.key === "Enter") {
                             e.preventDefault();
                             handleAddService();
                           }
@@ -747,21 +874,27 @@ const Business = () => {
                         margin="normal"
                         size="small"
                       />
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                        {formData.service.map((service, index) => (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 1,
+                          mt: 1,
+                        }}
+                      >
+                        {formData?.service.map((service, index) => (
                           <Chip
                             key={index}
                             label={service}
                             onDelete={() => handleDeleteService(service)}
                             sx={{
                               backgroundColor: Colors.LOGOlight,
-                              color: 'white',
+                              color: "white",
                             }}
                           />
                         ))}
                       </Box>
                     </Box>
-
                     <TextField
                       fullWidth
                       label="Description"
@@ -780,23 +913,40 @@ const Business = () => {
                 <Grid item xs={12} md={6}>
                   <Box mb={3}>
                     <Typography variant="subtitle1" fontWeight={600} mb={2}>
-                      Location
+                      Contact & Location
                     </Typography>
                     <TextField
                       fullWidth
-                      label="Address"
-                      name="address"
-                      value={formData.address}
+                      label="Email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       margin="normal"
-                      multiline
-                      rows={3}
                       size="small"
                     />
-                    <FormControl fullWidth margin="normal" size="small" sx={{ mt: 2 }}>
+                    <TextField
+                      fullWidth
+                      sx={{
+                        mt: 4,
+                      }}
+                      label="Phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      margin="normal"
+                      size="small"
+                    />
+
+                    <FormControl
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                      sx={{ mt: 4 }}
+                    >
                       <InputLabel>State</InputLabel>
                       <Select
                         name="state"
+                        // value={formData.state}
                         value={formData.state || ""}
                         onChange={handleChange}
                         label="State"
@@ -825,11 +975,25 @@ const Business = () => {
                           ))
                         ) : (
                           <MenuItem disabled value="">
-                            {formData.state ? "No cities available" : "Select state first"}
+                            {formData.state
+                              ? "No cities available"
+                              : "Select state first"}
                           </MenuItem>
                         )}
                       </Select>
                     </FormControl>
+
+                    <TextField
+                      fullWidth
+                      label="Address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      margin="normal"
+                      multiline
+                      rows={3}
+                      size="small"
+                    />
                   </Box>
                 </Grid>
               </Grid>
@@ -839,8 +1003,79 @@ const Business = () => {
               <Typography variant="subtitle1" fontWeight={600} mb={2}>
                 Social Media Links
               </Typography>
-
               <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Linkedin"
+                    name="socialLinks.linkedin"
+                    value={formData.socialLinks.linkedin}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LinkedIn color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Youtube"
+                    name="socialLinks.youtube"
+                    value={formData.socialLinks.youtube}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <YouTube color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Whatsapp"
+                    name="socialLinks.whatsapp"
+                    value={formData.socialLinks.whatsapp}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <WhatsApp color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Twitter"
+                    name="socialLinks.twitter"
+                    value={formData.socialLinks.twitter}
+                    onChange={handleChange}
+                    margin="normal"
+                    size="small"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Twitter color="primary" />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
