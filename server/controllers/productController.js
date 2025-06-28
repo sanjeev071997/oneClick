@@ -171,7 +171,7 @@ export const getProductById = catchAsyncErrors(async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const getProduct = await Product.findById(id);
+    const getProduct = await Product.findById(id).populate("businessId", "phone");
 
     if (!getProduct) {
       return next(new Errorhandler("Product not found", 404));
