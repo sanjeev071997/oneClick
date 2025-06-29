@@ -45,7 +45,8 @@ const Footer = () => {
     { name: "Home", path: "/", icon: <Bolt fontSize="small" /> },
     { name: "About Us", path: "/about", icon: <Verified fontSize="small" /> },
     { name: "Contact", path: "/contact", icon: <Email fontSize="small" /> },
-    { name: "Plans", path: "/plans", icon: <CurrencyRupeeIcon fontSize="small" /> },
+    { name: "Business", path: "/add/business", icon: <CurrencyRupeeIcon fontSize="small" /> },
+    { name: "Shop", path: "/shop", icon: <Bolt fontSize="small" /> },
   ];
 
   const socialLinks = [

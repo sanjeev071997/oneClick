@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { reloadUser } from "./redux/actions/userAction";
 import store from "./redux/store";
 import ConnectionStatus from "./Components/ConnectionStatus.js";
+import Shop from "./pages/Shop.js";
 
 // Pages
 import Home from "./pages/Home";
@@ -125,6 +126,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/plans" element={<Plans/>} />
+            <Route path="/shop" element={<Shop/>} />
            
             <Route path="/category/:id" element={<CategoryDetail />} />
             <Route path="/add/business" element={<ListYourBusiness />} />

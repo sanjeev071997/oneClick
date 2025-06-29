@@ -17,6 +17,7 @@
 // import axios from "../axiosInstance";
 // import { Colors } from "../Comman";
 
+<<<<<<< HEAD
 // const ProductDetails = () => {
 //   const { id } = useParams();
 //   const [product, setProduct] = useState(null);
@@ -257,23 +258,39 @@
 // export default ProductDetails;
 
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+=======
+
+
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
 import {
   Box,
   Typography,
   Grid,
   Chip,
+<<<<<<< HEAD
+=======
+  Stack,
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   Paper,
   useMediaQuery,
   useTheme,
   Rating,
   Container,
+<<<<<<< HEAD
   Button,
+=======
+  TextField,
+  Button, 
+  CircularProgress 
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
 import axios from "../axiosInstance";
 import { Colors } from "../Comman";
+<<<<<<< HEAD
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { useSelector } from "react-redux";
@@ -286,14 +303,36 @@ const ProductDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.user);
+=======
+import { message, Modal } from "antd"; 
+import { useSelector } from "react-redux";
+const ProductDetails = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation(); 
+  const { user } = useSelector((state) => state.user);
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
+<<<<<<< HEAD
+=======
+
+  // State for reviews
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [errorReviews, setErrorReviews] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const isAuthenticated = true; 
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
+<<<<<<< HEAD
   const currentURL = `${window.location.origin}/product/${id}`;
 
   const handleShareOnWhatsApp = () => {
@@ -330,10 +369,90 @@ const ProductDetails = () => {
 
   useEffect(() => {
     if (id) fetchProducts();
+=======
+  const fetchProductDetails = async () => {
+    try {
+      const res = await axios.get(`/api/v1/product/get/product/${id}`);
+      const fetchedProduct = res.data?.getProduct;
+      setProduct(fetchedProduct);
+
+      const firstImage = fetchedProduct?.images?.[0];
+      const imageUrl = typeof firstImage === "string" ? firstImage : firstImage?.url;
+      setSelectedImage(imageUrl || "");
+    } catch (err) {
+  
+    }
+  };
+
+  const fetchReviews = async () => {
+    setLoadingReviews(true);
+    setErrorReviews(null);
+    try {
+      const res = await axios.get(`/api/v1/product/review/get/${id}`);
+      setReviews(res.data?.data || []);
+    } catch (err) {
+      setErrorReviews("Failed to load reviews. Please try again.");
+      message.error("Failed to load reviews.");
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!isAuthenticated) {
+      Modal.confirm({
+        title: "Login Required",
+        content: "Please log in to add a review.",
+        okText: "Login",
+        cancelText: "Cancel",
+        onOk: () => navigate("/login", { state: { from: location.pathname } }),
+      });
+      return;
+    }
+
+    if (rating === 0) {
+      message.warning("Please provide a rating.");
+      return;
+    }
+
+    if (!reviewText.trim()) {
+      message.warning("Please write a comment for your review.");
+      return;
+    }
+
+    setSubmittingReview(true);
+    try {
+      const payload = {
+        productId: product?._id,
+        rating,
+        comment: reviewText,
+        reviewer: user?._id, 
+      };
+      await axios.post("/api/v1/product/review/add", payload);
+      message.success("Review added successfully!");
+      setRating(0);
+      setReviewText("");
+      fetchReviews(); 
+    } catch (error) {
+      console.error("Failed to add review:", error);
+      message.error(error.response?.data?.message || "Failed to add review.");
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+
+  useEffect(() => {
+    if (id) {
+      fetchProductDetails();
+      fetchReviews(); 
+    }
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   }, [id]);
 
   if (!product) {
     return (
+<<<<<<< HEAD
       <Box
         sx={{
           display: "flex",
@@ -342,6 +461,9 @@ const ProductDetails = () => {
           height: "100vh",
         }}
       >
+=======
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
         <Typography variant="h6">No product found</Typography>
       </Box>
     );
@@ -360,6 +482,7 @@ const ProductDetails = () => {
 
   const handleImageLeave = () => {
     setShowMagnifier(false);
+<<<<<<< HEAD
   };
 
   const images = product?.images || [];
@@ -420,13 +543,18 @@ const ProductDetails = () => {
       ""
     )}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
+=======
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   };
+
+  const images = product?.images || [];
 
   return (
     <>
       <Navbar />
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Grid container spacing={4}>
+<<<<<<< HEAD
           {/* Image Section */}
           <Grid item xs={12} md={6} lg={5}>
             <Box
@@ -436,6 +564,11 @@ const ProductDetails = () => {
                 gap: 2,
               }}
             >
+=======
+          {/* Image Section (Existing Code) */}
+          <Grid item xs={12} md={6} lg={5}>
+            <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row-reverse", gap: 2 }}>
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
               {/* Zoom Image on Hover */}
               <Box
                 onMouseMove={handleImageHover}
@@ -450,7 +583,11 @@ const ProductDetails = () => {
                     height: isSmallScreen ? 300 : 500,
                     objectFit: "cover",
                     borderRadius: "10px",
+<<<<<<< HEAD
                     cursor: "zoom-in",
+=======
+                    cursor: "zoom-in"
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   }}
                 />
 
@@ -470,8 +607,13 @@ const ProductDetails = () => {
                       borderRadius: 2,
                       display: {
                         xs: "none",
+<<<<<<< HEAD
                         sm: "block",
                       },
+=======
+                        sm: "block"
+                      }
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                     }}
                   />
                 )}
@@ -487,7 +629,11 @@ const ProductDetails = () => {
                   overflowY: isSmallScreen ? "unset" : "auto",
                   maxHeight: isSmallScreen ? "unset" : 500,
                   width: isSmallScreen ? "100%" : 80,
+<<<<<<< HEAD
                   pr: 1,
+=======
+                  pr: 1
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                 }}
               >
                 {images.map((img, index) => {
@@ -507,7 +653,11 @@ const ProductDetails = () => {
                           selectedImage === imgUrl
                             ? `2px solid ${Colors.LOGOColor}`
                             : "1px solid #e0e0e0",
+<<<<<<< HEAD
                         transition: "all 0.2s ease",
+=======
+                        transition: "all 0.2s ease"
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                       }}
                       onClick={() => setSelectedImage(imgUrl)}
                     >
@@ -517,7 +667,11 @@ const ProductDetails = () => {
                         style={{
                           width: "100%",
                           height: "100%",
+<<<<<<< HEAD
                           objectFit: "cover",
+=======
+                          objectFit: "cover"
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                         }}
                       />
                     </Paper>
@@ -525,6 +679,7 @@ const ProductDetails = () => {
                 })}
               </Box>
             </Box>
+<<<<<<< HEAD
 
             {/* Buy Now Button */}
             <Box sx={{ mt: 3 }}>
@@ -646,14 +801,39 @@ const ProductDetails = () => {
                     color: "white",
                     fontSize: "0.75rem",
                     fontWeight: 500,
+=======
+          </Grid>
+
+          {/* Product Info (Existing Code) */}
+          <Grid item xs={12} md={6} lg={7}>
+            <Box>
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                sx={{ mb: 2 }}
+              >
+                {product.name}
+              </Typography>
+
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Chip
+                  label={product.category}
+                  color="secondary"
+                  sx={{
+                    mr: 2,
+                    fontWeight: "bold",
+                    textTransform: "uppercase",
+                    fontSize: "0.7rem"
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   }}
                 />
                 <Rating
-                  value={4.5}
+                  value={4.5} 
                   precision={0.5}
                   readOnly
                   sx={{ color: Colors.LOGOColor }}
                 />
+<<<<<<< HEAD
                 <Typography variant="body2" color="text.secondary">
                   (24 reviews)
                 </Typography>
@@ -675,14 +855,19 @@ const ProductDetails = () => {
                     flexWrap: "wrap",
                   }}
                 >
+=======
+                <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                  ({reviews.length} reviews) 
+                </Typography>
+              </Box>
+
+              <Box sx={{ backgroundColor: "#f9f9f9", p: 3, borderRadius: 2, mb: 3 }}>
+                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   {product.price > product.totalPrice && (
                     <Typography
                       variant="h6"
-                      sx={{
-                        textDecoration: "line-through",
-                        color: "#9e9e9e",
-                        mr: 2,
-                      }}
+                      sx={{ textDecoration: "line-through", color: "#9e9e9e", mr: 2 }}
                     >
                       ₹{parseFloat(product.price).toFixed(2)}
                     </Typography>
@@ -707,11 +892,16 @@ const ProductDetails = () => {
                         color: "white",
                         height: 32,
                         fontSize: "1rem",
+<<<<<<< HEAD
                         fontWeight: "bold",
+=======
+                        fontWeight: "bold"
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                       }}
                     />
                   )}
                 </Box>
+<<<<<<< HEAD
 
                 {/* Stock Info */}
                 <Box
@@ -736,6 +926,95 @@ const ProductDetails = () => {
                 >
                   {product.details || "No description available"}
                 </Typography>
+=======
+              </Box>
+
+              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", mb: 1 }}>
+                Description
+              </Typography>
+              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.7 }}>
+                {product.details || "No description available"}
+              </Typography>
+
+              {/* --- Review Section Starts Here --- */}
+              <Box sx={{ mt: 5 }}>
+                <Typography variant="h5" fontWeight="bold" gutterBottom>
+                  Customer Reviews
+                </Typography>
+
+                {/* Review Submission Form */}
+                <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Add a Review
+                  </Typography>
+                  <Rating
+                    name="product-rating"
+                    value={rating}
+                    precision={1}
+                    onChange={(event, newValue) => {
+                      setRating(newValue);
+                    }}
+                    sx={{ mb: 2, color: Colors.LOGOColor }}
+                  />
+                  <TextField
+                    label="Your Comment"
+                    multiline
+                    rows={4}
+                    fullWidth
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    sx={{ mb: 2 }}
+                  />
+                  <Button
+                    variant="contained"
+                    sx={{ bgcolor: Colors.LOGOColor, "&:hover": { bgcolor: Colors.LOGOColorHover } }}
+                    onClick={handleSubmitReview}
+                    disabled={submittingReview}
+                  >
+                    {submittingReview ? <CircularProgress size={24} color="inherit" /> : "Submit Review"}
+                  </Button>
+                </Paper>
+
+                {/* Display Existing Reviews */}
+                {loadingReviews ? (
+                  <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                    <CircularProgress />
+                  </Box>
+                ) : errorReviews ? (
+                  <Typography color="error" sx={{ mt: 3 }}>
+                    {errorReviews}
+                  </Typography>
+                ) : reviews.length === 0 ? (
+                  <Typography variant="body1" color="text.secondary" sx={{ mt: 3 }}>
+                    No reviews yet. Be the first to review this product!
+                  </Typography>
+                ) : (
+                  <Stack spacing={2} sx={{ mt: 3 }}>
+                    {reviews.map((review) => (
+                      <Paper key={review._id} elevation={1} sx={{ p: 2 }}>
+                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <Typography variant="subtitle1" fontWeight="bold">
+                            {review.reviewer?.name || "Anonymous User"}
+                          </Typography>
+                          <Rating
+                            value={review.rating}
+                            precision={0.5}
+                            readOnly
+                            size="small"
+                            sx={{ color: Colors.LOGOColor }}
+                          />
+                        </Box>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </Typography>
+                        <Typography variant="body1" sx={{ mt: 1 }}>
+                          {review.comment}
+                        </Typography>
+                      </Paper>
+                    ))}
+                  </Stack>
+                )}
+>>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
               </Box>
             </Box>
           </Grid>

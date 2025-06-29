@@ -204,22 +204,21 @@ import {
   Grid,
   CardActions,
   IconButton,
-  Tooltip,
 } from "@mui/material";
 import { message } from "antd";
 import axios from "../../axiosInstance";
 import { Colors } from "../../Comman";
 import { useNavigate, useParams } from "react-router-dom";
-import StarIcon from "@mui/icons-material/Star";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // at the top with other imports
+import StarIcon from '@mui/icons-material/Star';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const BusinessProducts = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
+  const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [errorReviews, setErrorReviews] = useState(null);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -234,18 +233,54 @@ const BusinessProducts = () => {
     }
   };
 
+  const fetchReviews = async (id) => {
+    try {
+      const res = await axios.get(`/api/v1/product/review/get/${id}`);
+      return res.data?.data || [];
+    } catch (err) {
+      console.error(`Failed to fetch reviews for product ${id}:`, err);
+      return [];
+    }
+  };
+
+  const fetchAllReviews = async () => {
+    setLoadingReviews(true);
+    setErrorReviews(null);
+    try {
+      const reviewsPromises = products.map(product => 
+        fetchReviews(product._id)
+      );
+      const allReviews = await Promise.all(reviewsPromises);
+      
+      const reviewsMap = {};
+      products.forEach((product, index) => {
+        reviewsMap[product._id] = allReviews[index];
+      });
+      
+      setReviews(reviewsMap);
+    } catch (err) {
+      setErrorReviews("Failed to load reviews. Please try again.");
+      message.error("Failed to load reviews.");
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
   useEffect(() => {
-    if (id) fetchProducts();
-  }, [id]);
+    if (businessId) {
+      fetchProducts();
+      fetchBusinesses();
+    }
+  }, [businessId]);
 
   const handleCardClick = (product) => {
-    navigate(`/product/${product?._id}`, { state: { product } });
+    navigate(`/product/${product._id}`, { state: { product } });
   };
 
   const StaticStars = () => (
-    <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
       {[...Array(5)].map((_, index) => (
-        <StarIcon key={index} sx={{ color: "#FFD700", fontSize: "1rem" }} />
+        <StarIcon key={index} sx={{ color: '#FFD700', fontSize: '1rem' }} />
       ))}
     </Box>
   );
@@ -278,15 +313,15 @@ const BusinessProducts = () => {
                 ? product.images[0].url || product.images[0]
                 : "";
 
+            const { averageRating, numOfReviews } = getReviewStats(product._id);
+
             return (
               <Grid item xs={12} sm={6} md={4} lg={3} key={product?._id}>
                 <Card
                   onClick={() => handleCardClick(product)}
                   sx={{
                     cursor: "pointer",
-                    borderRadius: 3,
-                    width:"100%",
-                    height:"100%",
+                    borderRadius: 2,
                     transition: "0.3s",
                     display: "flex",
                     flexDirection: "column",
@@ -299,7 +334,6 @@ const BusinessProducts = () => {
                     },
                   }}
                 >
-                  {/* Discount Badge */}
                   {product.discount > 0 && (
                     <Box
                       sx={{
@@ -323,7 +357,6 @@ const BusinessProducts = () => {
                     </Box>
                   )}
 
-                  {/* Product Image */}
                   <Box
                     sx={{
                       height: 180,
@@ -342,7 +375,7 @@ const BusinessProducts = () => {
                     />
                   </Box>
 
-                  {/* Product Content */}
+                  {/* Product Details */}
                   <CardContent sx={{ flexGrow: 1, pt: 1 }}>
                     <Typography
                       variant="caption"
@@ -352,118 +385,47 @@ const BusinessProducts = () => {
                       {product.category || "General"}
                     </Typography>
                     <StaticStars />
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      noWrap
-                      title={product.name}
-                    >
+                    <Typography variant="subtitle2" fontWeight="bold" noWrap>
                       {product.name}
                     </Typography>
-
-                    {/* Description */}
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{
-                        mt: 0.5,
-                        mb: 1,
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {product.details}
-                    </Typography>
-
-                    {/* Price + Stock */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                        mt: 1,
-                      }}
-                    >
-                      <Box>
-                        {product.price > product.totalPrice && (
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              textDecoration: "line-through",
-                              color: "#9e9e9e",
-                              mr: 1,
-                            }}
-                          >
-                            ₹{parseFloat(product.price).toFixed(2)}
-                          </Typography>
-                        )}
-                        <Typography variant="h6" color="text.primary">
-                          ₹
-                          {parseFloat(
-                            product.totalPrice || product.price
-                          ).toFixed(2)}
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                      {product.price >product.totalPrice&& (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            textDecoration: "line-through",
+                            color: "#9e9e9e",
+                            mr: 1,
+                          }}
+                        >
+                          {parseFloat(product.price).toFixed(2)}
                         </Typography>
-                      </Box>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <InventoryIcon fontSize="small" color="action" />
-                        <Typography variant="body2" color="text.secondary">
-                          In stock: {product.stock}
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    {/* CreatedAt */}
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        mt: 1,
-                        gap: 1,
-                      }}
-                    >
-                      <AccessTimeIcon fontSize="small" color="action" />
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
-                        }}
-                      >
-                        Added on {formatDate(product.createdAt)}
-                        <ArrowForwardIcon sx={{ fontSize: 14 }} />
+                      )}
+                      <Typography variant="body1" fontWeight="bold" color="text.primary">
+                        {parseFloat(product.totalPrice || product.price).toFixed(2)}
                       </Typography>
                     </Box>
                   </CardContent>
 
                   {/* View Button */}
-                  {/* <CardActions sx={{ px: 2, pb: 2 }}>
-                    <Box
+                  <CardActions sx={{ p: 2, justifyContent: 'flex-end' }}>
+                    <IconButton
+                      aria-label="view details"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCardClick(product);
                       }}
                       sx={{
-                        ml: "auto",
-                        fontWeight: 500,
-                        color: Colors.LOGOColor,
-                        fontSize: "0.9rem",
-                        cursor: "pointer",
+                        backgroundColor: Colors.LOGOColor,
+                        color: "white",
                         "&:hover": {
-                          textDecoration: "underline",
+                          backgroundColor: Colors.LOGOlight,
                         },
                       }}
                     >
-                      View Details →
-                    </Box>
-                  </CardActions> */}
+                      <VisibilityIcon />
+                    </IconButton>
+                  </CardActions>
                 </Card>
               </Grid>
             );
