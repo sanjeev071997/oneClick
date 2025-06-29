@@ -19,10 +19,15 @@ export const addProductReview = catchAsyncErrors(async (req, res, next) => {
 // Get Product Review
 export const getProductReview = catchAsyncErrors(async (req, res, next) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.params;
+
+    if (!productId) {
+      return next(new Errorhandler("Product Id is required", 400));
+    }
+
     const productReview = await ProductReview.find({ productId })
       .sort({ createdAt: -1 })
-      .populate("reviewer");
+      .populate("reviewer", "name");
     res.status(200).json({
       success: true,
       data: productReview,
@@ -35,7 +40,7 @@ export const getProductReview = catchAsyncErrors(async (req, res, next) => {
 
 // User Get all Product Review
 export const userGetProductReview = catchAsyncErrors(async (req, res, next) => {
-  const  id  = req.user.id;
+  const id = req.user.id;
 
   if (!id) {
     return next(new Errorhandler("User not found", 404));
@@ -45,7 +50,7 @@ export const userGetProductReview = catchAsyncErrors(async (req, res, next) => {
     .sort({ createdAt: -1 })
     .populate("reviewer", "name")
     .populate("productId", "name images");
-  
+
   res.status(200).json({
     success: true,
     data: productReview,
@@ -92,16 +97,20 @@ export const deleteProductReview = catchAsyncErrors(async (req, res, next) => {
 });
 
 // Admin Product Review
-export const adminAllProductReview = catchAsyncErrors(async (req, res, next) => {
-  try {
-    const adminProductReview = await ProductReview.find({}).sort({ createdAt: -1 }).populate("reviewer", "name")
-    .populate("productId", "name images");
-    res.status(200).json({
-      success: true,
-      adminProductReview,
-      message: "All users product review fetched successfully",
-    });
-  } catch (error) {
-    return next(new Errorhandler(error.message, 500));
+export const adminAllProductReview = catchAsyncErrors(
+  async (req, res, next) => {
+    try {
+      const adminProductReview = await ProductReview.find({})
+        .sort({ createdAt: -1 })
+        .populate("reviewer", "name")
+        .populate("productId", "name images");
+      res.status(200).json({
+        success: true,
+        adminProductReview,
+        message: "All users product review fetched successfully",
+      });
+    } catch (error) {
+      return next(new Errorhandler(error.message, 500));
+    }
   }
-})
+);

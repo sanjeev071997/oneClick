@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/add", isAuthenticatedUser, addProductReview);
 
-router.post("/get", getProductReview);
+router.get("/get/:productId", getProductReview);
 
 // User Get all product reviews
 router.get("/get", isAuthenticatedUser, userGetProductReview);
