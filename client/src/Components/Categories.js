@@ -150,7 +150,7 @@ const Categories = () => {
                 },
               }}
               onClick={() =>
-                navigate(`/category/${category.name}`, { state: { category } })
+                navigate(`/category/${category._id}`)
               }
             >
               <Box
@@ -265,8 +265,6 @@ const Categories = () => {
           </Box>
         </Grid>
       </Grid>
-
-
       <Drawer
         anchor="right"
         open={drawerOpen}
@@ -352,7 +350,7 @@ const Categories = () => {
             <ListItem
               key={category._id}
               onClick={() => {
-                navigate(`/category/${category.name}`, { state: { category } });
+                navigate(`/category/${category?._id}`);
                 setDrawerOpen(false);
               }}
               sx={{

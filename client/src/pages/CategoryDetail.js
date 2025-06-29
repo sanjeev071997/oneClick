@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Avatar,
   Breadcrumb,
@@ -36,12 +36,12 @@ import {
   YoutubeOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import { Colors } from "../Comman";
-
 
 
 const { Title, Text, Paragraph } = Typography;
@@ -51,28 +51,40 @@ const { TextArea } = Input;
 
 const CategoryDetail = () => {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { user } = useSelector((state) => state.user);
-  const category = state?.category;
-  const token = localStorage.getItem("token");
   const [form] = Form.useForm();
+  const [category, setCategory] = useState("")
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewMap, setReviewMap] = useState({});
   const [openEnquiry, setOpenEnquiry] = useState(false);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [enquiryLoading, setEnquiryLoading] = useState(false);
+ const {id} = useParams()
+ 
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get(`/api/v1/categories/get/${id}`);
+      setCategory(res.data.getCategories || []);
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
 
   const fetchBusinessesByCategory = async () => {
     try {
       const response = await axios.post("/api/v1/business/get", {
-        category: category._id,
+        category: id,
       });
       setBusinesses(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch businesses:", error);
       message.error(error.response?.data?.message || "Failed to fetch businesses");
     } finally {
       setLoading(false);
@@ -92,12 +104,12 @@ const CategoryDetail = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      if (category) {
+      if (id) {
         await fetchBusinessesByCategory();
       }
     };
     fetchAllData();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const fetchReviewsForBusinesses = async () => {
@@ -158,8 +170,9 @@ const CategoryDetail = () => {
 
   if (!category) {
     return (
-      <div style={{ padding: 24 }}>
-        <Text>No category data available.</Text>
+      <div style={{ padding: 24, alignItems:'center', justifyContent:"center", display:"flex" }}>
+        {/* <Text>No category data available.</Text> */}
+        <CircularProgress />
       </div>
     );
   }
@@ -410,10 +423,8 @@ const CategoryDetail = () => {
                     }}>
                       <Button
                         type="text"
-                        onClick={() =>
-                          navigate(`/category/${category.name}/${business._id}`, {
-                            state: { business },
-                          })
+                        onClick={() => 
+                          navigate(`/category/${business?.businessName?.trim()?.toLowerCase()?.replace(/\s+/g, '-')}/${business?._id}`)
                         }
                         style={{ color: Colors.LOGOColor }}
                       >

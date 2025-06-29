@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Box, buttonBaseClasses} from "@mui/material";
+import { useParams } from "react-router-dom";
+import { Box } from "@mui/material";
 import axios from "../axiosInstance";
 import { useSelector } from "react-redux";
 import { message } from "antd";
@@ -17,12 +16,25 @@ import BusinessReviews from "../Components/Business/BusinessReviews";
 import BusinessContact from "../Components/Business/BusinessContact";
 
 const CategoryBusinessView = () => {
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
-  const { state } = useLocation();
-  const business = state?.business;
+  const { id } = useParams();
+  const [business, setBusiness] = useState("");
   const [reviews, setReviews] = useState([]);
   const [activeTab, setActiveTab] = useState("overview");
+
+  useEffect(() => {
+    const fetchDataById = async () => {
+      try {
+        const res = await axios.get(`/api/v1/business/get/${id}`);
+        setBusiness(res.data.getBusiness);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+    if (id) {
+      fetchDataById();
+    }
+  }, [id]);
 
   const totalReviews = reviews.length;
   const averageRating =
@@ -45,7 +57,6 @@ const CategoryBusinessView = () => {
         message.error("Failed to load reviews.");
       }
     } catch (error) {
-      console.log(error);
       message.error("An error occurred while fetching reviews.");
     }
   };
@@ -66,38 +77,30 @@ const CategoryBusinessView = () => {
         }}
       >
         {/* Header Section */}
-        <BusinessHeader 
-          business={business} 
-          averageRating={averageRating} 
-          totalReviews={totalReviews} 
+        <BusinessHeader
+          business={business}
+          averageRating={averageRating}
+          totalReviews={totalReviews}
         />
 
         {/* Business Info Tabs */}
         <Box sx={{ mb: 4 }}>
-          <BusinessTabs 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-            totalReviews={totalReviews} 
+          <BusinessTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            totalReviews={totalReviews}
           />
 
-          {activeTab === "overview" && (
-            <BusinessOverview business={business} />
-          )}
+          {activeTab === "overview" && <BusinessOverview business={business} />}
 
-          {activeTab === "services" && (
-            <BusinessServices business={business} />
-          )}
+          {activeTab === "services" && <BusinessServices business={business} />}
 
-          {activeTab === "products" && (
-            <BusinessProducts business={business} />
-          )}
+          {activeTab === "products" && <BusinessProducts business={business} />}
 
-          {activeTab === "media" && (
-            <BusinessMedia business={business} />
-          )}
+          {activeTab === "media" && <BusinessMedia business={business} />}
 
           {activeTab === "reviews" && (
-            <BusinessReviews 
+            <BusinessReviews
               business={business}
               user={user}
               reviews={reviews}
@@ -107,9 +110,7 @@ const CategoryBusinessView = () => {
             />
           )}
 
-          {activeTab === "contact" && (
-            <BusinessContact business={business} />
-          )}
+          {activeTab === "contact" && <BusinessContact business={business} />}
         </Box>
       </Box>
       <Footer />

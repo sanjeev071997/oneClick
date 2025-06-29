@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,13 +9,13 @@ import {
   Rating,
   Chip,
   Box,
-  Link
-} from '@mui/material';
-import { Send, Star, ChatBubble } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { message } from 'antd';
-import { Colors } from '../../Comman';
-import axios from '../../axiosInstance'
+  Link,
+} from "@mui/material";
+import { Send, Star, ChatBubble } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { message } from "antd";
+import { Colors } from "../../Comman";
+import axios from "../../axiosInstance";
 
 const BusinessReviews = ({
   user,
@@ -23,41 +23,40 @@ const BusinessReviews = ({
   reviews,
   getReview,
   averageRating,
-  totalReviews
+  totalReviews,
 }) => {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState('');
+  const [reviewText, setReviewText] = useState("");
 
   // Handle review submission
   const handleSubmit = async () => {
     if (!reviewText || rating === 0) {
-      return message.error('Please enter a review and rating');
+      return message.error("Please enter a review and rating");
     }
 
     if (!user) {
-      return navigate('/login');
+      return navigate("/login");
     }
 
     setSubmitting(true);
     try {
-      const response = await axios.post('/api/v1/review/add', {
-        businessId: business._id,
+      const response = await axios.post("/api/v1/review/add", {
+        businessId: business?._id,
         rating,
         comment: reviewText,
-        reviewer: user._id
+        reviewer: user?._id,
       });
 
       if (response.data.success) {
-        message.success('Review submitted successfully!');
+        message.success("Review submitted successfully!");
         setRating(0);
-        setReviewText('');
+        setReviewText("");
         getReview();
       }
     } catch (error) {
-      console.error('Error submitting review:', error);
-      message.error(error.response?.data?.message || 'Failed to submit review');
+      message.error(error?.response?.data?.message || "Failed to submit review");
     } finally {
       setSubmitting(false);
     }
@@ -68,27 +67,33 @@ const BusinessReviews = ({
       {/* Review Form Section */}
       <Card sx={{ mb: 3, borderRadius: 3, boxShadow: 3 }}>
         <CardContent>
-          <Typography variant="h6" gutterBottom sx={{
-            fontWeight: 'bold',
-            color: Colors.LOGOColor,
-            display: 'flex',
-            alignItems: 'center'
-          }}>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              fontWeight: "bold",
+              color: Colors.LOGOColor,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <ChatBubble sx={{ mr: 1, color: Colors.LOGOlight }} />
             Share Your Experience
           </Typography>
 
-          {user ? (
+          {user & user.length ===0 ? (
             <>
               <Box mb={2}>
-                <Typography variant="body1" gutterBottom>Your Rating</Typography>
+                <Typography variant="body1" gutterBottom>
+                  Your Rating
+                </Typography>
                 <Rating
                   value={rating}
                   onChange={(e, newValue) => setRating(newValue)}
                   precision={0.5}
                   size="large"
                   sx={{
-                    '& .MuiRating-iconFilled': {
+                    "& .MuiRating-iconFilled": {
                       color: Colors.LOGOlight,
                     },
                   }}
@@ -114,15 +119,15 @@ const BusinessReviews = ({
                   disabled={submitting || !user}
                   sx={{
                     backgroundColor: Colors.LOGOlight,
-                    '&:hover': {
+                    "&:hover": {
                       backgroundColor: Colors.LOGOColor,
                     },
-                    '&:disabled': {
+                    "&:disabled": {
                       backgroundColor: Colors.lightBg,
-                    }
+                    },
                   }}
                 >
-                  {submitting ? 'Submitting...' : 'Submit Review'}
+                  {submitting ? "Submitting..." : "Submit Review"}
                 </Button>
               </Box>
             </>
@@ -135,32 +140,36 @@ const BusinessReviews = ({
               border={`1px dashed ${Colors.LOGOColor}`}
             >
               <Typography>
-                Please <Link
-                  onClick={() => navigate('/login')}
+                Please{" "}
+                <Link
+                  onClick={() => navigate("/login")}
                   sx={{
-                    cursor: 'pointer',
+                    cursor: "pointer",
                     color: Colors.LOGOlight,
-                    fontWeight: 'bold'
+                    fontWeight: "bold",
                   }}
                 >
                   sign in
-                </Link> to leave a review
+                </Link>{" "}
+                to leave a review
               </Typography>
             </Box>
           )}
         </CardContent>
       </Card>
-
       {/* Reviews List Section */}
-      <Card sx={{ borderRadius: 3, boxShadow: 3,}}>
+      <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
         <CardContent>
           <Box display="flex" alignItems="center" mb={3}>
-            <Typography variant="h6" sx={{
-              fontWeight: 'bold',
-              color: Colors.LOGOColor,
-              display: 'flex',
-              alignItems: 'center'
-            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "bold",
+                color: Colors.LOGOColor,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <Star sx={{ mr: 1, color: Colors.LOGOlight }} />
               Customer Reviews
             </Typography>
@@ -171,16 +180,16 @@ const BusinessReviews = ({
                 readOnly
                 sx={{
                   mr: 1,
-                  '& .MuiRating-iconFilled': {
+                  "& .MuiRating-iconFilled": {
                     color: Colors.LOGOlight,
-                  }
+                  },
                 }}
               />
               <Typography sx={{ color: Colors.LOGOColor }}>
-                {Number(averageRating || 0).toFixed(1)} ({totalReviews} {totalReviews === 1 ? 'review' : 'reviews'})
+                {Number(averageRating || 0).toFixed(1)} ({totalReviews}{" "}
+                {totalReviews === 1 ? "review" : "reviews"})
               </Typography>
             </Box>
-
           </Box>
 
           {reviews.length === 0 ? (
@@ -191,13 +200,19 @@ const BusinessReviews = ({
               borderRadius={2}
               border={`1px dashed ${Colors.LOGOColor}`}
             >
-              <Star sx={{
-                fontSize: 60,
-                color: Colors.LOGOlight,
-                mb: 2,
-                opacity: 0.7
-              }} />
-              <Typography variant="h6" gutterBottom sx={{ color: Colors.LOGOColor }}>
+              <Star
+                sx={{
+                  fontSize: 60,
+                  color: Colors.LOGOlight,
+                  mb: 2,
+                  opacity: 0.7,
+                }}
+              />
+              <Typography
+                variant="h6"
+                gutterBottom
+                sx={{ color: Colors.LOGOColor }}
+              >
                 No Reviews Yet
               </Typography>
               <Typography sx={{ color: Colors.textDark }}>
@@ -206,13 +221,13 @@ const BusinessReviews = ({
             </Box>
           ) : (
             reviews.map((review) => (
-              <Box 
+              <Box
                 key={review._id}
                 mb={3}
                 pb={3}
                 borderBottom={`1px solid ${Colors.LOGOlight}`}
               >
-                <Box display="flex" >
+                <Box display="flex">
                   <Avatar
                     src={review.reviewer?.avatar}
                     sx={{
@@ -220,20 +235,33 @@ const BusinessReviews = ({
                       height: 56,
                       mr: 2,
                       border: `2px solid ${Colors.LOGOColor}`,
-                      bgcolor: Colors.lightBg
+                      bgcolor: Colors.lightBg,
                     }}
                   />
                   <Box flex={1}>
-                    <Box display="flex" justifyContent="space-between" flexWrap="wrap">
-                      <Typography fontWeight="bold" sx={{ color: Colors.LOGOColor }}>
-                        {review.reviewer?.name || 'Anonymous'}
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      flexWrap="wrap"
+                    >
+                      <Typography
+                        fontWeight="bold"
+                        sx={{ color: Colors.LOGOColor }}
+                      >
+                        {review.reviewer?.name || "Anonymous"}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: Colors.textDark }}>
-                        {new Date(review.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
+                      <Typography
+                        variant="body2"
+                        sx={{ color: Colors.textDark }}
+                      >
+                        {new Date(review.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
                       </Typography>
                     </Box>
                     <Box my={1} display="flex" alignItems="center">
@@ -250,16 +278,18 @@ const BusinessReviews = ({
                           ml: 1,
                           backgroundColor: Colors.LOGOColor,
                           color: Colors.WHITE,
-                          fontWeight: 'bold'
+                          fontWeight: "bold",
                         }}
                       />
                     </Box>
-                    <Typography sx={{
-                      color: Colors.textDark,
-                      fontStyle: 'italic',
-                      pl: 1,
-                      borderLeft: `3px solid ${Colors.LOGOlight}`
-                    }}>
+                    <Typography
+                      sx={{
+                        color: Colors.textDark,
+                        fontStyle: "italic",
+                        pl: 1,
+                        borderLeft: `3px solid ${Colors.LOGOlight}`,
+                      }}
+                    >
                       "{review.comment}"
                     </Typography>
                   </Box>

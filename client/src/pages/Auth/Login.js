@@ -18,8 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, login } from "../../redux/actions/userAction";
 import { message } from "antd";
 import axios from "../../axiosInstance";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
+const location = useLocation();
+console.log("Location state:", location.state)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, error, loading, isAuthenticated } = useSelector(
@@ -59,24 +62,46 @@ const Login = () => {
   };
 
   // Handle errors and authentication state changes
-   useEffect(() => {
-    if (error) {
-      message.error(error);
-      dispatch(clearErrors());
-    }
-    if (isAuthenticated) {
-      message.success("Login Successfully");
-      // Redirect based on user role
-      if (user && user.role >= 2) {
-        navigate("/business/dashboard");
-      } else if (user && user.role >= 1) {
-        navigate("/dashboard");
-      }
-      else if (user && user.role >= 0) {
-        navigate("/");
-      }
-    }
-  }, [error, isAuthenticated, user, dispatch, navigate]);
+  //  useEffect(() => {
+  //   if (error) {
+  //     message.error(error);
+  //     dispatch(clearErrors());
+  //   }
+  //   if (isAuthenticated) {
+  //     message.success("Login Successfully");
+  //     // Redirect based on user role
+  //     if (user && user.role >= 2) {
+  //       // navigate("/business/dashboard");
+  //       navigate("/business/dashboard", { state: { from: location.pathname } });
+  //     } else if (user && user.role >= 1) {
+  //       // navigate("/dashboard");
+  //       navigate("/dashboard", { state: { from: location.pathname } });
+  //     }
+  //     else if (user && user.role >= 0) {
+  //       // navigate("/");
+  //       navigate("/", { state: { from: location.pathname } });
+  //     }
+  //   }
+  // }, [error, isAuthenticated, user, dispatch, navigate]);
+  useEffect(() => {
+  if (error) {
+    message.error(error);
+    dispatch(clearErrors());
+  }
+
+  if (isAuthenticated && user) {
+    message.success("Login Successfully");
+
+    const redirectPath = location.state?.from || (
+      user.role >= 2 ? "/business/dashboard"
+      : user.role === 1 ? "/dashboard"
+      : "/"
+    );
+
+    navigate(redirectPath, { replace: true });
+  }
+}, [error, isAuthenticated, user, dispatch, navigate]);
+
 
   const currentYear = new Date().getFullYear();
 

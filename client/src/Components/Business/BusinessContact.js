@@ -128,7 +128,7 @@ const BusinessContact = ({ business }) => {
               textShadow: '0 2px 4px rgba(0,0,0,0.1)'
             }}
           >
-            Contact Information
+            Let’s Connect
           </Typography>
         </Box>
 

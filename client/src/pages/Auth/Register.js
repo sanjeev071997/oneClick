@@ -12,7 +12,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, userRegister } from "../../redux/actions/userAction";
 import { message } from "antd";
@@ -21,8 +21,9 @@ import axios from "../../axiosInstance";
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
-  const { error, loading, isAuthenticated } = useSelector(
+  const { error, loading, isAuthenticated, user } = useSelector(
     (state) => state.user
   );
 
@@ -68,17 +69,41 @@ const Register = () => {
     dispatch(userRegister(userData));
   };
 
+  // useEffect(() => {
+  //   if (error) {
+  //     message.error(error);
+  //     dispatch(clearErrors());
+  //   }
+  //   if (isAuthenticated) {
+  //     navigate("/");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [dispatch, error, isAuthenticated]);
+
+
   useEffect(() => {
-    if (error) {
-      message.error(error);
-      dispatch(clearErrors());
-    }
-    if (isAuthenticated) {
-      navigate("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, error, isAuthenticated]);
+  if (error) {
+    message.error(error);
+    dispatch(clearErrors());
+  }
+
+  if (isAuthenticated && user) {
+    message.success("Login Successfully");
+
+    const redirectPath = location.state?.from || (
+      user.role >= 2 ? "/business/dashboard"
+      : user.role === 1 ? "/dashboard"
+      : "/"
+    );
+
+    navigate(redirectPath, { replace: true });
+  }
+}, [error, isAuthenticated, user, dispatch, navigate, location]);
+
+
   const currentYear = new Date().getFullYear();
+
+
 
   return (
     <>
