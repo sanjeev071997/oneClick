@@ -203,6 +203,7 @@ const Navbar = () => {
                       overflowY: "auto",
                       zIndex: 999,
                       border: "1px solid #ccc",
+                      cursor:"pointer"
                     }}
                   >
                     <List>

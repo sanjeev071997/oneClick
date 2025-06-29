@@ -424,7 +424,7 @@ const CategoryDetail = () => {
                       <Button
                         type="text"
                         onClick={() => 
-                          navigate(`/category/${category.name}/${business._id}`)
+                          navigate(`/category/${business?.businessName?.trim()?.toLowerCase()?.replace(/\s+/g, '-')}/${business?._id}`)
                         }
                         style={{ color: Colors.LOGOColor }}
                       >
