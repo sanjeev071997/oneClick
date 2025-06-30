@@ -41,7 +41,7 @@ export const userGetReview = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("User not found", 404));
   }
 
-  const review = await Review.find({ reviewer: id })
+  const review = await Review.find({ businessUserId: id })
     .sort({ createdAt: -1 })
     .populate("reviewer", "name")
     .populate("businessId", "businessName images");

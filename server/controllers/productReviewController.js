@@ -46,7 +46,7 @@ export const userGetProductReview = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler("User not found", 404));
   }
 
-  const productReview = await ProductReview.find({ reviewer: id })
+  const productReview = await ProductReview.find({ productUserId: id })
     .sort({ createdAt: -1 })
     .populate("reviewer", "name")
     .populate("productId", "name images");

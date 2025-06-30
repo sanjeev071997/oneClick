@@ -18,6 +18,11 @@ const reviewSchema = new mongoose.Schema(
       required: false,
     },
 
+    businessUserId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+
     reviewer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",

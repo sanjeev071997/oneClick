@@ -63,8 +63,17 @@ const businessSchema = new mongoose.Schema({
     required: true,
   },
 
-  description: String,
+  businessExperience: {
+     type: String,
+    required: [true, "Experience is required"],
+  },
 
+  openTime: String,
+  
+  closeTime:String,
+  
+  description: String,
+  
   images: [
     {
       url: String,
