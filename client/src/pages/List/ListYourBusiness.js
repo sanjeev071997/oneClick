@@ -9,21 +9,22 @@ import {
   Alert as MuiAlert,
 } from "@mui/material";
 import { Business } from "@mui/icons-material";
-import axios from '../../axiosInstance'
-import Navbar from '../../Components/Navbar'
-import { useSelector } from "react-redux";
-import Footer from '../../Components/Footer'
 import { useLocation, useNavigate } from "react-router-dom";
 import { State, City } from "country-state-city";
-import { Colors } from '../../Comman'
-import BusinessInfoStep from '../List/BusinessInfoStep'
-import ContactDetailsStep from '../List/ContactDetailsStep'
-import ImagesStep from '../List/ImagesStep'
-import SocialMediaStep from '../List/SocialMediaStep'
-import ReviewSubmitStep from '../List/ReviewSubmitStep'
-import SuccessView from '../List/SuccessView'
-import StepperHeader from '../List/StepperHeader'
 import { message } from "antd";
+import dayjs from "dayjs";
+import axios from "../../axiosInstance";
+import Navbar from "../../Components/Navbar";
+import { useSelector } from "react-redux";
+import Footer from "../../Components/Footer";
+import { Colors } from "../../Comman";
+import BusinessInfoStep from "../List/BusinessInfoStep";
+import ContactDetailsStep from "../List/ContactDetailsStep";
+import ImagesStep from "../List/ImagesStep";
+import SocialMediaStep from "../List/SocialMediaStep";
+import ReviewSubmitStep from "../List/ReviewSubmitStep";
+import SuccessView from "../List/SuccessView";
+import StepperHeader from "../List/StepperHeader";
 
 const ListYourBusiness = () => {
   const navigate = useNavigate();
@@ -43,6 +44,9 @@ const ListYourBusiness = () => {
     category: "",
     description: "",
     images: [],
+    businessExperience: "",
+    openTime: null,
+    closeTime: null,
   });
 
   const [links, setLinks] = useState({
@@ -114,7 +118,7 @@ const ListYourBusiness = () => {
       if (
         !formData.businessName ||
         !formData.category ||
-        formData.service.length === 0  // Added services validation
+        formData.service.length === 0 
       ) {
         message.error(
           "Please fill in all required fields for Business Information."
@@ -128,7 +132,10 @@ const ListYourBusiness = () => {
         !formData.email ||
         !formData.address ||
         !formData.state ||
-        !formData.city
+        !formData.city ||
+        !formData.businessExperience ||
+        !formData.openTime ||
+        !formData.closeTime
       ) {
         message.error(
           "Please fill in all required fields for Contact Details."
@@ -165,46 +172,50 @@ const ListYourBusiness = () => {
       !formData.state ||
       !formData.city ||
       !formData.category ||
-      formData.service.length === 0 
+      formData.service.length === 0 ||
+      !formData.businessExperience ||
+      !formData.openTime ||
+      !formData.closeTime
     ) {
       message.error("Please fill in all required fields.");
       return;
     }
-  
-    setLoading(true);
-  
-    const data = new FormData();
-    // Object.entries(formData).forEach(([key, value]) => {
-    //   if (key === "images") {
-    //     value.forEach((image) => data.append("images", image));
-    //   } else if (value !== undefined && value !== null) {
-    //     data.append(key, value);
-    //   }
-    // });
 
+    setLoading(true);
+
+    const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-    if (key === "images") {
-      value.forEach((image) => data.append("images", image));
-    } else if (key === "service") { 
-      value.forEach((item, index) => {
-        data.append(`service[${index}]`, item);
-      });
-    } else if (value !== undefined && value !== null) {
-      data.append(key, value);
-    }
-  });
-  
+      if (key === "images") {
+        value.forEach((image) => data.append("images", image));
+      } else if (key === "service") {
+        value.forEach((item, index) => {
+          data.append(`service[${index}]`, item);
+        });
+      } else if (value !== undefined && value !== null) {
+        data.append(key, value);
+      } else if (
+        (key === "openTime" || key === "closeTime") &&
+        dayjs.isDayjs(value)
+      ) {
+        data.append(key, value.format("HH:mm"));
+      } else if (value !== undefined && value !== null) {
+        data.append(key, value);
+      }
+    });
+
     data.append("userId", user?._id);
     data.append("planName", planName);
     data.append("planPrice", planPrice);
     data.append("planId", planId);
     data.append("socialLinks", JSON.stringify(links));
-    
+
     try {
       const res = await axios.post("/api/v1/business/add", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
+
+      console.log(res, "add business");
+
       if (res.data.success) {
         message.success("Your business has been successfully listed!");
         setSuccess(true);
@@ -221,6 +232,9 @@ const ListYourBusiness = () => {
           category: "",
           description: "",
           images: [],
+          businessExperience: "",
+          openTime: null,
+          closeTime: null,
         });
         setLinks({
           facebook: "",

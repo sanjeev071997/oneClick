@@ -27,6 +27,8 @@ import {
   YouTube,
   WhatsApp,
   Work,
+  BusinessCenter,
+  AccessTime,
 } from "@mui/icons-material";
 import DetailItem from "./DetailItem";
 
@@ -143,7 +145,18 @@ const ReviewSubmitStep = ({
               multiline
               colors={colors}
             />
+            <DetailItem
+              label="Open Time"
+              value={
+                formData?.openTime
+                  ? formData.openTime.format("hh:mm A")
+                  : "Not selected"
+              }
+              icon={<AccessTime />}
+              colors={colors}
+            />
           </Grid>
+
           <Grid item xs={12} md={6}>
             <DetailItem
               label="Location"
@@ -153,7 +166,7 @@ const ReviewSubmitStep = ({
               icon={<Home />}
               colors={colors}
             />
-            
+
             {/* Services Section */}
             <Box sx={{ mt: 2 }}>
               <Typography
@@ -165,7 +178,9 @@ const ReviewSubmitStep = ({
                   color: colors.LOGOlight,
                 }}
               >
-                <Work sx={{ mr: 1, fontSize: "1rem", color: colors.LOGOColor }} />
+                <Work
+                  sx={{ mr: 1, fontSize: "1rem", color: colors.LightColor }}
+                />
                 Service
               </Typography>
               {formData.service && formData.service.length > 0 ? (
@@ -177,6 +192,8 @@ const ReviewSubmitStep = ({
                       sx={{
                         backgroundColor: colors.LOGOlight,
                         color: colors.WHITE,
+                        mt: -1,
+                        mb: 1,
                       }}
                     />
                   ))}
@@ -187,6 +204,23 @@ const ReviewSubmitStep = ({
                 </Typography>
               )}
             </Box>
+            <DetailItem
+              label="Business Experience"
+              value={formData.businessExperience}
+              icon={<BusinessCenter />}
+              colors={colors}
+            />
+
+            <DetailItem
+              label="Close Time"
+              value={
+                formData?.closeTime
+                  ? formData.closeTime.format("hh:mm A")
+                  : "Not selected"
+              }
+              icon={<AccessTime />}
+              colors={colors}
+            />
           </Grid>
         </Grid>
       </Box>
@@ -258,10 +292,7 @@ const ReviewSubmitStep = ({
           <PhotoCamera sx={{ mr: 1, color: colors.LOGOColor }} /> Media
         </Typography>
 
-        <Typography
-          variant="subtitle1"
-          sx={{ mb: 1, color: colors.LOGOlight }}
-        >
+        <Typography variant="subtitle1" sx={{ mb: 1, color: colors.LOGOlight }}>
           Images ({formData.images.length}/5)
         </Typography>
 
@@ -283,9 +314,7 @@ const ReviewSubmitStep = ({
                     component="img"
                     height="140"
                     image={
-                      typeof img === "string"
-                        ? img
-                        : URL.createObjectURL(img)
+                      typeof img === "string" ? img : URL.createObjectURL(img)
                     }
                     alt={`Business ${index}`}
                     sx={{ objectFit: "cover" }}

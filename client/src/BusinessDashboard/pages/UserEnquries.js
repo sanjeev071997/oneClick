@@ -75,12 +75,8 @@ const UserEnquire= () => {
 
   return (
     <>
-     
       <div
         style={{
-          maxWidth: 1200,
-          margin: "24px auto",
-          padding: "0 16px",
           minHeight: "80vh",
           display: "flex",
           flexDirection: "column",
@@ -110,24 +106,6 @@ const UserEnquire= () => {
               >
                 Enquiries
               </Title>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "flex-start",
-                  marginTop: 8,
-                }}
-              >
-                <div
-                  style={{
-                    marginLeft: 20,
-                    height: 3,
-                    width: 80,
-                    backgroundColor: Colors.LOGOColor,
-                    borderRadius: 2,
-                  }}
-                />
-              </div>
             </div>
           </Col>
 

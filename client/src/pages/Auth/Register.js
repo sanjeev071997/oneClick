@@ -238,6 +238,7 @@ const Register = () => {
               label="Phone"
               type="tel"
               placeholder="Phone"
+              helperText="Please include the country code, e.g. +91XXXXXXXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />

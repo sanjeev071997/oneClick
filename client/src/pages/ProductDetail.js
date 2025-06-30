@@ -150,6 +150,7 @@ const ProductDetails = () => {
         rating,
         comment: reviewText,
         reviewer: user?._id,
+        productUserId: product?.userId
       };
       await axios.post("/api/v1/product/review/add", payload);
       message.success("Review added successfully!");
@@ -241,7 +242,7 @@ const ProductDetails = () => {
   return (
     <>
       <Navbar />
-      <Container maxWidth="xl" sx={{ mt: { md: 5, sm: 3 } }}>
+      <Container maxWidth="xl" sx={{ mt: { md: 5, sm: 3, xs:3 } }}>
         <Grid container spacing={4}>
           {/* Image Section */}
           <Grid item xs={12} md={6} lg={5}>
@@ -555,7 +556,7 @@ const ProductDetails = () => {
               <Tab label="Add Review" />
               <Tab label={`All Reviews (${reviews.length})`} />
             </Tabs>
-          </Box>
+          </Box>  
 
           {/* Tab Panels */}
           <TabPanel value={activeTab} index={0}>

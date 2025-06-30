@@ -47,6 +47,7 @@ const BusinessReviews = ({
         rating,
         comment: reviewText,
         reviewer: user?._id,
+        businessUserId: business?.userId
       });
 
       if (response.data.success) {

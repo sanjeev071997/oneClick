@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Container, Typography, Avatar, Card, CardHeader, CardContent,
-  CardActions, Button, Grid, Paper, Divider, Pagination, Rating, Chip,
-  Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, TextField,
-  IconButton, useTheme, useMediaQuery, CircularProgress
+  Box, Typography, Paper, Grid, CircularProgress,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  IconButton, Tooltip, Pagination, Avatar
 } from '@mui/material';
-import {
-  Edit, Delete, Star, StarBorder, Business, ThumbUp, Reviews
-} from '@mui/icons-material';
-import { message, Modal } from "antd";
+import { Delete, Star, ThumbUp, Reviews, Business } from '@mui/icons-material';
+import { Modal, message } from 'antd';
 import axios from '../../axiosInstance';
 import { Colors } from "../../Comman";
 
@@ -21,14 +18,6 @@ const UserReviews = () => {
     totalReviews: 0,
     recommendationRate: 0
   });
-
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState(null);
-  const [editComment, setEditComment] = useState('');
-  const [editRating, setEditRating] = useState(0);
-
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchReviews();
@@ -56,42 +45,9 @@ const UserReviews = () => {
         });
       }
     } catch (err) {
-   
+      console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
-  };
-
-  const openEditModal = (review) => {
-    setSelectedReview(review);
-    setEditComment(review.comment);
-    setEditRating(Number(review.rating));
-    setEditModalOpen(true);
-  };
-
-  const handleEditSubmit = async () => {
-    const updateData = {
-      id: selectedReview._id,
-      comment: editComment,
-      rating: editRating
-    }
-
-    try {
-      const response = await axios.put('/api/v1/review/update', updateData);
-      if (response?.data?.success) {
-        message.success('Review updated successfully!');
-        setEditModalOpen(false);
-        fetchReviews();
-      } else {
-        message.error('Failed to update review.');
-      }
-    } catch (err) {
-      console.error('Failed to update review:', err);
-      message.error('Something went wrong. Please try again.');
     }
   };
 
@@ -105,329 +61,151 @@ const UserReviews = () => {
       okButtonProps: { style: { background: Colors.LOGOColor } },
       onOk: async () => {
         try {
-          const data = await axios.delete(`/api/v1/review/delete`, {
-            data: { id },
-          });
+          const data = await axios.delete(`/api/v1/review/delete`, { data: { id } });
           if (data?.data?.success === true) {
             message.success(data?.data?.message);
             fetchReviews();
           }
         } catch (err) {
-          message.error(err || "Failed to delete review")
+          message.error(err || "Failed to delete review");
         }
       },
     });
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
   };
 
   const paginatedReviews = reviews.slice((currentPage - 1) * 6, currentPage * 6);
 
   return (
     <Box sx={{ background: '#f9fafb', minHeight: '100vh', py: 4 }}>
-      <Container maxWidth="lg">
-        {/* Header Section */}
-        <Box textAlign="center" mb={6}>
-          <Typography
-            variant="h3"
-            sx={{
-              fontFamily: 'Poppins, sans-serif',
-              color: Colors.LOGOColor,
-              fontWeight: 700,
-              fontSize: isMobile ? '1.8rem' : '2.5rem',
-              position: 'relative',
-              display: 'inline-block',
-              '&:after': {
-                content: '""',
-                position: 'absolute',
-                bottom: -8,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '80%',
-                height: 4,
-                background: `linear-gradient(to right, ${Colors.LOGOColor}, #9EDC29)`,
-                borderRadius: 2
-              }
-            }}
-          >
-            Customer Reviews
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary" mt={2}>
-            See what our community is saying about businesses
-          </Typography>
-        </Box>
-
-        {/* Stats Cards - Compact Design */}
+      <Box >
+         <Typography variant="h4" fontWeight="bold" color="primary" mb={3}> Customer Reviews</Typography>
+        {/* Stats */}
         <Grid container spacing={2} mb={4}>
           <Grid item xs={12} sm={4}>
             <Paper elevation={0} sx={{
-              p: 2,
-              borderRadius: 2,
-              background: 'white',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              borderTop: `4px solid ${Colors.LOGOColor}`,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              p: 2, borderRadius: 2, background: 'white',
+              borderTop: `4px solid ${Colors.LOGOColor}`
             }}>
-              <Box sx={{
-                width: 48,
-                height: 48,
-                borderRadius: '12px',
-                bgcolor: '#e8f5e9',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mr: 2,
-                flexShrink: 0
-              }}>
-                <Star sx={{ fontSize: 24, color: Colors.LOGOColor }} />
-              </Box>
-              <Box>
-                <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
-                  {stats.averageRating}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Avg. Rating
-                </Typography>
+              <Box display="flex" alignItems="center">
+                <Star sx={{ fontSize: 40, color: Colors.LOGOColor, mr: 2 }} />
+                <Box>
+                  <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
+                    {stats.averageRating}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">Avg. Rating</Typography>
+                </Box>
               </Box>
             </Paper>
           </Grid>
 
           <Grid item xs={12} sm={4}>
             <Paper elevation={0} sx={{
-              p: 2,
-              borderRadius: 2,
-              background: 'white',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              borderTop: `4px solid #9EDC29`,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              p: 2, borderRadius: 2, background: 'white',
+              borderTop: `4px solid #9EDC29`
             }}>
-              <Box sx={{
-                width: 48,
-                height: 48,
-                borderRadius: '12px',
-                bgcolor: '#f0f7e8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mr: 2,
-                flexShrink: 0
-              }}>
-                <Reviews sx={{ fontSize: 24, color: '#9EDC29' }} />
-              </Box>
-              <Box>
-                <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
-                  {stats.totalReviews}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Reviews
-                </Typography>
+              <Box display="flex" alignItems="center">
+                <Reviews sx={{ fontSize: 40, color: '#9EDC29', mr: 2 }} />
+                <Box>
+                  <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
+                    {stats.totalReviews}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">Total Reviews</Typography>
+                </Box>
               </Box>
             </Paper>
           </Grid>
 
           <Grid item xs={12} sm={4}>
             <Paper elevation={0} sx={{
-              p: 2,
-              borderRadius: 2,
-              background: 'white',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              borderTop: `4px solid ${Colors.LOGOlight}`,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              p: 2, borderRadius: 2, background: 'white',
+              borderTop: `4px solid ${Colors.LOGOlight}`
             }}>
-              <Box sx={{
-                width: 48,
-                height: 48,
-                borderRadius: '12px',
-                bgcolor: '#e3f2fd',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mr: 2,
-                flexShrink: 0
-              }}>
-                <ThumbUp sx={{ fontSize: 24, color: Colors.LOGOlight }} />
-              </Box>
-              <Box>
-                <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
-                  {stats.recommendationRate}%
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Recommended
-                </Typography>
+              <Box display="flex" alignItems="center">
+                <ThumbUp sx={{ fontSize: 40, color: Colors.LOGOlight, mr: 2 }} />
+                <Box>
+                  <Typography variant="h4" fontWeight={700} color={Colors.LOGOColor}>
+                    {stats.recommendationRate}%
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">Recommended</Typography>
+                </Box>
               </Box>
             </Paper>
           </Grid>
         </Grid>
 
+        {/* Table */}
         {loading ? (
           <Box textAlign="center" py={8}>
             <CircularProgress size={60} thickness={4} sx={{ color: Colors.LOGOColor }} />
           </Box>
         ) : reviews.length > 0 ? (
           <>
-            <Grid container spacing={4}>
-              {paginatedReviews.map((review) => (
-                <Grid item key={review._id} xs={12} sm={6} md={4}>
-                  <Card elevation={0} sx={{
-                    mt:4,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    borderRadius: 3,
-                    border: '1px solid rgba(0,0,0,0.08)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
-                    }
-                  }}>
-                    <CardHeader
-                      avatar={
-                        <Box sx={{ position: 'relative' }}>
-                          <Tooltip title={review.businessId?.businessName || "Business"}>
-                            <Avatar
-                              src={review.businessId?.images?.[0]?.url || ''}
-                              alt={review.businessId?.businessName}
-                              sx={{
-                                width: 56,
-                                height: 56,
-                                bgcolor: Colors.LOGOColor,
-                                fontSize: 24,
-                                fontWeight: 'bold'
-                              }}
-                            >
-                              {review.businessId?.businessName?.[0] || <Business />}
-                            </Avatar>
-                          </Tooltip>
-                          <Tooltip title={review.reviewer?.name || "User"}>
-                            <Avatar
-                              src={review.reviewer?.avatar || ''}
-                              alt={review.reviewer?.name}
-                              sx={{
-                                width: 32,
-                                height: 32,
-                                position: 'absolute',
-                                bottom: -8,
-                                right: -8,
-                                border: '2px solid white',
-                                bgcolor: Colors.LOGOlight,
-                              }}
-                            >
-                              {review.reviewer?.name?.[0] || 'U'}
-                            </Avatar>
-                          </Tooltip>
-                        </Box>
-                      }
-                      title={
-                        <Box>
-                          <Typography fontWeight="bold" color={Colors.LOGOColor}>
-                            {review.businessId?.businessName || "Business"}
-                          </Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            Reviewed by {review.reviewer?.name || "Anonymous"}
-                          </Typography>
-                        </Box>
-                      }
-                      subheader={
-                        <Typography variant="caption" color="text.secondary">
-                          {new Date(review.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </Typography>
-                      }
-                      action={
-                        <Rating
-                          value={Number(review.rating)}
-                          readOnly
-                          precision={0.5}
-                          icon={<Star fontSize="small" htmlColor={Colors.LOGOlight} />}
-                          emptyIcon={<StarBorder fontSize="small" htmlColor={Colors.LOGOlight} />}
-                        />
-                      }
-                      sx={{
-                        pb: 0,
-                        alignItems: 'flex-start',
-                        '& .MuiCardHeader-content': {
-                          overflow: 'hidden'
-                        }
-                      }}
-                    />
-                    <CardContent sx={{ flexGrow: 1, py: 0 }}>
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          fontStyle: 'italic',
-                          color: 'text.primary',
-                          position: 'relative',
-                          pl: 2,
-                          '&:before': {
-                            content: '"“"',
-                            position: 'absolute',
-                            left: 0,
-                            top: 0,
-                            fontSize: '2rem',
-                            color: Colors.LOGOlight,
-                            lineHeight: 1
-                          }
-                        }}
-                      >
-                        {review.comment}
-                      </Typography>
-                    </CardContent>
-                    <Divider sx={{ my: 2 }} />
-                    <CardActions sx={{ justifyContent: 'space-between', px: 2, py: 1 }}>
-                      <Chip
-                        icon={<Star fontSize="small" htmlColor={Colors.LOGOlight} />}
-                        label={`${review.rating}`}
-                        sx={{
-                          backgroundColor: '#f0f7e8',
-                          color: Colors.LOGOColor,
-                          fontWeight: 'bold',
-                        }}
-                      />
-                      <Box>
-                        <Tooltip title="Edit review">
-                          <IconButton
-                            onClick={() => openEditModal(review)}
-                            sx={{
-                              color: Colors.LOGOColor,
-                              '&:hover': {
-                                backgroundColor: 'rgba(39, 85, 89, 0.1)'
-                              }
-                            }}
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead sx={{ backgroundColor: Colors.LOGOColor }}>
+                  <TableRow>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Business</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Reviewer</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Rating</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Comment</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Date</TableCell>
+                    <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Action</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedReviews.map((review) => (
+                    <TableRow key={review._id}>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Avatar
+                            src={review.businessId?.images?.[0]?.url || ''}
+                            alt={review.businessId?.businessName}
+                            sx={{ mr: 1, bgcolor: Colors.LOGOColor }}
                           >
-                            <Edit fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
+                            {review.businessId?.businessName?.[0] || <Business />}
+                          </Avatar>
+                          {review.businessId?.businessName || 'Business'}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Avatar
+                            src={review.reviewer?.avatar || ''}
+                            alt={review.reviewer?.name}
+                            sx={{ mr: 1, bgcolor: Colors.LOGOlight }}
+                          >
+                            {review.reviewer?.name?.[0] || 'U'}
+                          </Avatar>
+                          {review.reviewer?.name || 'Anonymous'}
+                        </Box>
+                      </TableCell>
+                      <TableCell>{review.rating}</TableCell>
+                      <TableCell>{review.comment}</TableCell>
+                      <TableCell>
+                        {new Date(review.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric', month: 'short', day: 'numeric'
+                        })}
+                      </TableCell>
+                      <TableCell>
                         <Tooltip title="Delete review">
-                          <IconButton
-                            onClick={() => handleDelete(review._id)}
-                            sx={{
-                              color: Colors.LOGOlight,
-                              '&:hover': {
-                                backgroundColor: 'rgba(158, 220, 41, 0.1)'
-                              }
-                            }}
-                          >
-                            <Delete fontSize="small" />
+                          <IconButton onClick={() => handleDelete(review._id)} color="error">
+                            <Delete />
                           </IconButton>
                         </Tooltip>
-                      </Box>
-                    </CardActions>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             {/* Pagination */}
             {reviews.length > 6 && (
-              <Box display="flex" justifyContent="center" mt={6}>
+              <Box display="flex" justifyContent="center" mt={4}>
                 <Pagination
                   count={Math.ceil(reviews.length / 6)}
                   page={currentPage}
@@ -435,130 +213,19 @@ const UserReviews = () => {
                   color="primary"
                   size="large"
                   shape="rounded"
-                  sx={{
-                    '& .MuiPaginationItem-root': {
-                      color: Colors.LOGOColor,
-                      border: '1px solid rgba(0,0,0,0.1)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(39, 85, 89, 0.1)'
-                      }
-                    },
-                    '& .MuiPaginationItem-root.Mui-selected': {
-                      backgroundColor: Colors.LOGOColor,
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: Colors.LOGOColor
-                      }
-                    },
-                  }}
                 />
               </Box>
             )}
           </>
         ) : (
-          <Paper elevation={0} sx={{
-            p: 6,
-            textAlign: 'center',
-            borderRadius: 3,
-            background: 'white'
-          }}>
-            <Star sx={{
-              fontSize: 60,
-              color: Colors.LOGOlight,
-              mb: 2,
-              opacity: 0.7
-            }} />
+          <Paper elevation={0} sx={{ p: 6, textAlign: 'center', borderRadius: 3, background: 'white' }}>
+            <Star sx={{ fontSize: 60, color: Colors.LOGOlight, mb: 2, opacity: 0.7 }} />
             <Typography variant="h5" color={Colors.LOGOColor} gutterBottom>
               No Reviews Yet
             </Typography>
           </Paper>
         )}
-
-        {/* Edit Review Modal */}
-        <Dialog
-          open={editModalOpen}
-          onClose={() => setEditModalOpen(false)}
-          fullWidth
-          maxWidth="sm"
-          PaperProps={{
-            sx: {
-              borderRadius: 3
-            }
-          }}
-        >
-          <DialogTitle sx={{
-            color: 'white',
-            backgroundColor: Colors.LOGOColor,
-            fontWeight: 'bold'
-          }}>
-            Edit Your Review
-          </DialogTitle>
-          <DialogContent sx={{ py: 3 }}>
-            <Box mb={3} textAlign="center">
-              <Rating
-                value={editRating}
-                precision={0.5}
-                onChange={(e, newValue) => setEditRating(newValue)}
-                icon={<Star fontSize="large" htmlColor={Colors.LOGOlight} />}
-                emptyIcon={<StarBorder fontSize="large" htmlColor={Colors.LOGOlight} />}
-                sx={{ fontSize: '2.5rem' }}
-              />
-            </Box>
-            <TextField
-              fullWidth
-              multiline
-              minRows={4}
-              label="Your review"
-              value={editComment}
-              onChange={(e) => setEditComment(e.target.value)}
-              variant="outlined"
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    borderColor: Colors.LOGOlight,
-                  },
-                },
-                '& .MuiInputLabel-root.Mui-focused': {
-                  color: Colors.LOGOlight,
-                },
-              }}
-            />
-          </DialogContent>
-          <DialogActions sx={{ px: 3, py: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={() => setEditModalOpen(false)}
-              sx={{
-                color: Colors.LOGOColor,
-                borderColor: Colors.LOGOColor,
-                borderRadius: 1,
-                px: 3,
-                '&:hover': {
-                  backgroundColor: 'rgba(39, 85, 89, 0.1)',
-                  borderColor: Colors.LOGOColor,
-                },
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleEditSubmit}
-              sx={{
-                backgroundColor: Colors.LOGOlight,
-                color: 'white',
-                borderRadius: 1,
-                px: 3,
-                '&:hover': {
-                  backgroundColor: '#7cb518',
-                },
-              }}
-            >
-              Save Changes
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Container>
+      </Box>
     </Box>
   );
 };

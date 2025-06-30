@@ -1,14 +1,23 @@
 import React from "react";
-import { 
-  Grid, 
-  TextField, 
-  InputAdornment, 
-  Autocomplete, 
+import {
+  Grid,
+  TextField,
+  InputAdornment,
+  Autocomplete,
   MenuItem,
   Chip,
-  Box
+  Box,
 } from "@mui/material";
-import { Business, Search, Description, Add } from "@mui/icons-material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import {
+  Business,
+  Search,
+  Description,
+  Add,
+  BusinessCenter,
+} from "@mui/icons-material";
 
 const BusinessInfoStep = ({
   formData,
@@ -20,6 +29,7 @@ const BusinessInfoStep = ({
 }) => {
   const [serviceInput, setServiceInput] = React.useState("");
   const [service, setService] = React.useState(formData.service || []);
+  // const [businessTime, setBusinessTime] = React.useState(dayjs("2022-04-17T15:30"));
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,7 +59,9 @@ const BusinessInfoStep = ({
   };
 
   const handleDeleteService = (serviceToDelete) => {
-    const newServices = service.filter((service) => service !== serviceToDelete);
+    const newServices = service.filter(
+      (service) => service !== serviceToDelete
+    );
     setService(newServices);
     setFormData((prev) => ({ ...prev, service: newServices }));
   };
@@ -124,11 +136,7 @@ const BusinessInfoStep = ({
             />
           )}
           renderOption={(props, option) => (
-            <MenuItem
-              {...props}
-              key={option}
-              sx={{ color: colors.LOGOColor }}
-            >
+            <MenuItem {...props} key={option} sx={{ color: colors.LOGOColor }}>
               {option}
             </MenuItem>
           )}
@@ -152,16 +160,16 @@ const BusinessInfoStep = ({
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <Chip 
-                  label="Add" 
+                <Chip
+                  label="Add"
                   onClick={handleAddService}
-                  sx={{ 
+                  sx={{
                     backgroundColor: colors.LOGOlight,
                     color: colors.WHITE,
-                    cursor: 'pointer',
-                    '&:hover': {
+                    cursor: "pointer",
+                    "&:hover": {
                       backgroundColor: colors.LOGOColor,
-                    }
+                    },
                   }}
                 />
               </InputAdornment>
@@ -169,7 +177,7 @@ const BusinessInfoStep = ({
           }}
           sx={textFieldSx}
         />
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
           {service.map((service, index) => (
             <Chip
               key={index}
@@ -178,16 +186,65 @@ const BusinessInfoStep = ({
               sx={{
                 backgroundColor: colors.LOGOlight,
                 color: colors.WHITE,
-                '& .MuiChip-deleteIcon': {
+                "& .MuiChip-deleteIcon": {
                   color: colors.WHITE,
-                  '&:hover': {
+                  "&:hover": {
                     color: colors.LOGOColor,
-                  }
-                }
+                  },
+                },
               }}
             />
           ))}
         </Box>
+      </Grid>
+
+      <Grid item xs={12} mt={-2}>
+        <TextField
+          fullWidth
+          required
+          label="Business Experience"
+          name="businessExperience"
+          value={formData.businessExperience}
+          onChange={handleChange}
+          variant="outlined"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <BusinessCenter sx={{ color: colors.LOGOColor }} />
+              </InputAdornment>
+            ),
+          }}
+          sx={textFieldSx}
+        />
+      </Grid>
+      
+      <Grid item xs={12} mt={-2} mb={3}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box display="flex" gap={2}>
+            <TimePicker
+              label="Open Time"
+              value={formData.openTime}
+              onChange={(newValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  openTime: newValue,
+                }));
+              }}
+              sx={{ flex: 1 }}
+            />
+            <TimePicker
+              label="Close Time"
+              value={formData.closeTime}
+              onChange={(newValue) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  closeTime: newValue,
+                }));
+              }}
+              sx={{ flex: 1 }}
+            />
+          </Box>
+        </LocalizationProvider>
       </Grid>
 
       <Grid item xs={12}>

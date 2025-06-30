@@ -92,6 +92,7 @@ const SidebarUser = () => {
             <MenuItem component={<Link to='/user/product' />} icon={<CategoryOutlinedIcon />}>Product</MenuItem>
             <MenuItem component={<Link to='/user/enquries' />} icon={<PeopleIcon />}>Enquiries</MenuItem>
             <MenuItem component={<Link to='/user/reviews' />} icon={<RateReviewIcon />}>Reviews</MenuItem>
+            <MenuItem component={<Link to='/user/product/reviews' />} icon={<RateReviewIcon />}>Product Reviews</MenuItem>
             <MenuItem component={<Link to='/user/plans' />} icon={<PeopleIcon />}>Plans</MenuItem>
           </Menu>
         </Box>
