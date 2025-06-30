@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.272eb970.css",
-    "main.js": "/static/js/main.bf26573a.js",
+    "main.js": "/static/js/main.ffe9a339.js",
     "static/media/weddingguide1_cover.jpg": "/static/media/weddingguide1_cover.31b8e5e6367355fe2c75.jpg",
     "static/media/bike.jpg": "/static/media/bike.bd2a2eb0ce29244a440d.jpg",
     "static/media/grocery.jpg": "/static/media/grocery.b980b1378e42c48d3694.jpg",
@@ -18,6 +18,7 @@
     "static/media/car.webp": "/static/media/car.273b7c8cf870419125b8.webp",
     "static/media/LOGO1.png": "/static/media/LOGO1.47d06bb6c47a3040ac5c.png",
     "static/media/wedding.avif": "/static/media/wedding.91f95b295e16b4f99da1.avif",
+    "static/media/favicon.png": "/static/media/favicon.f2377d24ba4ff16f621c.png",
     "static/media/spa.avif": "/static/media/spa.0f4edc8c889a3a8e486a.avif",
     "static/media/slick.svg": "/static/media/slick.2630a3e3eab21c607e21.svg",
     "static/media/slick.eot": "/static/media/slick.a4e97f5a2a64f0ab1323.eot",
@@ -25,10 +26,10 @@
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
     "main.272eb970.css.map": "/static/css/main.272eb970.css.map",
-    "main.bf26573a.js.map": "/static/js/main.bf26573a.js.map"
+    "main.ffe9a339.js.map": "/static/js/main.ffe9a339.js.map"
   },
   "entrypoints": [
     "static/css/main.272eb970.css",
-    "static/js/main.bf26573a.js"
+    "static/js/main.ffe9a339.js"
   ]
 }
