@@ -55,6 +55,7 @@ import { message } from "antd";
 import axios from "../../axiosInstance";
 import { Colors } from "../../Comman";
 import { State, City } from "country-state-city";
+import BusinessQRCode from "./BusinessQRCode";
 
 const Business = () => {
   const navigate = useNavigate();
@@ -729,6 +730,7 @@ const Business = () => {
                             <Edit />
                           </IconButton>
                         </Tooltip>
+                      <BusinessQRCode businessId={business?._id}businessName={business?.businessName}/>
                       </TableCell>
                     </TableRow>
                   ))}

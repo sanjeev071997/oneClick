@@ -1,199 +1,3 @@
-// import { useEffect, useState } from "react";
-// import {
-//   Card,
-//   CardContent,
-//   Typography,
-//   CircularProgress,
-//   Box,
-//   Grid,
-//   CardActions,
-//   IconButton,
-// } from "@mui/material";
-// import { message } from "antd";
-// import axios from "../../axiosInstance";
-// import { Colors } from "../../Comman";
-// import { useSelector } from "react-redux";
-// import { useNavigate, useParams } from "react-router-dom";
-// import StarIcon from '@mui/icons-material/Star';
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-
-// const BusinessProducts = () => {
-//   const { id } = useParams();
-//   const [products, setProducts] = useState([]);
-//   const [businesses, setBusinesses] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const navigate = useNavigate();
-//   const businessId = id;
-
-//   const fetchProducts = async () => {
-//     setLoading(true);
-//     try {
-//       const res = await axios.get(`/api/v1/product/get/${businessId}`);
-//       setProducts(res.data?.data || []);
-//     } catch (err) {
-//       // message.warning("You don't have any product yet.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (businessId) {
-//       fetchProducts();
-//     }
-//   }, [businessId]);
-
-//   const handleCardClick = (product) => {
-//     navigate(`/product/${product?._id}`, { state: { product } });
-//   };
-
-//   const StaticStars = () => (
-//     <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-//       {[...Array(5)].map((_, index) => (
-//         <StarIcon key={index} sx={{ color: '#FFD700', fontSize: '1rem' }} />
-//       ))}
-//     </Box>
-//   );
-
-//   return (
-//     <>
-//       {loading ? (
-//         <Box display="flex" justifyContent="center" py={4}>
-//           <CircularProgress />
-//         </Box>
-//       ) : products.length === 0 ? (
-//         <Typography
-//           variant="body1"
-//           sx={{ color: Colors.textDark, textAlign: "center", py: 4 }}
-//         >
-//           No products available for this business.
-//         </Typography>
-//       ) : (
-//         <Grid container spacing={3} mt={1}>
-//           {products.map((product) => {
-//             const image = Array.isArray(product.images) && product.images.length > 0
-//               ? product.images[0].url || product.images[0]
-//               : "";
-
-//             return (
-//               <Grid item xs={12} sm={6} md={4} lg={3} key={product._id}>
-//                 <Card
-//                   onClick={() => handleCardClick(product)}
-//                   sx={{
-//                     cursor: "pointer",
-//                     borderRadius: 2,
-//                     transition: "0.3s",
-//                     display: "flex",
-//                     flexDirection: "column",
-//                     position: "relative",
-//                     bgcolor: "#fff",
-//                     overflow: "hidden",
-//                   }}
-//                 >
-//                   {/* Discount Badge */}
-//                   {product.discount > 0 && (
-//                     <Box
-//                       sx={{
-//                         position: "absolute",
-//                         top: 0,
-//                         left: 0,
-//                         bgcolor: Colors.LOGOColor,
-//                         color: "white",
-//                         writingMode: "vertical-rl",
-//                         transform: "rotate(180deg)",
-//                         fontSize: "0.75rem",
-//                         fontWeight: 600,
-//                         px: 0.5,
-//                         py: 1,
-//                         borderTopRightRadius: "4px",
-//                         borderBottomRightRadius: "4px",
-//                         zIndex: 2,
-//                       }}
-//                     >
-//                       {product.discount}% OFF
-//                     </Box>
-//                   )}
-
-//                   {/* Product Image */}
-//                   <Box
-//                     sx={{
-//                       height: 180,
-//                       backgroundColor: '#f9f9f9',
-//                       p: 0,
-//                     }}
-//                   >
-//                     <img
-//                       src={image}
-//                       alt={product.name}
-//                       style={{
-//                         width: '100%',
-//                         height: '100%',
-//                         backgroundSize: 'cover',
-//                         display: 'block',
-//                         objectFit: 'cover'
-//                       }}
-//                     />
-//                   </Box>
-
-//                   {/* Product Details */}
-//                   <CardContent sx={{ flexGrow: 1, pt: 1 }}>
-//                     <Typography variant="caption" color="text.secondary" sx={{ textTransform: 'uppercase', mb: 0.5 }}>
-//                       {product.category}
-//                     </Typography>
-//                     <StaticStars />
-//                     <Typography variant="subtitle2" fontWeight="bold" noWrap>
-//                       {product.name}
-//                     </Typography>
-//                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-//                       {product.price >product.totalPrice&& (
-//                         <Typography
-//                           variant="body2"
-//                           sx={{
-//                             textDecoration: "line-through",
-//                             color: "#9e9e9e",
-//                             mr: 1,
-//                           }}
-//                         >
-//                           {parseFloat(product.price).toFixed(2)}
-//                         </Typography>
-//                       )}
-//                       <Typography variant="body1" fontWeight="bold" color="text.primary">
-//                         {parseFloat(product.totalPrice || product.price).toFixed(2)}
-//                       </Typography>
-//                     </Box>
-//                   </CardContent>
-
-//                   {/* View Button */}
-//                   <CardActions sx={{ p: 2, justifyContent: 'flex-end' }}>
-//                     <IconButton
-//                       aria-label="view details"
-//                       onClick={(e) => {
-//                         e.stopPropagation();
-//                         handleCardClick(product);
-//                       }}
-//                       sx={{
-//                         backgroundColor: Colors.LOGOColor,
-//                         color: "white",
-//                         "&:hover": {
-//                           backgroundColor: Colors.LOGOlight,
-//                         },
-//                       }}
-//                     >
-//                       <VisibilityIcon />
-//                     </IconButton>
-//                   </CardActions>
-//                 </Card>
-//               </Grid>
-//             );
-//           })}
-//         </Grid>
-//       )}
-//     </>
-//   );
-// };
-
-// export default BusinessProducts;
-
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -202,20 +6,21 @@ import {
   CircularProgress,
   Box,
   Grid,
-  CardActions,
-  IconButton,
 } from "@mui/material";
 import { message } from "antd";
 import axios from "../../axiosInstance";
 import { Colors } from "../../Comman";
 import { useNavigate, useParams } from "react-router-dom";
-import StarIcon from '@mui/icons-material/Star';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import StarIcon from "@mui/icons-material/Star";
+import Rating from "@mui/material/Rating";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 const BusinessProducts = () => {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
-  const [businesses, setBusinesses] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [errorReviews, setErrorReviews] = useState(null);
@@ -267,23 +72,20 @@ const BusinessProducts = () => {
   };
 
   useEffect(() => {
-    if (businessId) {
+    if (id) {
       fetchProducts();
-      fetchBusinesses();
     }
-  }, [businessId]);
+  }, [id]);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      fetchAllReviews();
+    }
+  }, [products]);
 
   const handleCardClick = (product) => {
-    navigate(`/product/${product._id}`, { state: { product } });
+    navigate(`/product/${product?._id}`);
   };
-
-  const StaticStars = () => (
-    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-      {[...Array(5)].map((_, index) => (
-        <StarIcon key={index} sx={{ color: '#FFD700', fontSize: '1rem' }} />
-      ))}
-    </Box>
-  );
 
   const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-IN", {
@@ -291,6 +93,36 @@ const BusinessProducts = () => {
       month: "short",
       year: "numeric",
     });
+
+  // Function to calculate average rating and number of reviews for a product
+  // const getReviewStats = (id) => {
+  //   const productReviews = reviews[id] || [];
+  //   if (productReviews.length === 0) {
+  //     return { averageRating: 0, numOfReviews: 0 };
+  //   }
+    
+  //   const sum = productReviews.reduce((acc, review) => acc + review.rating, 0);
+  //   const averageRating = sum / productReviews.length;
+    
+  //   return {
+  //     averageRating,
+  //     numOfReviews: productReviews.length
+  //   };
+  // };
+const getReviewStats = (id) => {
+  const productReviews = reviews[id] || [];
+  if (productReviews.length === 0) {
+    return { averageRating: 0, numOfReviews: 0 };
+  }
+
+  const sum = productReviews.reduce((acc, review) => acc + parseFloat(review.rating || 0), 0);
+  const averageRating = Math.min(sum / productReviews.length, 5); // Ensure max 5
+
+  return {
+    averageRating,
+    numOfReviews: productReviews.length,
+  };
+};
 
   return (
     <>
@@ -313,7 +145,7 @@ const BusinessProducts = () => {
                 ? product.images[0].url || product.images[0]
                 : "";
 
-            const { averageRating, numOfReviews } = getReviewStats(product._id);
+            const { averageRating, numOfReviews } = getReviewStats(product?._id);
 
             return (
               <Grid item xs={12} sm={6} md={4} lg={3} key={product?._id}>
@@ -321,7 +153,9 @@ const BusinessProducts = () => {
                   onClick={() => handleCardClick(product)}
                   sx={{
                     cursor: "pointer",
-                    borderRadius: 2,
+                    borderRadius: 3,
+                    width: "100%",
+                    height: "100%",
                     transition: "0.3s",
                     display: "flex",
                     flexDirection: "column",
@@ -375,7 +209,6 @@ const BusinessProducts = () => {
                     />
                   </Box>
 
-                  {/* Product Details */}
                   <CardContent sx={{ flexGrow: 1, pt: 1 }}>
                     <Typography
                       variant="caption"
@@ -384,48 +217,124 @@ const BusinessProducts = () => {
                     >
                       {product.category || "General"}
                     </Typography>
-                    <StaticStars />
-                    <Typography variant="subtitle2" fontWeight="bold" noWrap>
+
+                    {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                      <Rating
+                        value={averageRating}
+                        precision={0.1} 
+                        readOnly
+                        size="small"
+                        emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+                        sx={{ color: Colors.LOGOColor }}
+                      />
+                      <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+                        ({numOfReviews} reviews)
+                      </Typography>
+                    </Box> */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+  <Rating
+    name={`rating-${product._id}`}
+    value={averageRating}
+    precision={0.1}
+    readOnly
+    size="small"
+    sx={{ color: Colors.LOGOlight }}
+  />
+  <Typography variant="body2" sx={{ ml: 1, fontWeight: 500 }}>
+    {averageRating.toFixed(1)}{" "}
+    <Typography component="span" variant="body2" color="text.secondary">
+      ({numOfReviews} review{numOfReviews !== 1 ? "s" : ""})
+    </Typography>
+  </Typography>
+</Box>
+
+
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      noWrap
+                      title={product.name}
+                    >
                       {product.name}
                     </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
-                      {product.price >product.totalPrice&& (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            textDecoration: "line-through",
-                            color: "#9e9e9e",
-                            mr: 1,
-                          }}
-                        >
-                          {parseFloat(product.price).toFixed(2)}
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        mt: 0.5,
+                        mb: 1,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {product.details}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        mt: 1,
+                      }}
+                    >
+                      <Box>
+                        {product.price > product.totalPrice && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              textDecoration: "line-through",
+                              color: "#9e9e9e",
+                              mr: 1,
+                            }}
+                          >
+                            ₹{parseFloat(product.price).toFixed(2)}
+                          </Typography>
+                        )}
+                        <Typography variant="h6" color="text.primary">
+                          ₹
+                          {parseFloat(
+                            product.totalPrice || product.price
+                          ).toFixed(2)}
                         </Typography>
-                      )}
-                      <Typography variant="body1" fontWeight="bold" color="text.primary">
-                        {parseFloat(product.totalPrice || product.price).toFixed(2)}
+                      </Box>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <InventoryIcon fontSize="small" color="action" />
+                        <Typography variant="body2" color="text.secondary">
+                          In stock: {product.stock}
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mt: 1,
+                        gap: 1,
+                      }}
+                    >
+                      <AccessTimeIcon fontSize="small" color="action" />
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        Added on {formatDate(product.createdAt)}
+                        <ArrowForwardIcon sx={{ fontSize: 14 }} />
                       </Typography>
                     </Box>
                   </CardContent>
-
-                  {/* View Button */}
-                  <CardActions sx={{ p: 2, justifyContent: 'flex-end' }}>
-                    <IconButton
-                      aria-label="view details"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCardClick(product);
-                      }}
-                      sx={{
-                        backgroundColor: Colors.LOGOColor,
-                        color: "white",
-                        "&:hover": {
-                          backgroundColor: Colors.LOGOlight,
-                        },
-                      }}
-                    >
-                      <VisibilityIcon />
-                    </IconButton>
-                  </CardActions>
                 </Card>
               </Grid>
             );

@@ -81,7 +81,7 @@ const BusinessReviews = ({
             Share Your Experience
           </Typography>
 
-          {user & user.length ===0 ? (
+          {user ? (
             <>
               <Box mb={2}>
                 <Typography variant="body1" gutterBottom>
@@ -90,7 +90,7 @@ const BusinessReviews = ({
                 <Rating
                   value={rating}
                   onChange={(e, newValue) => setRating(newValue)}
-                  precision={0.5}
+                  precision={1}
                   size="large"
                   sx={{
                     "& .MuiRating-iconFilled": {
@@ -268,10 +268,10 @@ const BusinessReviews = ({
                       <Rating
                         value={review.rating}
                         readOnly
-                        precision={0.5}
+                        precision={1}
                         sx={{ color: Colors.LOGOlight }}
                       />
-                      <Chip
+                      {/* <Chip
                         label={`${review.rating}`}
                         size="small"
                         sx={{
@@ -280,7 +280,7 @@ const BusinessReviews = ({
                           color: Colors.WHITE,
                           fontWeight: "bold",
                         }}
-                      />
+                      /> */}
                     </Box>
                     <Typography
                       sx={{

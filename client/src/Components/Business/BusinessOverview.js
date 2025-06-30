@@ -6,7 +6,6 @@ import {
     CardContent,
     Stack,
     Chip,
-    Avatar,
   } from "@mui/material";
   import {
     Person,

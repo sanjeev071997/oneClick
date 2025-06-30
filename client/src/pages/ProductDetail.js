@@ -1,323 +1,58 @@
-// import { useParams } from "react-router-dom";
-// import {
-//   Box,
-//   Typography,
-//   Grid,
-//   Chip,
-//   Stack,
-//   Paper,
-//   useMediaQuery,
-//   useTheme,
-//   Rating,
-//   Container
-// } from "@mui/material";
-// import { useState, useEffect } from "react";
-// import Footer from "../Components/Footer";
-// import Navbar from "../Components/Navbar";
-// import axios from "../axiosInstance";
-// import { Colors } from "../Comman";
-
-<<<<<<< HEAD
-// const ProductDetails = () => {
-//   const { id } = useParams();
-//   const [product, setProduct] = useState(null);
-//   const [selectedImage, setSelectedImage] = useState("");
-//   const [showMagnifier, setShowMagnifier] = useState(false);
-//   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
-
-//   const theme = useTheme();
-//   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-//   const fetchProducts = async () => {
-//     try {
-//       const res = await axios.get(`/api/v1/product/get/product/${id}`);
-//       const fetchedProduct = res.data?.getProduct;
-//       setProduct(fetchedProduct);
-
-//       const firstImage = fetchedProduct?.images?.[0];
-//       const imageUrl = typeof firstImage === "string" ? firstImage : firstImage?.url;
-//       setSelectedImage(imageUrl || "");
-//     } catch (err) {
-//       console.error("Failed to fetch product:", err);
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (id) {
-//       fetchProducts();
-//     }
-//   }, [id]);
-
-//   if (!product) {
-//     return (
-//       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-//         <Typography variant="h6">No product found</Typography>
-//       </Box>
-//     );
-//   }
-
-//   const handleImageHover = (e) => {
-//     if (!isSmallScreen) {
-//       const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-//       const x = ((e.clientX - left) / width) * 100;
-//       const y = ((e.clientY - top) / height) * 100;
-//       setMagnifierPosition({ x, y });
-//       setShowMagnifier(true);
-//     }
-//   };
-
-//   const handleImageLeave = () => {
-//     setShowMagnifier(false);
-//   };
-
-//   const images = product?.images || [];
-
-//   return (
-//     <>
-//       <Navbar />
-//       <Container maxWidth="xl" sx={{ py: 4 }}>
-//         <Grid container spacing={4}>
-//           {/* Image Section */}
-//           <Grid item xs={12} md={6} lg={5}>
-//             <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row-reverse", gap: 2 }}>
-//               {/* Zoom Image on Hover */}
-//               <Box
-//                 onMouseMove={handleImageHover}
-//                 onMouseLeave={handleImageLeave}
-//                 sx={{ width: "100%", position: "relative", borderRadius: 2 }}
-//               >
-//                 <img
-//                   src={selectedImage}
-//                   alt="Main"
-//                   style={{
-//                     width: "100%",
-//                     height: isSmallScreen ? 300 : 500,
-//                     objectFit: "cover",
-//                     borderRadius: "10px",
-//                     cursor: "zoom-in"
-//                   }}
-//                 />
-
-//                 {!isSmallScreen && showMagnifier && (
-//                   <Box
-//                     sx={{
-//                       position: "absolute",
-//                       top: 0,
-//                       left: "105%",
-//                       width: 800,
-//                       height: 700,
-//                       border: "1px solid #ddd",
-//                       background: `url(${selectedImage}) no-repeat`,
-//                       backgroundSize: "200%",
-//                       backgroundPosition: `${magnifierPosition.x}% ${magnifierPosition.y}%`,
-//                       zIndex: 10,
-//                       borderRadius: 2,
-//                       display: {
-//                         xs: "none",
-//                         sm: "block"
-//                       }
-//                     }}
-//                   />
-//                 )}
-//               </Box>
-
-//               {/* Thumbnails */}
-//               <Box
-//                 sx={{
-//                   display: "flex",
-//                   flexDirection: isSmallScreen ? "row" : "column",
-//                   gap: 1,
-//                   overflowX: isSmallScreen ? "auto" : "unset",
-//                   overflowY: isSmallScreen ? "unset" : "auto",
-//                   maxHeight: isSmallScreen ? "unset" : 500,
-//                   width: isSmallScreen ? "100%" : 80,
-//                   pr: 1
-//                 }}
-//               >
-//                 {images.map((img, index) => {
-//                   const imgUrl = img.url || img;
-//                   return (
-//                     <Paper
-//                       key={index}
-//                       elevation={selectedImage === imgUrl ? 4 : 1}
-//                       sx={{
-//                         width: isSmallScreen ? 80 : 70,
-//                         height: isSmallScreen ? 80 : 70,
-//                         cursor: "pointer",
-//                         borderRadius: 2,
-//                         overflow: "hidden",
-//                         flexShrink: 0,
-//                         border:
-//                           selectedImage === imgUrl
-//                             ? `2px solid ${Colors.LOGOColor}`
-//                             : "1px solid #e0e0e0",
-//                         transition: "all 0.2s ease"
-//                       }}
-//                       onClick={() => setSelectedImage(imgUrl)}
-//                     >
-//                       <img
-//                         src={imgUrl}
-//                         alt={`thumb-${index}`}
-//                         style={{
-//                           width: "100%",
-//                           height: "100%",
-//                           objectFit: "cover"
-//                         }}
-//                       />
-//                     </Paper>
-//                   );
-//                 })}
-//               </Box>
-//             </Box>
-//           </Grid>
-
-//           {/* Product Info */}
-//           <Grid item xs={12} md={6} lg={7}>
-//             <Box>
-//               <Typography
-//                 variant="h4"
-//                 fontWeight="bold"
-//                 sx={{ mb: 2 }}
-//               >
-//                 {product.name}
-//               </Typography>
-
-//               <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-//                 <Chip
-//                   label={product.category}
-//                   color="secondary"
-//                   sx={{
-//                     mr: 2,
-//                     fontWeight: "bold",
-//                     textTransform: "uppercase",
-//                     fontSize: "0.7rem"
-//                   }}
-//                 />
-//                 <Rating
-//                   value={4.5}
-//                   precision={0.5}
-//                   readOnly
-//                   sx={{ color: Colors.LOGOColor }}
-//                 />
-//                 <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-//                   (24 reviews)
-//                 </Typography>
-//               </Box>
-
-//               <Box sx={{ backgroundColor: "#f9f9f9", p: 3, borderRadius: 2, mb: 3 }}>
-//                 <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-//                   {product.price > product.totalPrice && (
-//                     <Typography
-//                       variant="h6"
-//                       sx={{ textDecoration: "line-through", color: "#9e9e9e", mr: 2 }}
-//                     >
-//                       ₹{parseFloat(product.price).toFixed(2)}
-//                     </Typography>
-//                   )}
-
-//                   <Typography
-//                     variant="h4"
-//                     fontWeight="bold"
-//                     color="text.primary"
-//                     sx={{ mr: 2 }}
-//                   >
-//                     ₹{parseFloat(product.totalPrice || product.price).toFixed(2)}
-//                   </Typography>
-
-//                   {product.discount > 0 && (
-//                     <Chip
-//                       label={`${product.discount}% OFF`}
-//                       size="medium"
-//                       sx={{
-//                         bgcolor: Colors.LOGOColor,
-//                         color: "white",
-//                         height: 32,
-//                         fontSize: "1rem",
-//                         fontWeight: "bold"
-//                       }}
-//                     />
-//                   )}
-//                 </Box>
-//               </Box>
-
-//               <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", mb: 1 }}>
-//                 Description
-//               </Typography>
-//               <Typography variant="body1" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.7 }}>
-//                 {product.details || "No description available"}
-//               </Typography>
-//             </Box>
-//           </Grid>
-//         </Grid>
-//       </Container>
-//       <Footer />
-//     </>
-//   );
-// };
-
-// export default ProductDetails;
-
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-=======
-
-
 import { useParams, useNavigate, useLocation } from "react-router-dom";
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
 import {
   Box,
   Typography,
   Grid,
   Chip,
-<<<<<<< HEAD
-=======
   Stack,
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   Paper,
   useMediaQuery,
   useTheme,
   Rating,
   Container,
-<<<<<<< HEAD
   Button,
-=======
   TextField,
-  Button, 
-  CircularProgress 
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
+  CircularProgress,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import Footer from "../Components/Footer";
 import Navbar from "../Components/Navbar";
 import axios from "../axiosInstance";
 import { Colors } from "../Comman";
-<<<<<<< HEAD
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import { useSelector } from "react-redux";
 import { Modal, message } from "antd";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Tab, Tabs } from "@mui/material";
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
 
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 0 }}>{children}</Box>}
+    </div>
+  );
+}
+// Add this state
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const location = useLocation();
-  const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state) => state.user);
-=======
-import { message, Modal } from "antd"; 
-import { useSelector } from "react-redux";
-const ProductDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation(); 
-  const { user } = useSelector((state) => state.user);
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
+  const [activeTab, setActiveTab] = useState(0);
+
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [showMagnifier, setShowMagnifier] = useState(false);
   const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
-<<<<<<< HEAD
-=======
 
   // State for reviews
   const [reviews, setReviews] = useState([]);
@@ -326,13 +61,9 @@ const ProductDetails = () => {
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
-  const isAuthenticated = true; 
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-<<<<<<< HEAD
   const currentURL = `${window.location.origin}/product/${id}`;
 
   const handleShareOnWhatsApp = () => {
@@ -347,12 +78,11 @@ const ProductDetails = () => {
       await navigator.clipboard.writeText(currentURL);
       message.success("Link copied to clipboard!");
     } catch (err) {
-      console.error("Failed to copy:", err);
       message.error("Failed to copy the link.");
     }
   };
 
-  const fetchProducts = async () => {
+  const fetchProductDetails = async () => {
     try {
       const res = await axios.get(`/api/v1/product/get/product/${id}`);
       const fetchedProduct = res.data?.getProduct;
@@ -367,23 +97,16 @@ const ProductDetails = () => {
     }
   };
 
-  useEffect(() => {
-    if (id) fetchProducts();
-=======
-  const fetchProductDetails = async () => {
-    try {
-      const res = await axios.get(`/api/v1/product/get/product/${id}`);
-      const fetchedProduct = res.data?.getProduct;
-      setProduct(fetchedProduct);
+  const totalReviews = reviews.length;
+  const averageRating =
+    totalReviews > 0
+      ? (
+          reviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) /
+          totalReviews
+        ).toFixed(1)
+      : 0;
 
-      const firstImage = fetchedProduct?.images?.[0];
-      const imageUrl = typeof firstImage === "string" ? firstImage : firstImage?.url;
-      setSelectedImage(imageUrl || "");
-    } catch (err) {
-  
-    }
-  };
-
+  // Get all Reviews
   const fetchReviews = async () => {
     setLoadingReviews(true);
     setErrorReviews(null);
@@ -426,13 +149,13 @@ const ProductDetails = () => {
         productId: product?._id,
         rating,
         comment: reviewText,
-        reviewer: user?._id, 
+        reviewer: user?._id,
       };
       await axios.post("/api/v1/product/review/add", payload);
       message.success("Review added successfully!");
       setRating(0);
       setReviewText("");
-      fetchReviews(); 
+      fetchReviews();
     } catch (error) {
       console.error("Failed to add review:", error);
       message.error(error.response?.data?.message || "Failed to add review.");
@@ -441,33 +164,12 @@ const ProductDetails = () => {
     }
   };
 
-
   useEffect(() => {
     if (id) {
       fetchProductDetails();
-      fetchReviews(); 
+      fetchReviews();
     }
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   }, [id]);
-
-  if (!product) {
-    return (
-<<<<<<< HEAD
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-=======
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
-        <Typography variant="h6">No product found</Typography>
-      </Box>
-    );
-  }
 
   const handleImageHover = (e) => {
     if (!isSmallScreen) {
@@ -482,34 +184,8 @@ const ProductDetails = () => {
 
   const handleImageLeave = () => {
     setShowMagnifier(false);
-<<<<<<< HEAD
   };
 
-  const images = product?.images || [];
-
-  //   const handleBuyNow = () => {
-  //   if (!user || !user.phone) {
-  //     // User not logged in
-  //     // alert("Please login first to buy this product.");
-  //     message.warning("Please login to proceed.");
-  // if (!isAuthenticated) {
-  //   navigate("/login", { state: { from: location.pathname } });
-  // }
-  //     return;
-  //   }
-
-  //   const businessPhone = product?.businessId?.phone;
-  //   if (!businessPhone) {
-  //     alert("Business contact not available.");
-  //     return;
-  //   }
-
-  //   const messages = `Hello, I am interested in buying *${product.name}* priced at ₹${product.totalPrice}. Please contact me at ${user.phone}.`;
-  //   const encodedMessage = encodeURIComponent(messages);
-
-  //   const whatsappUrl = `https://wa.me/${businessPhone.replace(/\D/g, "")}?text=${encodedMessage}`;
-  //   window.open(whatsappUrl, "_blank");
-  // };
   const handleBuyNow = () => {
     if (!user || !user.phone) {
       if (!isAuthenticated) {
@@ -543,18 +219,30 @@ const ProductDetails = () => {
       ""
     )}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
-=======
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
   };
+
+  if (!product) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Typography variant="h6">No product found</Typography>
+      </Box>
+    );
+  }
 
   const images = product?.images || [];
 
   return (
     <>
       <Navbar />
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ mt: { md: 5, sm: 3 } }}>
         <Grid container spacing={4}>
-<<<<<<< HEAD
           {/* Image Section */}
           <Grid item xs={12} md={6} lg={5}>
             <Box
@@ -564,12 +252,6 @@ const ProductDetails = () => {
                 gap: 2,
               }}
             >
-=======
-          {/* Image Section (Existing Code) */}
-          <Grid item xs={12} md={6} lg={5}>
-            <Box sx={{ display: "flex", flexDirection: isSmallScreen ? "column" : "row-reverse", gap: 2 }}>
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
-              {/* Zoom Image on Hover */}
               <Box
                 onMouseMove={handleImageHover}
                 onMouseLeave={handleImageLeave}
@@ -583,43 +265,34 @@ const ProductDetails = () => {
                     height: isSmallScreen ? 300 : 500,
                     objectFit: "cover",
                     borderRadius: "10px",
-<<<<<<< HEAD
                     cursor: "zoom-in",
-=======
-                    cursor: "zoom-in"
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   }}
                 />
-
                 {!isSmallScreen && showMagnifier && (
                   <Box
                     sx={{
                       position: "absolute",
                       top: 0,
                       left: "105%",
-                      width: 800,
-                      height: 700,
+                      width: { md: 400, lg: 600, xl: 800 },
+                      height: { md: 350, lg: 525, xl: 700 },
                       border: "1px solid #ddd",
                       background: `url(${selectedImage}) no-repeat`,
                       backgroundSize: "200%",
                       backgroundPosition: `${magnifierPosition.x}% ${magnifierPosition.y}%`,
                       zIndex: 10,
                       borderRadius: 2,
+                      overflow: "hidden",
                       display: {
                         xs: "none",
-<<<<<<< HEAD
-                        sm: "block",
+                        sm: "none",
+                        md: "block",
                       },
-=======
-                        sm: "block"
-                      }
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
+                      pointerEvents: "none",
                     }}
                   />
                 )}
               </Box>
-
-              {/* Thumbnails */}
               <Box
                 sx={{
                   display: "flex",
@@ -629,11 +302,7 @@ const ProductDetails = () => {
                   overflowY: isSmallScreen ? "unset" : "auto",
                   maxHeight: isSmallScreen ? "unset" : 500,
                   width: isSmallScreen ? "100%" : 80,
-<<<<<<< HEAD
                   pr: 1,
-=======
-                  pr: 1
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                 }}
               >
                 {images.map((img, index) => {
@@ -653,11 +322,7 @@ const ProductDetails = () => {
                           selectedImage === imgUrl
                             ? `2px solid ${Colors.LOGOColor}`
                             : "1px solid #e0e0e0",
-<<<<<<< HEAD
                         transition: "all 0.2s ease",
-=======
-                        transition: "all 0.2s ease"
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                       }}
                       onClick={() => setSelectedImage(imgUrl)}
                     >
@@ -667,11 +332,7 @@ const ProductDetails = () => {
                         style={{
                           width: "100%",
                           height: "100%",
-<<<<<<< HEAD
                           objectFit: "cover",
-=======
-                          objectFit: "cover"
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                         }}
                       />
                     </Paper>
@@ -679,32 +340,12 @@ const ProductDetails = () => {
                 })}
               </Box>
             </Box>
-<<<<<<< HEAD
-
-            {/* Buy Now Button */}
             <Box sx={{ mt: 3 }}>
-              {/* <Button
-                variant="contained"
-                fullWidth
-                size="large"
-                sx={{
-                  bgcolor: Colors.LOGOColor,
-                  color: "white",
-                  "&:hover": {
-                    bgcolor: Colors.LOGOlight,
-                  },
-                  borderRadius: 2,
-                  py: 1.5,
-                  fontWeight: "bold"
-                }}
-              >
-                Buy Now
-              </Button> */}
               <Button
                 variant="contained"
                 fullWidth
                 size="large"
-                onClick={() => handleBuyNow()}
+                onClick={handleBuyNow}
                 sx={{
                   bgcolor: Colors.LOGOColor,
                   color: "white",
@@ -724,9 +365,6 @@ const ProductDetails = () => {
           {/* Product Info */}
           <Grid item xs={12} md={6} lg={7}>
             <Box>
-              {/* <Typography variant="h4" fontWeight="bold" sx={{ mb: 2 }}>
-                {product.name}
-              </Typography> */}
               <Box
                 sx={{
                   display: "flex",
@@ -801,42 +439,22 @@ const ProductDetails = () => {
                     color: "white",
                     fontSize: "0.75rem",
                     fontWeight: 500,
-=======
-          </Grid>
-
-          {/* Product Info (Existing Code) */}
-          <Grid item xs={12} md={6} lg={7}>
-            <Box>
-              <Typography
-                variant="h4"
-                fontWeight="bold"
-                sx={{ mb: 2 }}
-              >
-                {product.name}
-              </Typography>
-
-              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <Chip
-                  label={product.category}
-                  color="secondary"
-                  sx={{
-                    mr: 2,
-                    fontWeight: "bold",
-                    textTransform: "uppercase",
-                    fontSize: "0.7rem"
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   }}
                 />
-                <Rating
-                  value={4.5} 
-                  precision={0.5}
-                  readOnly
-                  sx={{ color: Colors.LOGOColor }}
-                />
-<<<<<<< HEAD
-                <Typography variant="body2" color="text.secondary">
-                  (24 reviews)
-                </Typography>
+                  <Rating
+                    value={Number(averageRating)}
+                    precision={0.1}
+                    readOnly
+                    sx={{
+                      "& .MuiRating-iconFilled": {
+                        color: Colors.LOGOlight,
+                      },
+                    }}
+                  />
+                  <Typography sx={{ color: Colors.LOGOColor }}>
+                    {Number(averageRating || 0).toFixed(1)} ({totalReviews}{" "}
+                    {totalReviews === 1 ? "review" : "reviews"})
+                  </Typography>
               </Box>
 
               {/* Price Box */}
@@ -845,7 +463,7 @@ const ProductDetails = () => {
                   backgroundColor: "#f9f9f9",
                   p: 3,
                   borderRadius: 2,
-                  mb: 2,
+                  mb: 3,
                 }}
               >
                 <Box
@@ -855,19 +473,14 @@ const ProductDetails = () => {
                     flexWrap: "wrap",
                   }}
                 >
-=======
-                <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                  ({reviews.length} reviews) 
-                </Typography>
-              </Box>
-
-              <Box sx={{ backgroundColor: "#f9f9f9", p: 3, borderRadius: 2, mb: 3 }}>
-                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                   {product.price > product.totalPrice && (
                     <Typography
                       variant="h6"
-                      sx={{ textDecoration: "line-through", color: "#9e9e9e", mr: 2 }}
+                      sx={{
+                        textDecoration: "line-through",
+                        color: "#9e9e9e",
+                        mr: 2,
+                      }}
                     >
                       ₹{parseFloat(product.price).toFixed(2)}
                     </Typography>
@@ -892,16 +505,11 @@ const ProductDetails = () => {
                         color: "white",
                         height: 32,
                         fontSize: "1rem",
-<<<<<<< HEAD
                         fontWeight: "bold",
-=======
-                        fontWeight: "bold"
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
                       }}
                     />
                   )}
                 </Box>
-<<<<<<< HEAD
 
                 {/* Stock Info */}
                 <Box
@@ -926,99 +534,123 @@ const ProductDetails = () => {
                 >
                   {product.details || "No description available"}
                 </Typography>
-=======
               </Box>
 
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: "bold", mb: 1 }}>
-                Description
-              </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: "pre-wrap", lineHeight: 1.7 }}>
-                {product.details || "No description available"}
-              </Typography>
-
-              {/* --- Review Section Starts Here --- */}
-              <Box sx={{ mt: 5 }}>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Customer Reviews
-                </Typography>
-
-                {/* Review Submission Form */}
-                <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Add a Review
-                  </Typography>
-                  <Rating
-                    name="product-rating"
-                    value={rating}
-                    precision={1}
-                    onChange={(event, newValue) => {
-                      setRating(newValue);
-                    }}
-                    sx={{ mb: 2, color: Colors.LOGOColor }}
-                  />
-                  <TextField
-                    label="Your Comment"
-                    multiline
-                    rows={4}
-                    fullWidth
-                    value={reviewText}
-                    onChange={(e) => setReviewText(e.target.value)}
-                    sx={{ mb: 2 }}
-                  />
-                  <Button
-                    variant="contained"
-                    sx={{ bgcolor: Colors.LOGOColor, "&:hover": { bgcolor: Colors.LOGOColorHover } }}
-                    onClick={handleSubmitReview}
-                    disabled={submittingReview}
-                  >
-                    {submittingReview ? <CircularProgress size={24} color="inherit" /> : "Submit Review"}
-                  </Button>
-                </Paper>
-
-                {/* Display Existing Reviews */}
-                {loadingReviews ? (
-                  <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-                    <CircularProgress />
-                  </Box>
-                ) : errorReviews ? (
-                  <Typography color="error" sx={{ mt: 3 }}>
-                    {errorReviews}
-                  </Typography>
-                ) : reviews.length === 0 ? (
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 3 }}>
-                    No reviews yet. Be the first to review this product!
-                  </Typography>
-                ) : (
-                  <Stack spacing={2} sx={{ mt: 3 }}>
-                    {reviews.map((review) => (
-                      <Paper key={review._id} elevation={1} sx={{ p: 2 }}>
-                        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <Typography variant="subtitle1" fontWeight="bold">
-                            {review.reviewer?.name || "Anonymous User"}
-                          </Typography>
-                          <Rating
-                            value={review.rating}
-                            precision={0.5}
-                            readOnly
-                            size="small"
-                            sx={{ color: Colors.LOGOColor }}
-                          />
-                        </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                          {new Date(review.createdAt).toLocaleDateString()}
-                        </Typography>
-                        <Typography variant="body1" sx={{ mt: 1 }}>
-                          {review.comment}
-                        </Typography>
-                      </Paper>
-                    ))}
-                  </Stack>
-                )}
->>>>>>> ad001d673611039ece0a1eb5deec1bad0bd064fc
-              </Box>
+              {/* Review Section */}
             </Box>
           </Grid>
         </Grid>
+
+        <Box sx={{ mt: 5 }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            Ratings & Reviews
+          </Typography>
+
+          {/* Tabs */}
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+            <Tabs
+              value={activeTab}
+              onChange={(e, newValue) => setActiveTab(newValue)}
+            >
+              <Tab label="Add Review" />
+              <Tab label={`All Reviews (${reviews.length})`} />
+            </Tabs>
+          </Box>
+
+          {/* Tab Panels */}
+          <TabPanel value={activeTab} index={0}>
+            <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Add a Review
+              </Typography>
+              <Rating
+                name="product-rating"
+                value={rating}
+                precision={1}
+                onChange={(event, newValue) => {
+                  setRating(newValue);
+                }}
+                sx={{ mb: 2, color: Colors.LOGOlight }}
+              />
+              <TextField
+                label="Your Comment"
+                multiline
+                rows={4}
+                fullWidth
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+              <Button
+                variant="contained"
+                sx={{
+                  bgcolor: Colors.LOGOColor,
+                  "&:hover": { bgcolor: Colors.LOGOColorHover },
+                }}
+                onClick={handleSubmitReview}
+                disabled={submittingReview}
+              >
+                {submittingReview ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Submit Review"
+                )}
+              </Button>
+            </Paper>
+          </TabPanel>
+
+          <TabPanel value={activeTab} index={1}>
+            {loadingReviews ? (
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : errorReviews ? (
+              <Typography color="error" sx={{ mt: 3 }}>
+                {errorReviews}
+              </Typography>
+            ) : reviews.length === 0 ? (
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 3 }}>
+                No reviews yet. Be the first to review this product!
+              </Typography>
+            ) : (
+              <Stack spacing={2} sx={{ mt: 3 }}>
+                {reviews.map((review) => (
+                  <Paper key={review._id} elevation={1} sx={{ p: 2 }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {review.reviewer?.name || "Anonymous User"}
+                      </Typography>
+                      <Rating
+                        value={review.rating}
+                        precision={1}
+                        readOnly
+                        size="small"
+                        sx={{ color: Colors.LOGOlight }}
+                      />
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                      {review.comment}
+                    </Typography>
+                  </Paper>
+                ))}
+              </Stack>
+            )}
+          </TabPanel>
+
+        </Box>
       </Container>
       <Footer />
     </>
