@@ -15,17 +15,11 @@ export const createProductCategory = catchAsyncErrors(
   }
 );
 
-// Get all product categories
+// Get all product categories 
 export const getAllProductCategories = catchAsyncErrors(
   async (req, res, next) => {
     try {
-      const { businessId } = req.params;
-
-      if (!businessId) {
-        return next(new Errorhandler("Business ID is required", 400));
-      }
-
-      const categories = await ProductCategory.find({ businessId }).sort({
+      const categories = await ProductCategory.find({}).sort({
         createdAt: -1,
       });
 
@@ -38,34 +32,10 @@ export const getAllProductCategories = catchAsyncErrors(
         data: categories,
       });
     } catch (error) {
-      next(error); // Pass unexpected errors to error middleware
+      next(error); 
     }
   }
 );
-
-// export const getAllProductCategories = catchAsyncErrors(
-//   async (req, res, next) => {
-//     const { businessId } = req.params;
-
-//     if (!businessId) {
-//     return next(new Errorhandler("Business ID is required", 400));
-//   }
-
-//     const categories = await ProductCategory.find({ businessId }).sort({
-//       createdAt: -1,
-//     });
-
-//     // Check if there are no categories
-//     if (!categories || categories.length === 0) {
-//       return next(new Errorhandler("No product categories found", 404));
-//     }
-
-//     res.status(200).json({
-//       success: true,
-//       data: categories,
-//     });
-//   }
-// );
 
 // Update a product category by ID
 export const updateProductCategoryById = catchAsyncErrors(
@@ -101,21 +71,6 @@ export const deleteProductCategoryById = catchAsyncErrors(
     res.status(200).json({
       success: true,
       message: "Product category deleted successfully",
-    });
-  }
-);
-
-// Get All Categories by Admin
-export const getAllProductCategoriesByAdmin = catchAsyncErrors(
-  async (req, res, next) => {
-    const categories = await ProductCategory.find().sort({ createdAt: -1 });
-    // Check if there are no categories
-    if (!categories || categories.length === 0) {
-      return next(new Errorhandler("No product categories found", 404));
-    }
-    res.status(200).json({
-      success: true,
-      data: categories,
     });
   }
 );

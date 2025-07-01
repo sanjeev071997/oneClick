@@ -44,7 +44,7 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
 export const getAllProductsByBusinessId = catchAsyncErrors(
   async (req, res, next) => {
     const { businessId } = req.params;
-    const products = await Product.find({ businessId }).sort({ createdAt: -1 });
+    const products = await Product.find({ businessId }).sort({ createdAt: -1 }).populate("categoryId", "name");
 
     // Check if there are no products
     if (!products || products.length === 0) {
@@ -63,7 +63,7 @@ export const getAllProductsByUserIdAdmin = catchAsyncErrors(
   async (req, res, next) => {
     const { userId } = req.params;
 
-    const allProducts = await Product.find({ userId }).sort({ createdAt: -1 });
+    const allProducts = await Product.find({ userId }).sort({ createdAt: -1 }).populate("categoryId", "name");
     
     // Check if there are no products
     if (!allProducts || allProducts.length === 0) {
@@ -80,7 +80,7 @@ export const getAllProductsByUserIdAdmin = catchAsyncErrors(
 // Get all products by Admin
 export const getAllProductsByAdmin = catchAsyncErrors(
   async (req, res, next) => {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find().sort({ createdAt: -1 }).populate("categoryId", "name");
     // Check if there are no products
     if (!products || products.length === 0) {
       return next(new Errorhandler("No products found", 404));
@@ -171,7 +171,7 @@ export const getProductById = catchAsyncErrors(async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const getProduct = await Product.findById(id).populate("businessId", "phone");
+    const getProduct = await Product.findById(id).populate("businessId", "phone").populate("categoryId", "name");
 
     if (!getProduct) {
       return next(new Errorhandler("Product not found", 404));
@@ -190,7 +190,7 @@ export const getProductById = catchAsyncErrors(async (req, res, next) => {
 // Get All Product User Side
 export const getAllProduct = catchAsyncErrors(async (req, res, next) => {
   try {
-    const allProduct = await Product.find().sort({ createdAt: -1 }).populate("businessId", "businessName phone");
+    const allProduct = await Product.find().sort({ createdAt: -1 }).populate("businessId", "businessName phone").populate("categoryId", "name");
 
     if (!allProduct) {
       return next(new Errorhandler("Product not found", 404));

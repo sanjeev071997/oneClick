@@ -8,6 +8,12 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+    categoryId: {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"ProductCategory",
+      required:true,
+    },
+
      userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
@@ -20,10 +26,10 @@ const productSchema = new mongoose.Schema(
       trim: true,
     },
 
-    category: {
-      type: String,
-      required: false,
-    },
+    // category: {
+    //   type: String,
+    //   required: false,
+    // },
 
     price: {
       type: Number,

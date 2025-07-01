@@ -4,20 +4,17 @@ import {
     getAllProductCategories,
     updateProductCategoryById,
     deleteProductCategoryById,
-    getAllProductCategoriesByAdmin,
 } from "../controllers/ProductCategoryController.js";
 import { isAuthenticatedUser, isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/create", isAuthenticatedUser, createProductCategory); // Add a new product category
+router.post("/create", isAuthenticatedUser, isAdmin, createProductCategory); // Add a new product category
 
-router.post("/get/:businessId", isAuthenticatedUser, getAllProductCategories); // Get a product category by ID
+router.get("/get", isAuthenticatedUser, getAllProductCategories); // Get all product category 
 
-router.put("/update/:id", isAuthenticatedUser, updateProductCategoryById); // Update a product category
+router.put("/update/:id", isAuthenticatedUser, isAdmin, updateProductCategoryById); // Update a product category
 
-router.delete("/delete/:id", isAuthenticatedUser, deleteProductCategoryById); // Delete a product category
-
-router.get("/admin/all", isAuthenticatedUser, isAdmin, getAllProductCategoriesByAdmin); // Get all product category by Admin
+router.delete("/delete/:id", isAuthenticatedUser, isAdmin, deleteProductCategoryById); // Delete a product category
 
 export default router;
