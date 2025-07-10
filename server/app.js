@@ -19,6 +19,7 @@ import productRoute from "./routes/productRoute.js";
 import productCategoryRoute from "./routes/productCategoryRoute.js";
 import productReviewRoute from "./routes/productReviewRoute.js"
 import globalSearchRoute from "./routes/globalSearchRoute.js"
+import leadsRoute from "./routes/leadsRoute.js"
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -65,6 +66,7 @@ app.use("/api/v1/product", productRoute);
 app.use("/api/v1/product/category", productCategoryRoute);
 app.use("/api/v1/product/review", productReviewRoute);
 app.use("/api", globalSearchRoute);
+app.use("/api/v1/leads", leadsRoute)
 
 // Static files
 app.use(express.static(path.join(__dirname, "./build")));

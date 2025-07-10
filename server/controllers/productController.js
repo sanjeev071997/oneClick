@@ -1,14 +1,76 @@
 import Product from "../models/productModel.js";
+import PlanLimit from "../models/planLimitsModel.js";
 import catchAsyncErrors from "../middlewares/catchAsyncErrors.js";
 import Errorhandler from "../utils/Errorhandler.js";
 import cloudinary from "../utils/cloudinary.js";
 
-// create a new product
+// // create a new product
+// export const createProduct = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     let images = [];
+//     // Upload images to Cloudinary if they exist
+//     if (req.files && req.files.length > 0) {
+//       const imageUploads = req.files.map((file) =>
+//         cloudinary.uploader.upload(file.path, {
+//           folder: "business-product",
+//           transformation: { width: 800, height: 600, crop: "limit" },
+//         })
+//       );
+
+//       const uploadedImages = await Promise.all(imageUploads);
+//       images = uploadedImages.map((img) => ({
+//         url: img.secure_url,
+//         public_id: img.public_id,
+//       }));
+//     }
+
+//     const product = new Product({
+//       ...req.body,
+//       images,
+//     });
+
+//     await product.save();
+//     res.status(201).json({
+//       success: true,
+//       message: "Product created successfully",
+//       data: product,
+//     });
+//   } catch (error) {
+//     return next(new Errorhandler(error.message, 500));
+//   }
+// });
+
 export const createProduct = catchAsyncErrors(async (req, res, next) => {
   try {
+    const { userId, businessId } = req.body;
+
+    // 1. Get user's plan limits
+    const planLimits = await PlanLimit.findOne({ userId });
+    if (!planLimits) {
+      return next(new Errorhandler("Plan limits not found for user", 403));
+    }
+
+    // 2. Count how many products already exist for this business
+    const existingProductCount = await Product.countDocuments({ businessId });
+    if (existingProductCount >= planLimits.productLimit) {
+      return next(
+        new Errorhandler("Product limit exceeded for your current plan", 403)
+      );
+    }
+
+    // 3. Upload images to Cloudinary if they exist
     let images = [];
-    // Upload images to Cloudinary if they exist
     if (req.files && req.files.length > 0) {
+      // Check if image count exceeds limit
+      if (req.files.length > planLimits.productImageLimit) {
+        return next(
+          new Errorhandler(
+            `Only ${planLimits.productImageLimit} images allowed per product in your plan`,
+            403
+          )
+        );
+      }
+
       const imageUploads = req.files.map((file) =>
         cloudinary.uploader.upload(file.path, {
           folder: "business-product",
@@ -23,12 +85,14 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
       }));
     }
 
+    // 4. Save the product
     const product = new Product({
       ...req.body,
       images,
     });
 
     await product.save();
+
     res.status(201).json({
       success: true,
       message: "Product created successfully",
@@ -38,7 +102,6 @@ export const createProduct = catchAsyncErrors(async (req, res, next) => {
     return next(new Errorhandler(error.message, 500));
   }
 });
-
 
 // Get all products by business ID
 export const getAllProductsByBusinessId = catchAsyncErrors(
@@ -92,9 +155,59 @@ export const getAllProductsByAdmin = catchAsyncErrors(
   }
 );
 
-// Update a product by ID
+// // Update a product by ID
+// export const updateProductById = catchAsyncErrors(async (req, res, next) => {
+//   try {
+//     const { id } = req.params;
+//     const product = await Product.findById(id);
+
+//     if (!product) {
+//       return next(new Errorhandler("Product not found", 404));
+//     }
+
+//     // Handle image uploads only if files are provided
+//     let newImages = [];
+//     if (req.files && req.files.length > 0) {
+//       const imageUploads = req.files?.map((file) =>
+//         cloudinary.uploader.upload(file.path, {
+//           folder: "business-Product",
+//           transformation: { width: 800, height: 600, crop: "limit" },
+//         })
+//       );
+
+//       const uploadedImages = await Promise.all(imageUploads);
+//       newImages = uploadedImages.map((img) => ({
+//         url: img.secure_url,
+//         public_id: img.public_id,
+//       }));
+//     }
+
+//     // Merge old and new images
+//     const mergedImages = newImages.length > 0 ? [...product.images, ...newImages] : product.images;
+
+//     // Update the product
+//     const updatedProduct = await Product.findByIdAndUpdate(
+//       id,
+//       {
+//         ...req.body,
+//         images: mergedImages,
+//       },
+//       { new: true }
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Product updated successfully",
+//       data: updatedProduct,
+//     });
+//   } catch (error) {
+//     return next(new Errorhandler(error.message, 500));
+//   }
+// });
+
 export const updateProductById = catchAsyncErrors(async (req, res, next) => {
   try {
+    const { userId } = req.body; // ✅ expecting userId in body
     const { id } = req.params;
     const product = await Product.findById(id);
 
@@ -102,10 +215,27 @@ export const updateProductById = catchAsyncErrors(async (req, res, next) => {
       return next(new Errorhandler("Product not found", 404));
     }
 
-    // Handle image uploads only if files are provided
+    // ✅ 1. Fetch user plan limits
+    const planLimits = await PlanLimit.findOne({ userId });
+    if (!planLimits) {
+      return next(new Errorhandler("Plan limits not found for user", 403));
+    }
+
+    // ✅ 2. Handle image uploads only if files provided
     let newImages = [];
     if (req.files && req.files.length > 0) {
-      const imageUploads = req.files?.map((file) =>
+      // Check if image count after merge exceeds limit
+      const totalImages = product.images.length + req.files.length;
+      if (totalImages > planLimits.productImageLimit) {
+        return next(
+          new Errorhandler(
+            `You can only upload up to ${planLimits.productImageLimit} images per product in your plan`,
+            403
+          )
+        );
+      }
+
+      const imageUploads = req.files.map((file) =>
         cloudinary.uploader.upload(file.path, {
           folder: "business-Product",
           transformation: { width: 800, height: 600, crop: "limit" },
@@ -119,10 +249,11 @@ export const updateProductById = catchAsyncErrors(async (req, res, next) => {
       }));
     }
 
-    // Merge old and new images
-    const mergedImages = newImages.length > 0 ? [...product.images, ...newImages] : product.images;
+    // ✅ 3. Merge old and new images
+    const mergedImages =
+      newImages.length > 0 ? [...product.images, ...newImages] : product.images;
 
-    // Update the product
+    // ✅ 4. Update product
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {

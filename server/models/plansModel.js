@@ -56,6 +56,11 @@ const plansSchema = new mongoose.Schema(
       required: [true, "Plan status is required"],
     },
 
+    socialMediaLinks: {
+      type:Boolean,
+       required: [true, "Social Media Links is required"],
+    },
+
     createdAt: {
       type: Date,
       default: Date.now,
